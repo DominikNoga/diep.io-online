@@ -1,0 +1,82 @@
+body {
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map {
+  width: 100vw;
+  height: 100vh;
+  background-color: lightgrey;
+}
+
+.obstacle-basic {
+  width: 40px;
+  height: 40px;
+  background-color: rgb(72, 45, 230);
+  border: solid 4px rgb(46, 20, 196);
+}
+
+.obstacle-medium {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 40px solid rgb(175, 19, 110);
+}
+
+.obstacle-advanced {
+  position: relative;
+  height: 0;
+  width: 30px;
+  border-top: 30px solid rgb(23, 156, 23);
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+}
+.obstacle-advanced::after {
+  content: "";
+  position: absolute;
+  border-bottom: 30px solid rgb(5, 109, 5);
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  bottom: 30px;
+  left: -15px;
+}
+
+.tank {
+  height: 50px;
+  width: 50px;
+  background-color: red;
+  border-radius: 50%;
+  border: solid 4px darkred;
+  position: relative;
+  top: 30%;
+  left: 20%;
+}
+.tank::before {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 18px;
+  top: 50%;
+  left: 100%;
+  translate: 0 -50%;
+  border: 2px black solid;
+  background-color: darkgrey;
+  border-radius: 3px;
+}
+.tank::after {
+  content: "";
+  position: absolute;
+  bottom: -1em;
+  left: 50%;
+  background-color: green;
+  width: 120%;
+  height: 5px;
+  translate: -50% 0;
+  border: 1px solid black;
+  border-radius: 6px;
+}

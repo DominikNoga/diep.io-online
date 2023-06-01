@@ -1,0 +1,34 @@
+.tank{
+	height: 50px;
+	width: 50px;
+	background-color: red;
+	border-radius: 50%;
+	border: solid 4px darkred;
+	position: relative;
+    top: 30%;
+    left: 20%;
+	&::before{
+		content: '';
+		position: absolute;
+		width: 24px;
+		height: 18px;
+		top: 50%;
+		left: 100%;
+		translate: 0 -50%;
+		border: 2px black solid;
+		background-color: darkgrey;
+		border-radius: 3px;
+	}
+	&::after{
+		content: '';
+		position: absolute;
+		bottom: -1em;
+		left: 50%;
+		background-color: green;
+		width: 120%;
+		height: 5px;		
+		translate: -50% 0;
+		border: 1px solid black;
+		border-radius: 6px;
+	}
+}

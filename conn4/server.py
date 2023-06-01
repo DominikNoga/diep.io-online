@@ -1,13 +1,13 @@
-import asyncio
-import websockets
 import json
-
-from connect4 import PLAYER1, PLAYER2, Connect4
-from constants import PORT_NUMBER, message_types, WIN, ERROR, PLAY
+import asyncio
+import secrets
+from connect4 import Connect4
+from constants import *
 
 class Server:
     def __init__(self):
         self.connect4 = Connect4()
+        self.JOIN = {}
     
     
     async def send_win_message(self, websocket, message):
@@ -41,8 +41,16 @@ class Server:
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
+        
+    async def send_init_message(self, websocket, message: dict):
+        event = {
+            "type": message_types[INIT],
+            "join": message["join_key"]
+        }
+        await websocket.send(json.dumps(event))
+        await asyncio.sleep(0.5)
     
-    async def handle_sending_message(self, websocket, message_type, message):
+    async def send_message(self, websocket, message_type, message):
         if message_type == message_types[PLAY]:
             await self.send_play_message(websocket, message)
             
@@ -52,56 +60,63 @@ class Server:
         elif message_type == message_types[ERROR]:
             await self.send_error_message(websocket, message)
         
+        elif message_type == message_types[INIT]:
+            await self.send_init_message(websocket, message)
+        
         else: print(f"No such message type {message_type}")
         
-    
     async def handle_recieved_message(self, websocket, message):
         move = json.loads(message)
         if move["type"] == message_types[PLAY]:
             try:
                 row, winner = self.connect4.play(self.connect4.current_player, move["column"])
                 
-                await self.send_play_message(websocket, {
+                await self.send_message(websocket, message_types[PLAY], {
                     "player": self.connect4.current_player,
                     "column": move["column"],
                     "row": row
                 }) 
                 if winner is not False:
-                    await self.send_win_message(websocket, {
+                    await self.send_message(websocket, message_types[WIN] ,{
                         "player": self.connect4.current_player
                     })
                     self.connect4.__init__()
                 
                 
             except RuntimeError as err:
-                await self.handle_sending_message(websocket, message_types[ERROR], {
+                await self.send_message(websocket, message_types[ERROR], {
                     "content": str(err)
                 })
             
             except Exception as err:
-                await self.handle_sending_message(websocket, message_types[ERROR], {
+                await self.send_message(websocket, message_types[ERROR], {
                     "content": str(err)
-                })
-            
-        # else:
-        #     print(f"Unknown message type: {move['type']}")
-        
+                })        
 
     async def recieveMessages(self, websocket):
         async for message in websocket:
             await self.handle_recieved_message(websocket, message)
-
-
+            
     async def handler(self, websocket):
-        await self.recieveMessages(websocket)
+        game = Connect4()
+        conncected = {websocket}
+        
+        join_key = secrets.token_urlsafe(12)
+        self.JOIN[join_key] = game, conncected
+        try:
+            await self.recieveMessages(websocket)
 
-async def main():
-    server = Server()
-    async with websockets.serve(server.handler, "", PORT_NUMBER):
-        print(f"server started on port {PORT_NUMBER}")
-        await asyncio.Future()  # run forever
+        finally:
+            del self.JOIN[join_key]
+            
+        join_key = None
+        game, connected = self.JOIN[join_key]
 
+        # Register to receive moves from this game.
+        connected.add(websocket)
+        try:
+            self.recieveMessages(websocket)
 
-if __name__ == "__main__":
-    asyncio.run(main())
-    
+        finally:
+            connected.remove(websocket)
+            
