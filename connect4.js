@@ -4,6 +4,9 @@ const PLAYER2 = "yellow";
 
 function createBoard(board) {
   // Inject stylesheet.
+  while(board.lastElementChild) {
+    board.removeChild(board.lastElementChild);
+  }
   const linkElement = document.createElement("link");
   linkElement.href = import.meta.url.replace(".js", ".css");
   linkElement.rel = "stylesheet";

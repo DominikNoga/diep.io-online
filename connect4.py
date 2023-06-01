@@ -46,7 +46,7 @@ class Connect4:
         Raises :exc:`RuntimeError` if the move is illegal.
 
         """
-        if player != self.current_player():
+        if player != self.current_player:
             raise RuntimeError("It isn't your turn.")
 
         row = self.top[column]
@@ -56,8 +56,8 @@ class Connect4:
         self.moves.append((player, column, row))
         self.top[column] += 1
 
-        if self.winner is None and self.last_move_won():
-            self.winner = self.current_player()
+        if self.winner is None and self.last_move_won:
+            self.winner = self.current_player
             return row, self.winner
 
         return row, False

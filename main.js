@@ -40,8 +40,10 @@ websocket.addEventListener("message", ({ data }) => {
         break;
     case "win":
         showMessage(`Player ${event.player} wins!`);
-        // No further messages are expected; close the WebSocket connection.
-        websocket.close(1000);
+        setTimeout(() =>{
+            const board = document.querySelector(".board");
+            createBoard(board);
+        }, 1000)
         break;
     case "error":
         showMessage(event.message);

@@ -21,12 +21,18 @@ class Server:
     async def send_error_message(self, websocket, message):
         event = {
             "type": message_types[ERROR],
-            "message": message['error']
+            "message": message['content']
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
     
-    async def send_play_message(self, websocket, message):
+    async def send_play_message(self, websocket, message: dict):
+        """Method used to send a message about player move
+
+        Args:
+            websocket (_type_): Object of a websocket
+            message (Dict: with keys row, column, player): Dictionary serialized to JSON containing type of event, row and column where player put his pawn and a player itself
+        """
         event = {
             "type": message_types[PLAY],
             "row": message["row"],
@@ -48,50 +54,46 @@ class Server:
         
         else: print(f"No such message type {message_type}")
         
-
+    
     async def handle_recieved_message(self, websocket, message):
-        move = json.load(message)
-        if move["type"] == 'play':
+        move = json.loads(message)
+        if move["type"] == message_types[PLAY]:
             try:
-                self.connect4.play(self.connect4.current_player(), move['column'])
+                row, winner = self.connect4.play(self.connect4.current_player, move["column"])
+                
+                await self.send_play_message(websocket, {
+                    "player": self.connect4.current_player,
+                    "column": move["column"],
+                    "row": row
+                }) 
+                if winner is not False:
+                    await self.send_win_message(websocket, {
+                        "player": self.connect4.current_player
+                    })
+                    self.connect4.__init__()
+                
+                
             except RuntimeError as err:
-                await self.handle_sending_message()
+                await self.handle_sending_message(websocket, message_types[ERROR], {
+                    "content": str(err)
+                })
             
             except Exception as err:
-                print(f"Unknown error: {err}")
+                await self.handle_sending_message(websocket, message_types[ERROR], {
+                    "content": str(err)
+                })
             
-        else:
-            print(f"Unknown message type: {move['type']}")
+        # else:
+        #     print(f"Unknown message type: {move['type']}")
         
 
     async def recieveMessages(self, websocket):
         async for message in websocket:
-            self.handle_message(message)
+            await self.handle_recieved_message(websocket, message)
 
 
     async def handler(self, websocket):
-        for player, column, row in [
-            (PLAYER1, 3, 0),
-            (PLAYER2, 3, 1),
-            (PLAYER1, 4, 0),
-            (PLAYER2, 4, 1),
-            (PLAYER1, 2, 0),
-            (PLAYER2, 1, 0),
-            (PLAYER1, 5, 0),
-        ]:
-            event = {
-                "type": "play",
-                "player": player,
-                "column": column,
-                "row": row,
-            }
-            await websocket.send(json.dumps(event))
-            await asyncio.sleep(0.5)
-        event = {
-            "type": "win",
-            "player": PLAYER1,
-        }
-        await websocket.send(json.dumps(event))
+        await self.recieveMessages(websocket)
 
 async def main():
     server = Server()
