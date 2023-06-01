@@ -21,15 +21,15 @@ class Connect4:
         self.winner = None
 
     @property
-    def last_player(self):
+    def current_player(self):
         """
-        Player who played the last move.
+        Player who should play now.
 
         """
-        return PLAYER1 if len(self.moves) % 2 else PLAYER2
+        return PLAYER2 if len(self.moves) % 2 else PLAYER1
 
     @property
-    def last_player_won(self):
+    def last_move_won(self):
         """
         Whether the last move is winning.
 
@@ -46,7 +46,7 @@ class Connect4:
         Raises :exc:`RuntimeError` if the move is illegal.
 
         """
-        if player == self.last_player:
+        if player != self.current_player():
             raise RuntimeError("It isn't your turn.")
 
         row = self.top[column]
@@ -56,7 +56,8 @@ class Connect4:
         self.moves.append((player, column, row))
         self.top[column] += 1
 
-        if self.winner is None and self.last_player_won:
-            self.winner = self.last_player
+        if self.winner is None and self.last_move_won():
+            self.winner = self.current_player()
+            return row, self.winner
 
-        return row
+        return row, False
