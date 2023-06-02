@@ -5,4 +5,10 @@ export var Direction;
     Direction["LEFT"] = "ArrowLeft";
     Direction["RIGHT"] = "ArrowRight";
 })(Direction || (Direction = {}));
-export const MOVE_VALUE = 7;
+export const arrows = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT];
+export var Keys;
+(function (Keys) {
+    Keys["SPACE"] = " ";
+})(Keys || (Keys = {}));
+export const MOVE_VALUE = 4;
+export const allowedKeys = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT, Keys.SPACE];
