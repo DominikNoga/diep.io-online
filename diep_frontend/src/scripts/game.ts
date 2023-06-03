@@ -6,6 +6,7 @@ import { allowedKeys } from "./constants.js";
 export default class Game implements GameInterface{
     private gameMechanics: GameMechanics
     private currentPlayer: Player;
+    private frames = 1000/60;
 
     constructor(currentPlayer: Player){
         this.currentPlayer = currentPlayer;
@@ -17,7 +18,7 @@ export default class Game implements GameInterface{
     public initHandlers(){
         document.addEventListener("keydown", (e) =>{
             if(allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined){
-                this.gameMechanics.handleKeyPress(e.key);
+                this.gameMechanics.handleKeyDown(e.key);
             }
         });
 
@@ -28,5 +29,8 @@ export default class Game implements GameInterface{
 
     public run(){
         this.initHandlers();
+        setInterval(() =>{
+            this.gameMechanics.handlePressedKeys();
+        }, this.frames)
     }
 }

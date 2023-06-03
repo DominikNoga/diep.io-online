@@ -14,12 +14,14 @@ export default class Player implements PlayerInterface {
     private _name: string;
     private _score: number;
     private _angle: number;
+    private _speed: number;
 
     public constructor(tank: HTMLElement, name: string) {
         this._tank = tank;
         this._top = Number(this.tank.style.top);
         this._left = Number(this.tank.style.left);
         this._name = name;
+        this._speed = 5;
         
         this.clientRect = this.tank.getBoundingClientRect();
         this._lifeLeft = 100;
@@ -116,5 +118,13 @@ export default class Player implements PlayerInterface {
     
     set angle(value) {
     this._angle = value;
+    }
+
+    get speed(): number {
+        return this._speed;
+    }
+    
+    set speed(value: number) {
+    this._speed = value;
     }
 }

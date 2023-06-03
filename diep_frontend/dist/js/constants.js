@@ -10,5 +10,4 @@ export var Keys;
 (function (Keys) {
     Keys["SPACE"] = " ";
 })(Keys || (Keys = {}));
-export const MOVE_VALUE = 4;
 export const allowedKeys = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT, Keys.SPACE];

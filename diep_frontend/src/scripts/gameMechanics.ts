@@ -1,4 +1,4 @@
-import { Direction, MOVE_VALUE, Keys, arrows, allowedKeys } from "./constants.js"
+import { Direction, Keys, arrows, allowedKeys } from "./constants.js"
 import Player from "./components/player.js"
 
 export default class GameMechanics{
@@ -10,41 +10,36 @@ export default class GameMechanics{
         this.player = player;
     }
 
-    public handleKeyPress(key: string){
+    public handleKeyDown(key: string){
         this.keysPressed[key] = true;
-        for(let pressedKey in this.keysPressed){
-            if(!this.keysPressed[pressedKey])
-                continue;
-            if(arrows.find(arrow => arrow === pressedKey) !== undefined){
-                this.handlePlayerMovement(this.player, pressedKey)
-            }
-            if(pressedKey === Keys.SPACE){
-                console.log('Implement shooting');
-            }
-        }
     }
 
     public handleKeyUp(key: string){
         delete this.keysPressed[key];
     };
-
-    public handlePlayerMovement(player: Player, key: string){
-        let leftValue = 0, topValue = 0;
-        if(key === Direction.UP){
-            topValue -= MOVE_VALUE;
-        }
-        if(key === Direction.DOWN){
-            topValue += MOVE_VALUE;
-        }
-        if(key === Direction.LEFT){
-            leftValue -= MOVE_VALUE;
-        }
-        if(key === Direction.RIGHT){
-            leftValue += MOVE_VALUE;
-        }
     
-        // requestAnimationFrame(() =>{
-            player.changePosition(leftValue, topValue);
-        // })
-    };
+    /**
+     * 
+     * TODO: change function handlePlayerMovement to handlePressedKey, in handleKeyPress only add a key to the object.
+     */
+
+    public handlePressedKeys(){
+        let leftValue = 0, topValue = 0;
+        if(this.keysPressed[Direction.UP]){
+            topValue -= this.player.speed;
+        }
+        if(this.keysPressed[Direction.DOWN]){
+            topValue += this.player.speed;
+        }
+        if(this.keysPressed[Direction.LEFT]){
+            leftValue -= this.player.speed;
+        }
+        if(this.keysPressed[Direction.RIGHT]){
+            leftValue += this.player.speed;
+        }
+        if(this.keysPressed[Keys.SPACE]){
+            console.log("Implement shooting")
+        }
+        this.player.changePosition(leftValue, topValue);
+    }
 }

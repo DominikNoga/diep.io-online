@@ -11,8 +11,6 @@ export enum Keys{
     SPACE = ' ',
 }
 
-export const MOVE_VALUE = 4;
-
 export type Point = {
     x: number,
     y: number

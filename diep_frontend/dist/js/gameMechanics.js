@@ -1,4 +1,4 @@
-import { Direction, MOVE_VALUE, Keys, arrows } from "./constants.js";
+import { Direction, Keys } from "./constants.js";
 export default class GameMechanics {
     constructor(player) {
         this.keysPressed = {};
@@ -6,38 +6,32 @@ export default class GameMechanics {
     }
     handleKeyPress(key) {
         this.keysPressed[key] = true;
-        for (let pressedKey in this.keysPressed) {
-            if (!this.keysPressed[pressedKey])
-                continue;
-            if (arrows.find(arrow => arrow === pressedKey) !== undefined) {
-                this.handlePlayerMovement(this.player, pressedKey);
-            }
-            if (pressedKey === Keys.SPACE) {
-                console.log('Implement shooting');
-            }
-        }
     }
     handleKeyUp(key) {
         delete this.keysPressed[key];
     }
     ;
-    handlePlayerMovement(player, key) {
+    /**
+     *
+     * TODO: change function handlePlayerMovement to handlePressedKey, in handleKeyPress only add a key to the object.
+     */
+    handlePressedKeys() {
         let leftValue = 0, topValue = 0;
-        if (key === Direction.UP) {
-            topValue -= MOVE_VALUE;
+        if (this.keysPressed[Direction.UP]) {
+            topValue -= this.player.speed;
         }
-        if (key === Direction.DOWN) {
-            topValue += MOVE_VALUE;
+        if (this.keysPressed[Direction.DOWN]) {
+            topValue += this.player.speed;
         }
-        if (key === Direction.LEFT) {
-            leftValue -= MOVE_VALUE;
+        if (this.keysPressed[Direction.LEFT]) {
+            leftValue -= this.player.speed;
         }
-        if (key === Direction.RIGHT) {
-            leftValue += MOVE_VALUE;
+        if (this.keysPressed[Direction.RIGHT]) {
+            leftValue += this.player.speed;
         }
-        // requestAnimationFrame(() =>{
-        player.changePosition(leftValue, topValue);
-        // })
+        if (this.keysPressed[Keys.SPACE]) {
+            console.log("Implement shooting");
+        }
+        this.player.changePosition(leftValue, topValue);
     }
-    ;
 }

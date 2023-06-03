@@ -4,6 +4,7 @@ export default class Player {
         this._top = Number(this.tank.style.top);
         this._left = Number(this.tank.style.left);
         this._name = name;
+        this._speed = 5;
         this.clientRect = this.tank.getBoundingClientRect();
         this._lifeLeft = 100;
     }
@@ -93,5 +94,11 @@ export default class Player {
     }
     set angle(value) {
         this._angle = value;
+    }
+    get speed() {
+        return this._speed;
+    }
+    set speed(value) {
+        this._speed = value;
     }
 }

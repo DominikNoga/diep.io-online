@@ -2,6 +2,7 @@ import GameMechanics from "./gameMechanics.js";
 import { allowedKeys } from "./constants.js";
 export default class Game {
     constructor(currentPlayer) {
+        this.frames = 1000 / 60;
         this.currentPlayer = currentPlayer;
         this.gameMechanics = new GameMechanics(currentPlayer);
     }
@@ -19,5 +20,8 @@ export default class Game {
     }
     run() {
         this.initHandlers();
+        setInterval(() => {
+            this.gameMechanics.handlePressedKeys();
+        }, this.frames);
     }
 }
