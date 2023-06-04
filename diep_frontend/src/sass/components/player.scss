@@ -1,3 +1,4 @@
+$r: 25px;
 .tank{
 	height: 50px;
 	width: 50px;
@@ -5,17 +6,13 @@
 	border-radius: 50%;
 	border: solid 4px darkred;
 	position: relative;
-    top: 300px;
-    left: 300px;
-	&::before{
-		content: '';
+	.barrel{
 		position: absolute;
 		width: 24px;
 		height: 18px;
-		top: 50%;
-		left: 100%;
-		translate: 0 -50%;
 		border: 2px black solid;
+		border-right-color: black;
+		border-right-width: 5px;
 		background-color: darkgrey;
 		border-radius: 3px;
 	}

@@ -1,12 +1,19 @@
 export default class Player {
     constructor(tank, name) {
+        this.barrelSize = {
+            length: 18,
+            width: 24
+        };
         this._tank = tank;
-        this._top = Number(this.tank.style.top);
-        this._left = Number(this.tank.style.left);
+        this.barrel = this.tank.querySelector('.barrel');
+        this._top = Number(this.tank.style.top.slice(0, -2));
+        this._left = Number(this.tank.style.left.slice(0, -2));
         this._name = name;
-        this._speed = 5;
+        this._speed = 3;
+        this._score = 0;
         this.clientRect = this.tank.getBoundingClientRect();
         this._lifeLeft = 100;
+        this._radius = 25;
     }
     ;
     calculateCenters() {
@@ -18,23 +25,15 @@ export default class Player {
         };
     }
     ;
-    getUpdatedPlayerPosition(leftValue, topValue) {
-        return {
-            x: this.left + leftValue,
-            y: this.top + topValue
-        };
+    shoot() {
     }
-    ;
-    changePosition(leftValue, topValue) {
-        const updatedPositon = this.getUpdatedPlayerPosition(leftValue, topValue);
-        this.left = updatedPositon.x;
-        this.top = updatedPositon.y;
-        this.tank.style.top = `${this.top}px`;
-        this.tank.style.left = `${this.left}px`;
-    }
-    ;
     get tank() {
         return this._tank;
+    }
+    ;
+    set tank(tank) {
+        this._tank = tank;
+        this.barrel = this.tank.querySelector('.barrel');
     }
     ;
     get top() {
@@ -53,12 +52,12 @@ export default class Player {
         this._left = left;
     }
     ;
-    get size() {
-        return this._size;
+    get radius() {
+        return this._radius;
     }
     ;
-    set size(size) {
-        this._size = size;
+    set radius(size) {
+        this._radius = size;
     }
     ;
     set color(color) {
@@ -80,25 +79,33 @@ export default class Player {
     get name() {
         return this._name;
     }
+    ;
     set name(value) {
         this._name = value;
     }
+    ;
     get score() {
         return this._score;
     }
+    ;
     set score(value) {
         this._score = value;
     }
+    ;
     get angle() {
         return this._angle;
     }
+    ;
     set angle(value) {
         this._angle = value;
     }
+    ;
     get speed() {
         return this._speed;
     }
+    ;
     set speed(value) {
         this._speed = value;
     }
+    ;
 }
