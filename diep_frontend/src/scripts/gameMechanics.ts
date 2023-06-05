@@ -1,7 +1,5 @@
-import { Direction, Keys, Point } from "./constants.js"
+import { Point } from "./constants.js"
 import Player from "./components/player.js"
-import GameObject from "./abstract/gameObject.js";
-import { setHtmlElementPosition } from "./helperFunctions/htmlHelperFunctions.js";
 
 export default class GameMechanics{
     public keysPressed: {[key: string]: boolean};

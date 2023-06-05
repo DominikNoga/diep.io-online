@@ -18,13 +18,6 @@ export type Point = {
 
 export const allowedKeys = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT, Keys.SPACE]
 
-export const startingRadius = 25;
-
-export const startingBarellPosition = {
-    left: 50,
-    top: 25
-}
-
 export type GameObjectColor = {
     bg: string,
     border: string
