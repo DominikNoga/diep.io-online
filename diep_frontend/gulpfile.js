@@ -12,8 +12,8 @@ gulp.task("sass", (done) => {
         done();
 })
 gulp.task("copyHTML", (done) => {
-    gulp.src("src/templates/*.html")
-    .pipe(gulp.dest("dist/templates"));
+    gulp.src("src/html/*.html")
+    .pipe(gulp.dest("dist/html"));
     done();
 });
 
@@ -27,5 +27,5 @@ gulp.task("ts", (done) => {
 gulp.task('watch', () => {
     gulp.watch('src/scripts/**/*.ts', gulp.series('ts'));
     gulp.watch('src/sass/**/*.scss',gulp.series('sass'));
-    gulp.watch('src/templates/*.html', gulp.series('copyHTML'));
+    gulp.watch('src/html/*.html', gulp.series('copyHTML'));
 })
