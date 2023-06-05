@@ -4,7 +4,7 @@ import GameObject from "./abstract/gameObject.js";
 import { setHtmlElementPosition } from "./helperFunctions/htmlHelperFunctions.js";
 
 export default class GameMechanics{
-    private keysPressed: { [key: string]: boolean};
+    public keysPressed: { [key: string]: boolean};
     private currentPlayer: Player;
 
     constructor (currentPlayer: Player) {
@@ -52,28 +52,28 @@ export default class GameMechanics{
         document.createElement('div');
     };
 
-    public handleBarelMovement(mousePosition: Point): void{
-        console.log(`Mouse position x: ${mousePosition.x} y: ${mousePosition.y}`);
+    // public handleBarelMovement(mousePosition: Point): void{
+    //     console.log(`Mouse position x: ${mousePosition.x} y: ${mousePosition.y}`);
        
-        const playerCenterPosition = this.currentPlayer.calculateCenters();
-        console.log(`Center position x: ${playerCenterPosition.x} y: ${playerCenterPosition.y}`);
-        const dx = mousePosition.x - playerCenterPosition.x;
-        const dy = mousePosition.y - playerCenterPosition.y;
-        const fi = Math.atan(dy/dx);
-        const fiDeg = fi*180/Math.PI;
-        let newX = this.currentPlayer.radius*2 - (this.currentPlayer.radius)*Math.cos(fi);
-        let newY = this.currentPlayer.radius + (this.currentPlayer.radius)*Math.sin(fi);
+    //     const playerCenterPosition = this.currentPlayer.calculateCenters();
+    //     console.log(`Center position x: ${playerCenterPosition.x} y: ${playerCenterPosition.y}`);
+    //     const dx = mousePosition.x - playerCenterPosition.x;
+    //     const dy = mousePosition.y - playerCenterPosition.y;
+    //     const fi = Math.atan(dy/dx);
+    //     const fiDeg = fi*180/Math.PI;
+    //     let newX = this.currentPlayer.radius*2 - (this.currentPlayer.radius)*Math.cos(fi);
+    //     let newY = this.currentPlayer.radius + (this.currentPlayer.radius)*Math.sin(fi);
         
-        let rotationAngle = 0;
-        if(dx > 0){
-            rotationAngle = fiDeg;
-        }
-        else{
-            rotationAngle = fiDeg > 0 ? fiDeg + 90 : -90 + fiDeg;
+    //     let rotationAngle = 0;
+    //     if(dx > 0){
+    //         rotationAngle = fiDeg;
+    //     }
+    //     else{
+    //         rotationAngle = fiDeg > 0 ? fiDeg + 90 : -90 + fiDeg;
 
-        }
-        console.log(`Barrel position x: ${newX} y: ${newY}\nRotation angle: ${rotationAngle}`);
-        setHtmlElementPosition(this.currentPlayer.barrel, {x: newX, y: newY});
-        this.currentPlayer.barrel.style.rotate = `${rotationAngle}deg`;
-    }
+    //     }
+    //     console.log(`Barrel position x: ${newX} y: ${newY}\nRotation angle: ${rotationAngle}`);
+    //     setHtmlElementPosition(this.currentPlayer.barrel, {x: newX, y: newY});
+    //     this.currentPlayer.barrel.style.rotate = `${rotationAngle}deg`;
+    // }
 }

@@ -9,13 +9,16 @@ export default class Game implements GameInterface{
     private gameMechanics: GameMechanics
     private currentPlayer: Player;
     private frames = 1000/60;
-    private gameMap: GameMap;
+    public gameMap: GameMap;
     private gameUI: GameUI;
+    public width: number;
+    public height: number;
 
-    constructor(startingPosition: Point, playerName: string){
-        this.gameMap = new GameMap();
+    constructor(width: number, height: number){
+        this.width = width;
+        this.height = height;
         this.gameUI = new GameUI(this.gameMap);
-        this.currentPlayer = this.gameUI.createPlayerObject(startingPosition, playerName);
+        this.currentPlayer = new Player(this, 'Domin', {bg: 'red', border: 'darkred'}, {x: 100, y: 100});
         this.gameUI.currentPlayer = this.currentPlayer;
         this.gameMechanics = new GameMechanics(this.currentPlayer);
     };
@@ -34,9 +37,9 @@ export default class Game implements GameInterface{
             this.gameMechanics.handleKeyUp(e.key);
         });
 
-        document.addEventListener('mousemove', (e) =>{
-            this.gameMechanics.handleBarelMovement({x: e.x, y: e.y});
-        });
+        // document.addEventListener('mousemove', (e) =>{
+        //     this.gameMechanics.handleBarelMovement({x: e.x, y: e.y});
+        // });
     }
 
     public initGraphics(){
@@ -46,15 +49,13 @@ export default class Game implements GameInterface{
     public run(){
         this.initHandlers();
         this.initGraphics();
-        setInterval(() =>{
-            this.gameMechanics.handlePressedKeys();
-        }, this.frames)
+        this.gameMap.animate();
+    }
+
+    public update(){
+        this.currentPlayer.update(this.gameMechanics.keysPressed);
+    }
+    public draw(ctx: CanvasRenderingContext2D){
+        this.currentPlayer.draw(ctx);
     }
 }
-
-/* 
-    const barreel = document.querySelector('.barrel')
-    barreel.style.left = '37.5px';
-    barreel.style.rotate = '52deg'
-    barreel.style.top = '50.5px';
-*/

@@ -24,3 +24,8 @@ export const startingBarellPosition = {
     left: 50,
     top: 25
 }
+
+export type GameObjectColor = {
+    bg: string,
+    border: string
+}

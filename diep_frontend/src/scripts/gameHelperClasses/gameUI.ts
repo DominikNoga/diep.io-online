@@ -12,17 +12,12 @@ export default class GameUI{
         this.gameMap = gameMap;
     }
 
-    public addObjectToMap(classes: string[], position: Point): void{
-        const object = createGameObject(classes, position);
-        this.gameMap.map.appendChild(object);
-    }
 
-    public createPlayerObject(position: Point, name: string): Player{
-        const playerObject = createGameObject(['tank'], position);
-        this.gameMap.map.appendChild(playerObject);
-        const barrel = createGameObject(['barrel'], {x: startingRadius*2, y: startingRadius - 12})
-        playerObject.appendChild(barrel);
-        return new Player(playerObject, name);
-
-    }
+    // public createPlayerObject(position: Point, name: string): Player{
+    //     const playerObject = createGameObject(['tank'], position);
+    //     this.gameMap.map.appendChild(playerObject);
+    //     const barrel = createGameObject(['barrel'], {x: startingRadius*2, y: startingRadius - 12})
+    //     playerObject.appendChild(barrel);
+    //     return new Player(playerObject, name);
+    // }
 } 

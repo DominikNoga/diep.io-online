@@ -1,12 +1,14 @@
 import PlayerInterface from "../interfaces/player.interface";
-import { Point } from "../constants.js";
+import { Point, Direction, Keys, GameObjectColor } from "../constants.js";
 import { setHtmlElementPosition } from "../helperFunctions/htmlHelperFunctions.js";
+import Game from "../game.js";
 
 export default class Player implements PlayerInterface {
     private _top: number;
     private _left: number;
     private centerX: number;
     private centerY: number;
+    public game: Game;
     private _tank: HTMLElement;
     public barrel: HTMLElement;
     public barrelSize = {
@@ -15,37 +17,60 @@ export default class Player implements PlayerInterface {
     }
     private clientRect: DOMRect;
     private _radius: number;
-    private _color: string;
+    public color: GameObjectColor;
     private _lifeLeft: number;
     private _name: string;
     private _score: number;
     private _angle: number;
     private _speed: number;
+    private position: Point;
 
-    public constructor(tank: HTMLElement, name: string) {
-        this._tank = tank;
-        this.barrel = this.tank.querySelector('.barrel');
-        this._top = Number(this.tank.style.top.slice(0, -2));
-        this._left = Number(this.tank.style.left.slice(0, -2));
+    public constructor(game: Game, name: string, color: GameObjectColor, startingPosition: Point) {
+        this.game = game;
         this._name = name;
+        this.color = color;
+        this.position = startingPosition;
         this._speed = 3;
         this._score = 0;
-        this.clientRect = this.tank.getBoundingClientRect();
         this._lifeLeft = 100;
         this._radius = 25;
     };
 
-    public calculateCenters(): Point{
-        const x = this.clientRect.left + this.clientRect.width/2;
-        const y = this.clientRect.top + this.clientRect.height/2;
-        return {
-            x: x,
-            y: y
-        }
-    };
-
     public shoot(): void {
 
+    }
+
+    public draw(ctx: CanvasRenderingContext2D): void {
+        // draw the inside
+        ctx.beginPath();
+        ctx.ellipse(this.position.x, this.position.y, this.radius, this.radius, 0, 0, 2*Math.PI)
+        // ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = this.color.bg;
+        ctx.fill();
+        // draw the border
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.radius + 2, 0, Math.PI*2);
+        ctx.strokeStyle = this.color.border;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+
+    public update(keysPressed: any): void {
+        if(keysPressed[Direction.UP]){
+            this.position.y -= this.speed;
+        }
+        if(keysPressed[Direction.DOWN]){
+            this.position.y += this.speed;
+        }
+        if(keysPressed[Direction.LEFT]){
+            this.position.x -= this.speed;
+        }
+        if(keysPressed[Direction.RIGHT]){
+            this.position.x += this.speed;
+        }
+        if(keysPressed[Keys.SPACE]){
+            console.log("Implement shooting")
+        }
     }
 
     public get tank(): HTMLElement {
@@ -81,14 +106,6 @@ export default class Player implements PlayerInterface {
         this._radius = size;
     };
     
-    public set color(color: string) {
-        this._color = color;
-    };
-    
-    public get color(): string {
-        return this._color;
-    };    
-
     public get lifeLeft(): number {
         return this._lifeLeft;
     };

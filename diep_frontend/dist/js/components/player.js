@@ -1,31 +1,52 @@
+import { Direction, Keys } from "../constants.js";
 export default class Player {
-    constructor(tank, name) {
+    constructor(game, name, color, startingPosition) {
         this.barrelSize = {
             length: 18,
             width: 24
         };
-        this._tank = tank;
-        this.barrel = this.tank.querySelector('.barrel');
-        this._top = Number(this.tank.style.top.slice(0, -2));
-        this._left = Number(this.tank.style.left.slice(0, -2));
+        this.game = game;
         this._name = name;
+        this.color = color;
+        this.position = startingPosition;
         this._speed = 3;
         this._score = 0;
-        this.clientRect = this.tank.getBoundingClientRect();
         this._lifeLeft = 100;
         this._radius = 25;
     }
     ;
-    calculateCenters() {
-        const x = this.clientRect.left + this.clientRect.width / 2;
-        const y = this.clientRect.top + this.clientRect.height / 2;
-        return {
-            x: x,
-            y: y
-        };
-    }
-    ;
     shoot() {
+    }
+    draw(ctx) {
+        // draw the inside
+        ctx.beginPath();
+        ctx.ellipse(this.position.x, this.position.y, this.radius, this.radius, 0, 0, 2 * Math.PI);
+        // ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = this.color.bg;
+        ctx.fill();
+        // draw the border
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.radius + 2, 0, Math.PI * 2);
+        ctx.strokeStyle = this.color.border;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+    update(keysPressed) {
+        if (keysPressed[Direction.UP]) {
+            this.position.y -= this.speed;
+        }
+        if (keysPressed[Direction.DOWN]) {
+            this.position.y += this.speed;
+        }
+        if (keysPressed[Direction.LEFT]) {
+            this.position.x -= this.speed;
+        }
+        if (keysPressed[Direction.RIGHT]) {
+            this.position.x += this.speed;
+        }
+        if (keysPressed[Keys.SPACE]) {
+            console.log("Implement shooting");
+        }
     }
     get tank() {
         return this._tank;
@@ -58,14 +79,6 @@ export default class Player {
     ;
     set radius(size) {
         this._radius = size;
-    }
-    ;
-    set color(color) {
-        this._color = color;
-    }
-    ;
-    get color() {
-        return this._color;
     }
     ;
     get lifeLeft() {
