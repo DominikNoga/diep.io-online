@@ -1,8 +1,9 @@
 import GameInterface from "./interfaces/game.interface";
 import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
-import { Point, allowedKeys, ObstacleTypes } from "./constants.js";
+import { Point, allowedKeys, ObstacleTypes, Keys } from "./constants.js";
 import Obstacle from "./components/obstacle.js";
+import Bullet from "./components/bullet";
 
 export default class Game implements GameInterface{
     private gameMechanics: GameMechanics
@@ -12,6 +13,9 @@ export default class Game implements GameInterface{
     public offset: Point;
     public obstacles: Obstacle[] = [];
     public obstaclesNumber = 12;
+    public firedBullets: Bullet[] = [];
+    private shootingInerval: number;
+    public mouseDown: boolean = false;
 
     constructor(width: number, height: number){
         this.width = width;
@@ -39,6 +43,21 @@ export default class Game implements GameInterface{
         document.addEventListener('mousemove', (e) =>{
             this.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
         });
+
+        document.addEventListener('mousedown', (e) =>{
+            if(!this.gameMechanics.keysPressed[Keys.SPACE]){
+                this.mouseDown = true;
+                this.currentPlayer.shoot();
+                this.shootingInerval = setInterval(() =>{
+                    this.currentPlayer.shoot();
+                }, this.currentPlayer.shootCooldown);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            this.mouseDown = false;
+            clearInterval(this.shootingInerval);
+        })
     }
 
     public generateObstacles(){
@@ -49,24 +68,37 @@ export default class Game implements GameInterface{
                 x: this.randomNumber(0, this.width),
                 y: this.randomNumber(0, this.height)
             }
-            this.obstacles.push(new Obstacle(allowedTypes[this.randomNumber(0, allowedTypes.length)], position))
+            const randIndex = this.randomNumber(0, allowedTypes.length);
+            this.obstacles.push(new Obstacle(allowedTypes[randIndex], position))
         }
     };
 
+    
+
     public update(ctx: CanvasRenderingContext2D){
         this.currentPlayer.update(this.gameMechanics.keysPressed);
+        this.firedBullets.forEach(bullet => {
+            bullet.update();
+        });
     };
 
     public draw(ctx: CanvasRenderingContext2D){
         this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
         this.renderObstacles(ctx);
-    }
+        this.renderBullets(ctx);
+    };
 
     public renderObstacles(ctx: CanvasRenderingContext2D){
         this.obstacles.forEach(obstacle =>{
-            obstacle.draw(ctx)
-        })
-    }
+            obstacle.draw(ctx);
+        });
+    };
 
-    public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+    public renderBullets(ctx: CanvasRenderingContext2D){
+        this.firedBullets.forEach(bullet => {
+            bullet.draw(ctx);
+        });
+    };
+
+    public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
 }

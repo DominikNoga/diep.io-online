@@ -1,6 +1,7 @@
 import PlayerInterface from "../interfaces/player.interface";
 import { Point, Direction, Keys, GameObjectColor } from "../constants.js";
 import Game from "../game.js";
+import Bullet from "./bullet.js";
 
 export default class Player implements PlayerInterface {
     public game: Game;
@@ -9,6 +10,10 @@ export default class Player implements PlayerInterface {
         width: 30,
         color: 'darkgray',
         angle: Math.PI / 2,
+        position: {
+            x: 0,
+            y: 0
+        }
     }
     private _radius: number;
     public color: GameObjectColor;
@@ -18,6 +23,8 @@ export default class Player implements PlayerInterface {
     private _angle: number;
     private _speed: number;
     public position: Point;
+    public canShoot: boolean = true;
+    public shootCooldown: number;
 
     public constructor(game: Game, name: string, color: GameObjectColor, startingPosition: Point) {
         this.game = game;
@@ -28,15 +35,12 @@ export default class Player implements PlayerInterface {
         this._score = 0;
         this._lifeLeft = 100;
         this._radius = 25;
+        this.shootCooldown = 700; // value in miliseconds
     };
 
-    public shoot(): void {
-
-    }
-
     public draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
-        const newOffset = this.calculateOffset(offsetX, offsetY) 
-        this.drawBarrel(newOffset.x, newOffset.y, ctx);
+        this.calculateOffset(offsetX, offsetY) 
+        this.drawBarrel(this.barrelParams.position.x, this.barrelParams.position.y, ctx);
         this.drawPlayerObject(ctx);
     }
 
@@ -74,11 +78,10 @@ export default class Player implements PlayerInterface {
         ctx.closePath(); 
     };
 
-    private calculateOffset(offsetX: number, offsetY: number): Point {
+    private calculateOffset(offsetX: number, offsetY: number): void {
         this.barrelParams.angle = Math.atan2(offsetY, offsetX);
-        const x = this.radius * this.barrelParams.length * Math.cos(this.barrelParams.angle) + this.position.x
-        const y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
-        return {x, y};
+        this.barrelParams.position.x = this.radius * this.barrelParams.length * Math.cos(this.barrelParams.angle) + this.position.x
+        this.barrelParams.position.y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
     }
 
     public update(keysPressed: any): void {
@@ -94,9 +97,17 @@ export default class Player implements PlayerInterface {
         if(keysPressed[Direction.RIGHT]){
             this.position.x += this.speed;
         }
-        if(keysPressed[Keys.SPACE]){
-            console.log("Implement shooting")
+        if(keysPressed[Keys.SPACE] && this.canShoot && !this.game.mouseDown){
+            this.shoot();
         }
+    }
+
+    public shoot(){
+        this.game.firedBullets.push(new Bullet(this))
+        this.canShoot = false;
+        setTimeout(() =>{
+            this.canShoot = true;   
+        }, this.shootCooldown)
     }
 
     public get radius(): number {
