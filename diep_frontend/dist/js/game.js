@@ -1,15 +1,16 @@
+import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
 import { allowedKeys } from "./constants.js";
-import GameMap from "./components/map.js";
-import GameUI from "./gameHelperClasses/gameUI.js";
 export default class Game {
-    constructor(startingPosition, playerName) {
-        this.frames = 1000 / 60;
-        this.gameMap = new GameMap();
-        this.gameUI = new GameUI(this.gameMap);
-        this.currentPlayer = this.gameUI.createPlayerObject(startingPosition, playerName);
-        this.gameUI.currentPlayer = this.currentPlayer;
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+        this.currentPlayer = new Player(this, 'Domin', { bg: 'red', border: 'darkred' }, { x: 100, y: 100 });
         this.gameMechanics = new GameMechanics(this.currentPlayer);
+        this.offset = {
+            x: 0,
+            y: 0
+        };
     }
     ;
     initHandlers() {
@@ -17,32 +18,19 @@ export default class Game {
             if (allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined) {
                 this.gameMechanics.handleKeyDown(e.key);
             }
-            // if(e.key === 'k'){
-            //     this.gameMechanics.handleBarelMovement({x: 158, y: 100});
-            // }
         });
         document.addEventListener("keyup", (e) => {
             this.gameMechanics.handleKeyUp(e.key);
         });
         document.addEventListener('mousemove', (e) => {
-            this.gameMechanics.handleBarelMovement({ x: e.x, y: e.y });
+            this.offset = this.gameMechanics.getMousePlayerOffset({ x: e.x, y: e.y }, this.currentPlayer.position);
         });
     }
-    initGraphics() {
-        // this.gameUI.addObjectToMap(['tank'], {x: 0, y: 0});
+    update(ctx) {
+        this.currentPlayer.update(this.gameMechanics.keysPressed);
     }
     ;
-    run() {
-        this.initHandlers();
-        this.initGraphics();
-        setInterval(() => {
-            this.gameMechanics.handlePressedKeys();
-        }, this.frames);
+    draw(ctx) {
+        this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
     }
 }
-/*
-    const barreel = document.querySelector('.barrel')
-    barreel.style.left = '37.5px';
-    barreel.style.rotate = '52deg'
-    barreel.style.top = '50.5px';
-*/ 

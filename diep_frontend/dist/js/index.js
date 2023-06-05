@@ -1,3 +1,11 @@
 import Game from "./game.js";
-const game = new Game({ x: 100, y: 100 }, "Domin");
-game.run();
+import GameManager from "./gameManager.js";
+addEventListener('load', () => {
+    const map = document.querySelector('#map');
+    const ctx = map.getContext('2d');
+    map.width = 1600;
+    map.height = 900;
+    const game = new Game(map.width, map.height);
+    const gm = new GameManager(game, ctx);
+    gm.runGame();
+});
