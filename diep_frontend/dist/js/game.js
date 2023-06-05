@@ -1,16 +1,16 @@
 import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
 import { allowedKeys } from "./constants.js";
-import GameUI from "./gameHelperClasses/gameUI.js";
 export default class Game {
     constructor(width, height) {
-        this.frames = 1000 / 60;
         this.width = width;
         this.height = height;
-        this.gameUI = new GameUI(this.gameMap);
         this.currentPlayer = new Player(this, 'Domin', { bg: 'red', border: 'darkred' }, { x: 100, y: 100 });
-        this.gameUI.currentPlayer = this.currentPlayer;
         this.gameMechanics = new GameMechanics(this.currentPlayer);
+        this.offset = {
+            x: 0,
+            y: 0
+        };
     }
     ;
     initHandlers() {
@@ -18,30 +18,19 @@ export default class Game {
             if (allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined) {
                 this.gameMechanics.handleKeyDown(e.key);
             }
-            // if(e.key === 'k'){
-            //     this.gameMechanics.handleBarelMovement({x: 158, y: 100});
-            // }
         });
         document.addEventListener("keyup", (e) => {
             this.gameMechanics.handleKeyUp(e.key);
         });
-        // document.addEventListener('mousemove', (e) =>{
-        //     this.gameMechanics.handleBarelMovement({x: e.x, y: e.y});
-        // });
+        document.addEventListener('mousemove', (e) => {
+            this.offset = this.gameMechanics.getMousePlayerOffset({ x: e.x, y: e.y }, this.currentPlayer.position);
+        });
     }
-    initGraphics() {
-        // this.gameUI.addObjectToMap(['tank'], {x: 0, y: 0});
-    }
-    ;
-    run() {
-        this.initHandlers();
-        this.initGraphics();
-        this.gameMap.animate();
-    }
-    update() {
+    update(ctx) {
         this.currentPlayer.update(this.gameMechanics.keysPressed);
     }
+    ;
     draw(ctx) {
-        this.currentPlayer.draw(ctx);
+        this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
     }
 }

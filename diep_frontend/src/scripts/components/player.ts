@@ -4,26 +4,21 @@ import { setHtmlElementPosition } from "../helperFunctions/htmlHelperFunctions.j
 import Game from "../game.js";
 
 export default class Player implements PlayerInterface {
-    private _top: number;
-    private _left: number;
-    private centerX: number;
-    private centerY: number;
     public game: Game;
-    private _tank: HTMLElement;
-    public barrel: HTMLElement;
-    public barrelSize = {
-        length: 18,
-        width: 24
+    public barrelParams = {
+        length: 3,
+        width: 30,
+        color: 'darkgray',
+        angle: Math.PI / 2,
     }
-    private clientRect: DOMRect;
     private _radius: number;
     public color: GameObjectColor;
     private _lifeLeft: number;
-    private _name: string;
+    public _name: string;
     private _score: number;
     private _angle: number;
     private _speed: number;
-    private position: Point;
+    public position: Point;
 
     public constructor(game: Game, name: string, color: GameObjectColor, startingPosition: Point) {
         this.game = game;
@@ -40,11 +35,16 @@ export default class Player implements PlayerInterface {
 
     }
 
-    public draw(ctx: CanvasRenderingContext2D): void {
+    public draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
+        const newOffset = this.calculateOffset(offsetX, offsetY) 
+        this.drawBarrel(newOffset.x, newOffset.y, ctx);
+        this.drawPlayerObject(ctx);
+    }
+
+    private drawPlayerObject(ctx: CanvasRenderingContext2D): void {
         // draw the inside
         ctx.beginPath();
-        ctx.ellipse(this.position.x, this.position.y, this.radius, this.radius, 0, 0, 2*Math.PI)
-        // ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
         ctx.fillStyle = this.color.bg;
         ctx.fill();
         // draw the border
@@ -53,6 +53,33 @@ export default class Player implements PlayerInterface {
         ctx.strokeStyle = this.color.border;
         ctx.lineWidth = 3;
         ctx.stroke();
+    };
+
+    private drawBarrel(x: number, y: number,ctx: CanvasRenderingContext2D){
+        // border
+        ctx.beginPath()
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = this.barrelParams.width + 6;
+        ctx.moveTo(this.position.x, this.position.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.closePath(); 
+        
+        // inside
+        ctx.beginPath()
+        ctx.lineWidth = this.barrelParams.width;
+        ctx.strokeStyle = this.barrelParams.color;
+        ctx.moveTo(this.position.x, this.position.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.closePath(); 
+    };
+
+    private calculateOffset(offsetX: number, offsetY: number): Point {
+        this.barrelParams.angle = Math.atan2(offsetY, offsetX);
+        const x = this.radius * this.barrelParams.length * Math.cos(this.barrelParams.angle) + this.position.x
+        const y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
+        return {x, y};
     }
 
     public update(keysPressed: any): void {
@@ -72,31 +99,6 @@ export default class Player implements PlayerInterface {
             console.log("Implement shooting")
         }
     }
-
-    public get tank(): HTMLElement {
-        return this._tank;
-    };
-
-    public set tank(tank: HTMLElement){
-        this._tank = tank;
-        this.barrel = this.tank.querySelector('.barrel');
-    };
-
-    public get top(): number {
-        return this._top;
-    };
-
-    public set top(top: number){
-        this._top = top;
-    };
-
-    public get left(): number {
-        return this._left;
-    };
-
-    public set left(left: number){
-        this._left = left;
-    };
 
     public get radius(): number {
         return this._radius;

@@ -16,7 +16,7 @@ export default class GameManager{
 
     public animate(){
         this.ctx.clearRect(0, 0, this.game.width, this.game.height);
-        this.game.update();
+        this.game.update(this.ctx);
         this.game.draw(this.ctx);
         requestAnimationFrame(() => {this.animate();});
     };
