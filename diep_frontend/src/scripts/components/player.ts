@@ -1,6 +1,5 @@
 import PlayerInterface from "../interfaces/player.interface";
 import { Point, Direction, Keys, GameObjectColor } from "../constants.js";
-import { setHtmlElementPosition } from "../helperFunctions/htmlHelperFunctions.js";
 import Game from "../game.js";
 
 export default class Player implements PlayerInterface {

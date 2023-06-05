@@ -1,9 +1,11 @@
 import { Point } from "../constants.js";
 
 export default class Bullet{
-    private position: Point;
+    public position: Point;
+    public destination: Point;
 
-    constructor(position: Point) {
+    constructor(position: Point, destination: Point) {
         this.position = position;  
+        this.destination = destination;
     };
 }
