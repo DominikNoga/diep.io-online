@@ -39,3 +39,10 @@ export enum ObstacleColors{
 }
 
 export type ObstacleTypeString = ObstacleTypes.basic | ObstacleTypes.medium | ObstacleTypes.hard;
+
+export enum MessageTypes {
+    createGame = 'create',
+    move = 'move',
+    error = 'error',
+    collision = 'collision'
+};

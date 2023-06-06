@@ -1,0 +1,29 @@
+$font-size: 20px;
+.join-form-wrapper{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    width: 50%;
+    padding: 1em;
+    border-radius: 1em;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    .form-field{
+        display: flex;
+        flex-direction: row;
+        gap: .5em;
+    }
+    .form-input{
+        font-size: $font-size;
+        padding: .4em 1em;
+        border: 3px solid #333;
+    }
+    .btn-submit{
+        font-size: $font-size;
+        padding: .4em 1em;
+        font-weight: bold;
+        color: white;
+        background-color: rgb(48, 190, 48);
+    }
+}

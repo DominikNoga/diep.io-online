@@ -17,11 +17,9 @@ export default class Game implements GameInterface{
     private shootingInerval: number;
     public mouseDown: boolean = false;
 
-    constructor(width: number, height: number, playerData: any){
+    constructor(width: number, height: number){
         this.width = width;
         this.height = height;
-        this.currentPlayer = new Player(this, 'Domin', {bg: 'red', border: 'darkred'}, {x: 100, y: 100});
-        this.gameMechanics = new GameMechanics(this.currentPlayer);
         this.offset ={
             x: 0,
             y: 0
@@ -74,7 +72,10 @@ export default class Game implements GameInterface{
         }
     };
 
-    
+    public setCurrentPlayerAndGameMechanics(player: Player){
+        this.currentPlayer = player;
+        this.gameMechanics = new GameMechanics(player);
+    }
 
     public update(ctx: CanvasRenderingContext2D){
         this.currentPlayer.update(this.gameMechanics.keysPressed);
