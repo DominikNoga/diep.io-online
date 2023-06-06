@@ -7,7 +7,7 @@ export interface Message {
 
 export interface CreateGameMessage extends Message {
     position?: Point;
-    color?: GameObjectColor;
+    color?: number;
     errorMessage?: string;
     width?: number;
     height?: number;
@@ -23,5 +23,5 @@ export interface MoveMessage extends Message {
 };
 
 export interface ErrorMessage extends Message {
-
+    message: string;
 };

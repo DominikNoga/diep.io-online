@@ -31,6 +31,6 @@ export const createCanvas = (width: number, height: number): HTMLCanvasElement =
 };
 
 export const removeForm = (): void =>{
-    const form = document.querySelector('#join-form-wrapper');
+    const form = document.getElementById('join-form-wrapper');
     document.body.removeChild(form);
 };

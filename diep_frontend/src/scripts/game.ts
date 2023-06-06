@@ -3,7 +3,7 @@ import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
 import { Point, allowedKeys, ObstacleTypes, Keys } from "./constants.js";
 import Obstacle from "./components/obstacle.js";
-import Bullet from "./components/bullet";
+import Bullet from "./components/bullet.js";
 
 export default class Game implements GameInterface{
     private gameMechanics: GameMechanics
@@ -24,7 +24,7 @@ export default class Game implements GameInterface{
             x: 0,
             y: 0
         };
-        this.generateObstacles();
+        // this.generateObstacles();
     };
 
     public initHandlers(){
@@ -79,15 +79,15 @@ export default class Game implements GameInterface{
 
     public update(ctx: CanvasRenderingContext2D){
         this.currentPlayer.update(this.gameMechanics.keysPressed);
-        this.firedBullets.forEach(bullet => {
-            bullet.update();
-        });
+        // this.firedBullets.forEach(bullet => {
+        //     bullet.update();
+        // });
     };
 
     public draw(ctx: CanvasRenderingContext2D){
         this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
-        this.renderObstacles(ctx);
-        this.renderBullets(ctx);
+        // this.renderObstacles(ctx);
+        // this.renderBullets(ctx);
     };
 
     public renderObstacles(ctx: CanvasRenderingContext2D){

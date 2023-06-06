@@ -1,12 +1,13 @@
 import json
 import asyncio
-import secrets
 from constants import *
 import websockets
+from game import Game
 
 class Server:
     def __init__(self):
         self.connected_players = set()
+        self.game = Game()
     
     
     async def send_collision_message(self, websocket, message):
@@ -34,11 +35,15 @@ class Server:
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
-        
-    async def send_join_message(self, websocket, message: dict):
+    
+    async def send_create_message(self, websocket, message):
+        event = self.game.add_player(message["name"])
+        await websocket.send(json.dumps(event))
+        await asyncio.sleep(0.5)
+    
+    async def handle_join_message(self, websocket, message: dict):
         event = {
             "type": message_types[JOIN],
-            "join": message["join_key"]
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
@@ -54,20 +59,20 @@ class Server:
             await self.send_error_message(websocket, message)
         
         elif message_type == message_types[JOIN]:
-            await self.send_join_message(websocket, message)
+            print("Handling join message")
+            await self.send_create_message(websocket, message)
         
         else: print(f"No such message type {message_type}")
         
     async def handle_recieved_message(self, websocket, message):
-        move = json.loads(message)
-        if move["type"] == message_types[MOVE]:
-            try:
-                pass
-            
-            except Exception as err:
-                await self.send_message(websocket, message_types[ERROR], {
-                    "content": f"there was an error {str(err)}"
-                })        
+        msg = json.loads(message)
+        try:
+            await self.send_message(websocket, msg["type"], msg)
+        
+        except Exception as err:
+            await self.send_message(websocket, message_types[ERROR], {
+                "content": f"there was an error {str(err)}"
+            })        
 
     async def recieveMessages(self, websocket):
         try:
