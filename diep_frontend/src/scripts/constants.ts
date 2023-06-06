@@ -38,4 +38,26 @@ export enum ObstacleColors{
     obstacle_medium_border_color = 'rgb(128, 3, 76)',
 }
 
+export const playerColors: GameObjectColor[] = [
+    {
+        bg: 'red',
+        border: 'darkred'
+    },
+    {
+        bg: 'green',
+        border: 'darkgreen'
+    },
+    {
+        bg: 'lightblue',
+        border: 'darkblue'
+    }
+]
+
 export type ObstacleTypeString = ObstacleTypes.basic | ObstacleTypes.medium | ObstacleTypes.hard;
+
+export enum MessageTypes {
+    createGame = 'create',
+    move = 'move',
+    error = 'error',
+    collision = 'collision'
+};

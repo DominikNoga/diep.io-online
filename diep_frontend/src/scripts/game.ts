@@ -3,7 +3,7 @@ import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
 import { Point, allowedKeys, ObstacleTypes, Keys } from "./constants.js";
 import Obstacle from "./components/obstacle.js";
-import Bullet from "./components/bullet";
+import Bullet from "./components/bullet.js";
 
 export default class Game implements GameInterface{
     private gameMechanics: GameMechanics
@@ -20,13 +20,11 @@ export default class Game implements GameInterface{
     constructor(width: number, height: number){
         this.width = width;
         this.height = height;
-        this.currentPlayer = new Player(this, 'Domin', {bg: 'red', border: 'darkred'}, {x: 100, y: 100});
-        this.gameMechanics = new GameMechanics(this.currentPlayer);
         this.offset ={
             x: 0,
             y: 0
         };
-        this.generateObstacles();
+        // this.generateObstacles();
     };
 
     public initHandlers(){
@@ -47,7 +45,8 @@ export default class Game implements GameInterface{
         document.addEventListener('mousedown', (e) =>{
             if(!this.gameMechanics.keysPressed[Keys.SPACE]){
                 this.mouseDown = true;
-                this.currentPlayer.shoot();
+                if(this.currentPlayer.canShoot)
+                    this.currentPlayer.shoot();
                 this.shootingInerval = setInterval(() =>{
                     this.currentPlayer.shoot();
                 }, this.currentPlayer.shootCooldown);
@@ -73,19 +72,22 @@ export default class Game implements GameInterface{
         }
     };
 
-    
+    public setCurrentPlayerAndGameMechanics(player: Player){
+        this.currentPlayer = player;
+        this.gameMechanics = new GameMechanics(player);
+    }
 
     public update(ctx: CanvasRenderingContext2D){
         this.currentPlayer.update(this.gameMechanics.keysPressed);
-        this.firedBullets.forEach(bullet => {
-            bullet.update();
-        });
+        // this.firedBullets.forEach(bullet => {
+        //     bullet.update();
+        // });
     };
 
     public draw(ctx: CanvasRenderingContext2D){
         this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
-        this.renderObstacles(ctx);
-        this.renderBullets(ctx);
+        // this.renderObstacles(ctx);
+        // this.renderBullets(ctx);
     };
 
     public renderObstacles(ctx: CanvasRenderingContext2D){

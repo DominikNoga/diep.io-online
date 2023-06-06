@@ -1,0 +1,25 @@
+$tankSize: 100px;
+
+.tank{
+	height: $tankSize;
+	width: $tankSize;
+	background-color: red;
+	border-radius: 50%;
+	border: solid 4px darkred;
+	position: absolute;
+    right:5%;
+    top: 10%;
+    
+	&::before{
+		content: '';
+		position: absolute;
+		width: 48px;
+		height: 36px;
+		top: 50%;
+		left: 100%;
+		translate: 0 -50%;
+		border: 2px black solid;
+		background-color: darkgrey;
+		border-radius: 3px;
+	}
+}
