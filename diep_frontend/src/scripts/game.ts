@@ -17,7 +17,7 @@ export default class Game implements GameInterface{
     private shootingInerval: number;
     public mouseDown: boolean = false;
 
-    constructor(width: number, height: number){
+    constructor(width: number, height: number, playerData: any){
         this.width = width;
         this.height = height;
         this.currentPlayer = new Player(this, 'Domin', {bg: 'red', border: 'darkred'}, {x: 100, y: 100});
@@ -47,7 +47,8 @@ export default class Game implements GameInterface{
         document.addEventListener('mousedown', (e) =>{
             if(!this.gameMechanics.keysPressed[Keys.SPACE]){
                 this.mouseDown = true;
-                this.currentPlayer.shoot();
+                if(this.currentPlayer.canShoot)
+                    this.currentPlayer.shoot();
                 this.shootingInerval = setInterval(() =>{
                     this.currentPlayer.shoot();
                 }, this.currentPlayer.shootCooldown);
