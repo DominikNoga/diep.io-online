@@ -24,8 +24,13 @@ gulp.task("ts", (done) => {
     done();
 });
 
+gulp.task("build", (done) => {
+    gulp.parallel("copyHTML", "ts", "sass")();
+    done();
+});    
+
 gulp.task('watch', () => {
     gulp.watch('src/scripts/**/*.ts', gulp.series('ts'));
     gulp.watch('src/sass/**/*.scss',gulp.series('sass'));
     gulp.watch('src/html/*.html', gulp.series('copyHTML'));
-})
+});
