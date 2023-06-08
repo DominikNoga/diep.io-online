@@ -18,7 +18,7 @@ export default class SocketMessageHandler{
                 this.handleCollisionMessage(<CollisionMessage>message);
                 break;
             case MessageTypes.move:
-                this.handleMovenMessage(<MoveMessage>message);
+                this.handleMoveMessage(<MoveMessage>message);
                 break;
             case MessageTypes.error:
                 this.handleErrorMessage(<ErrorMessage>message);
@@ -27,7 +27,7 @@ export default class SocketMessageHandler{
     };
 
     private handleNewPlayerJoining(message: CreateGameMessage){
-        
+
     }
 
     private handleCreateGameMessage(message: CreateGameMessage){
@@ -60,7 +60,7 @@ export default class SocketMessageHandler{
 
     };
 
-    private handleMovenMessage(message: MoveMessage){
+    private handleMoveMessage(message: MoveMessage){
 
         this.gameManager.game.update(message.position)
         //this.gameManager.update(message.enemies,message.obstacles)

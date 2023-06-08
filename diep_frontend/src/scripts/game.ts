@@ -93,7 +93,7 @@ export default class Game implements GameInterface{
     };
 
     public draw(ctx: CanvasRenderingContext2D){
-        this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
+        this.currentPlayer.draw(ctx);
         this.renderObstacles(ctx);
         this.renderEnemies(ctx);
         this.renderBullets(ctx);
@@ -107,7 +107,7 @@ export default class Game implements GameInterface{
 
     public renderEnemies(ctx: CanvasRenderingContext2D){
         this.enemies.forEach(enemy=>{
-            enemy.draw(ctx,this.offset.x, this.offset.y);
+            enemy.draw(ctx);
         })
     }
 

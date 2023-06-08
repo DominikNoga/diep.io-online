@@ -72,8 +72,7 @@ class Game:
             if player.name == name:
                 for other_player in self.players:
                     if player != other_player:
-                        distance = math.sqrt((player.position['x'] - other_player.position['x'])**2 +(player.position['y'] - other_player.position['y'])**2)
-                        if distance <= 2 * 25:
+                        if  self.objects_colide(player, other_player):
                             dx = player.position['x'] - other_player.position['x']
                             dy = player.position['y'] - other_player.position['y']
                             angle = math.atan2(dy, dx)
@@ -82,3 +81,8 @@ class Game:
                             player.position['x'] = new_x
                             player.position['y'] = new_y
 
+
+    def objects_colide(self, o1, o2):
+        distance = math.sqrt((o1.position['x'] - o2.position['x'])**2 +(o1.position['y'] - o2.position['y'])**2)
+        return distance <= (o1.radius + o2.radius)
+            

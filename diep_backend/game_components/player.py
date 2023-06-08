@@ -3,3 +3,4 @@ class Player:
         self.name = name
         self.position = position
         self.color = color
+        self.radius = 25

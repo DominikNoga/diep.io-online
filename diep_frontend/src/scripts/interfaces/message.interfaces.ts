@@ -1,5 +1,6 @@
-import Player from "../components/player";
-import { GameObjectColor, Point } from "../constants";
+import Player from "../components/player.js";
+import Obstacle from "../components/obstacle.js";
+import { GameObjectColor, Point } from "../constants.js";
 
 export interface Message {
     type: string;
@@ -42,7 +43,9 @@ export interface CollisionMessage extends Message {
 };
 
 export interface MoveMessage extends Message {
-
+    position?: Point;
+    enemies?: Player[];
+    obstacles?: Obstacle[];
 };
 
 export interface ErrorMessage extends Message {
