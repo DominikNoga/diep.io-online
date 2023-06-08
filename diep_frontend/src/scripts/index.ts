@@ -2,7 +2,7 @@ import { GameObjectColor, Point } from "./constants.js";
 import Game from "./game.js";
 import GameManager from "./gameManager.js";
 import { addJoinListener } from "./gameStartHandlingFunctions.js";
-import { Message } from "./interfaces/message.type.js";
+import { Message } from "./interfaces/message.interfaces";
 import SocketMessageHandler from "./socketMessageHandler.js";
 
 addEventListener('load', () =>{

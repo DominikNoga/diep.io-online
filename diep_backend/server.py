@@ -37,16 +37,17 @@ class Server:
         await asyncio.sleep(0.5)
     
     async def send_create_message(self, websocket, message):
-        event = self.game.add_player(message["name"])
+        event = self.game.add_player(message["name"], str(websocket))
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.5)    
     
-    async def handle_join_message(self, websocket, message: dict):
+    async def send_new_player_message(self, websocket, message):
         event = {
-            "type": message_types[JOIN],
+            "type": message["type"],
+            "player": {
+                
+            }
         }
-        await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
     
     async def send_message(self, websocket, message_type, message):
         if message_type == message_types[MOVE]:
@@ -58,16 +59,31 @@ class Server:
         elif message_type == message_types[ERROR]:
             await self.send_error_message(websocket, message)
         
-        elif message_type == message_types[JOIN]:
-            print("Handling join message")
+        elif message_type == message_types[CREATE]:
             await self.send_create_message(websocket, message)
         
+        elif message_type == message_types[NEW_PLAYER]:
+            await self.send_new_player_message(websocket, message)
+            
         else: print(f"No such message type {message_type}")
-        
+    
+    async def handle_join_message(self, websocket, message: dict):
+       await self.send_message(websocket, message_types[CREATE], message)
+    
+    async def handle_move_message(self, websocket, message: dict):
+        pass
+    
     async def handle_recieved_message(self, websocket, message):
         msg = json.loads(message)
+        message_type = msg['type']
         try:
-            await self.send_message(websocket, msg["type"], msg)
+            if message_type == message_types[MOVE]:
+                await self.handle_move_message(websocket, msg)
+            
+            elif message_type == message_types[JOIN]:
+                await self.handle_join_message(websocket, msg)
+            
+            else: print(f"No such message type {message_type}")
         
         except Exception as err:
             await self.send_message(websocket, message_types[ERROR], {

@@ -1,4 +1,4 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage } from "./interfaces/message.type";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage } from "./interfaces/message.interfaces";
 import { createCanvas, removeForm, addJoinListener } from "./gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Game from "./game.js";
@@ -26,6 +26,10 @@ export default class SocketMessageHandler{
         }
     };
 
+    private handleNewPlayerJoining(message: CreateGameMessage){
+        
+    }
+
     private handleCreateGameMessage(message: CreateGameMessage){
         if(!message.success){
             alert(message.errorMessage);
@@ -36,11 +40,14 @@ export default class SocketMessageHandler{
                 alert("Missing data from server");
                 console.log(`Received message: ${message}`);
                 return;
-              }
+            }
             removeForm();
             const canvas = createCanvas(message.width, message.height);
             document.body.appendChild(canvas);
             const game = new Game(canvas.width, canvas.height);
+            message.players.forEach(player =>{
+                game.players.push(new Player(game, player.name, playerColors[player.color], player.position))
+            });
             const player = new Player(game, message.name, playerColors[message.color], message.position);
             game.setCurrentPlayerAndGameMechanics(player);
             const ctx = canvas.getContext('2d');

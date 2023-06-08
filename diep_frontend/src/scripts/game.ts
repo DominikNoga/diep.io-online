@@ -16,6 +16,7 @@ export default class Game implements GameInterface{
     public firedBullets: Bullet[] = [];
     private shootingInerval: number;
     public mouseDown: boolean = false;
+    private _players: Player[] = [];
 
     constructor(width: number, height: number){
         this.width = width;
@@ -40,6 +41,7 @@ export default class Game implements GameInterface{
 
         document.addEventListener('mousemove', (e) =>{
             this.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
+            this.currentPlayer.calculateOffset(this.offset.x, this.offset.y); 
         });
 
         document.addEventListener('mousedown', (e) =>{
@@ -74,7 +76,7 @@ export default class Game implements GameInterface{
 
     public setCurrentPlayerAndGameMechanics(player: Player){
         this.currentPlayer = player;
-        this.gameMechanics = new GameMechanics(player);
+        this.gameMechanics = new GameMechanics();
     }
 
     public update(ctx: CanvasRenderingContext2D){
@@ -85,7 +87,9 @@ export default class Game implements GameInterface{
     };
 
     public draw(ctx: CanvasRenderingContext2D){
-        this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
+        this.players.forEach(player =>{
+            player.draw(ctx);
+        })
         // this.renderObstacles(ctx);
         // this.renderBullets(ctx);
     };
@@ -101,6 +105,13 @@ export default class Game implements GameInterface{
             bullet.draw(ctx);
         });
     };
+
+    public set players(players: Player[]){
+        this._players = players;
+    }
+    public get players(): Player[] {
+        return this._players;
+    }
 
     public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
 }
