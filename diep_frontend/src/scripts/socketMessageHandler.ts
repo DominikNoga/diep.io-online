@@ -52,7 +52,7 @@ export default class SocketMessageHandler{
             game.setCurrentPlayerAndGameMechanics(player);
             const ctx = canvas.getContext('2d');
             this.gameManager = new GameManager(game, ctx);
-            this.gameManager.runGame();
+            this.gameManager.runGame(this.websocket);
         }
     };
 
@@ -61,6 +61,9 @@ export default class SocketMessageHandler{
     };
 
     private handleMovenMessage(message: MoveMessage){
+
+        this.gameManager.game.update(message.position)
+        //this.gameManager.update(message.enemies,message.obstacles)
 
     };
 

@@ -15,7 +15,7 @@ addEventListener('load', () =>{
     // map.width = 1600;
     // map.height = 900;
     // const game = new Game(map.width, map.height);
-    // const gm = new GameManager(game, ctx);
-    // gm.runGame();
+    //const gm = new GameManager(game, ctx);
+    //gm.runGame();
 })
 
