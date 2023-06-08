@@ -18,7 +18,7 @@ export default class Player implements PlayerInterface {
     private _radius: number;
     public color: GameObjectColor;
     private _lifeLeft: number;
-    public _name: string;
+    private _name: string;
     private _score: number;
     private _angle: number;
     private _speed: number;

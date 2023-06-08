@@ -4,7 +4,7 @@ import { GameObjectColor, Point } from "../constants.js";
 
 export interface Message {
     type: string;
-    success: boolean;
+    success?: boolean;
 }
 
 
@@ -50,4 +50,10 @@ export interface MoveMessage extends Message {
 
 export interface ErrorMessage extends Message {
     message: string;
+};
+
+export interface NewPlayerMessage extends Message {
+    color: number;
+    name: string;
+    position?: Point;
 };

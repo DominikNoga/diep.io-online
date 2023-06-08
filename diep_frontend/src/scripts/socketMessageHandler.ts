@@ -1,5 +1,5 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage } from "./interfaces/message.interfaces";
-import { createCanvas, removeForm, addJoinListener } from "./gameStartHandlingFunctions.js";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage } from "./interfaces/message.interfaces";
+import { createCanvas, removeForm, addJoinListener, createGameManager } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Game from "./game.js";
 import Player from "./components/player.js";
@@ -23,12 +23,11 @@ export default class SocketMessageHandler{
             case MessageTypes.error:
                 this.handleErrorMessage(<ErrorMessage>message);
                 break;
+            case MessageTypes.newPlayer:
+                this.handleNewPlayerMessage(<NewPlayerMessage>message);
+                break;
         }
     };
-
-    private handleNewPlayerJoining(message: CreateGameMessage){
-
-    }
 
     private handleCreateGameMessage(message: CreateGameMessage){
         if(!message.success){
@@ -41,17 +40,7 @@ export default class SocketMessageHandler{
                 console.log(`Received message: ${message}`);
                 return;
             }
-            removeForm();
-            const canvas = createCanvas(message.width, message.height);
-            document.body.appendChild(canvas);
-            const game = new Game(canvas.width, canvas.height);
-            message.players.forEach(player =>{
-                game.players.push(new Player(game, player.name, playerColors[player.color], player.position))
-            });
-            const player = new Player(game, message.name, playerColors[message.color], message.position);
-            game.setCurrentPlayerAndGameMechanics(player);
-            const ctx = canvas.getContext('2d');
-            this.gameManager = new GameManager(game, ctx);
+            this.gameManager = createGameManager(message);
             this.gameManager.runGame(this.websocket);
         }
     };
@@ -61,11 +50,20 @@ export default class SocketMessageHandler{
     };
 
     private handleMoveMessage(message: MoveMessage){
-
         this.gameManager.game.update(message.position)
         //this.gameManager.update(message.enemies,message.obstacles)
 
     };
+
+    private handleNewPlayerMessage(message: NewPlayerMessage): void {
+        this.gameManager.game.players.push(
+            new Player(
+                this.gameManager.game,
+                message.name, 
+                playerColors[message.color], 
+                message.position
+        ));
+    }
 
     private handleErrorMessage(message: ErrorMessage){
         alert(message.message)

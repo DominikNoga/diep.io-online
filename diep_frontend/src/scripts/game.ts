@@ -26,7 +26,7 @@ export default class Game implements GameInterface{
             x: 0,
             y: 0
         };
-        // this.generateObstacles();
+        this.gameMechanics = new GameMechanics();
     };
 
     public initHandlers(websocket: WebSocket){
@@ -36,7 +36,7 @@ export default class Game implements GameInterface{
                 websocket.send(JSON.stringify({
                     direction: e.key,
                     type: 'move',
-                    name: this.currentPlayer._name
+                    name: this.currentPlayer.name
                 }));
             }
         });
@@ -80,12 +80,11 @@ export default class Game implements GameInterface{
         }
     };
 
-    public setCurrentPlayerAndGameMechanics(player: Player){
+    public setCurrentPlayer(player: Player){
         this.currentPlayer = player;
-        this.gameMechanics = new GameMechanics();
     }
 
-    public update(pos:Point){
+    public update(pos: Point){
         this.currentPlayer.update(pos);
         // this.firedBullets.forEach(bullet => {
         //     bullet.update();
