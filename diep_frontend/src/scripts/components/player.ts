@@ -84,24 +84,27 @@ export default class Player implements PlayerInterface {
         this.barrelParams.position.y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
     }
 
-    public update(keysPressed: any): void {
-        if(keysPressed[Direction.UP]){
-            this.position.y -= this.speed;
-        }
-        if(keysPressed[Direction.DOWN]){
-            this.position.y += this.speed;
-        }
-        if(keysPressed[Direction.LEFT]){
-            this.position.x -= this.speed;
-        }
-        if(keysPressed[Direction.RIGHT]){
-            this.position.x += this.speed;
-        }
-        if(keysPressed[Keys.SPACE] && this.canShoot && !this.game.mouseDown){
-            this.shoot();
-        }
+    // public update(keysPressed: any): void {
+    //     if(keysPressed[Direction.UP]){
+    //         this.position.y -= this.speed;
+    //     }
+    //     if(keysPressed[Direction.DOWN]){
+    //         this.position.y += this.speed;
+    //     }
+    //     if(keysPressed[Direction.LEFT]){
+    //         this.position.x -= this.speed;
+    //     }
+    //     if(keysPressed[Direction.RIGHT]){
+    //         this.position.x += this.speed;
+    //     }
+    //     if(keysPressed[Keys.SPACE] && this.canShoot && !this.game.mouseDown){
+    //         this.shoot();
+    //     }
+    // }
+    public update(pos:Point)
+    {
+        this.position=pos
     }
-
     public shoot(){
         this.game.firedBullets.push(new Bullet(this))
         this.canShoot = false;

@@ -12,6 +12,7 @@ export default class Game implements GameInterface{
     public height: number;
     public offset: Point;
     public obstacles: Obstacle[] = [];
+    public enemies: Player[] = [];
     public obstaclesNumber = 12;
     public firedBullets: Bullet[] = [];
     private shootingInerval: number;
@@ -27,10 +28,15 @@ export default class Game implements GameInterface{
         // this.generateObstacles();
     };
 
-    public initHandlers(){
+    public initHandlers(websocket: WebSocket){
         document.addEventListener("keydown", (e) =>{
             if(allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined){
                 this.gameMechanics.handleKeyDown(e.key);
+                websocket.send(JSON.stringify({
+                    direction: e.key,
+                    type: 'move',
+                    name: this.currentPlayer._name
+                }));
             }
         });
 
@@ -77,8 +83,8 @@ export default class Game implements GameInterface{
         this.gameMechanics = new GameMechanics(player);
     }
 
-    public update(ctx: CanvasRenderingContext2D){
-        this.currentPlayer.update(this.gameMechanics.keysPressed);
+    public update(pos:Point){
+        this.currentPlayer.update(pos);
         // this.firedBullets.forEach(bullet => {
         //     bullet.update();
         // });
@@ -86,8 +92,9 @@ export default class Game implements GameInterface{
 
     public draw(ctx: CanvasRenderingContext2D){
         this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
-        // this.renderObstacles(ctx);
-        // this.renderBullets(ctx);
+        this.renderObstacles(ctx);
+        this.renderEnemies(ctx);
+        this.renderBullets(ctx);
     };
 
     public renderObstacles(ctx: CanvasRenderingContext2D){
@@ -95,6 +102,12 @@ export default class Game implements GameInterface{
             obstacle.draw(ctx);
         });
     };
+
+    public renderEnemies(ctx: CanvasRenderingContext2D){
+        this.enemies.forEach(enemy=>{
+            enemy.draw(ctx,this.offset.x, this.offset.y);
+        })
+    }
 
     public renderBullets(ctx: CanvasRenderingContext2D){
         this.firedBullets.forEach(bullet => {

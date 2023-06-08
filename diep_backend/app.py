@@ -7,7 +7,7 @@ async def main():
     server = Server()
     async with websockets.serve(server.handler, "", PORT_NUMBER):
         print(f"server started on port {PORT_NUMBER}")
-        await asyncio.Future()  # run forever
+        await asyncio.Future()  # run fpy apporever
 
 
 if __name__ == "__main__":
