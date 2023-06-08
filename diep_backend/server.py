@@ -6,7 +6,7 @@ from game import Game
 
 class Server:
     def __init__(self):
-        self.connected_players = set()
+        self.connected_players = []
         self.game = Game()
         self.last_adding_result = None
 
@@ -56,9 +56,9 @@ class Server:
     async def send_new_player_message(self, websocket, message):
         event = {
             "type": message_types[NEW_PLAYER],
-            "position": message["position"],
-            "color": message["color"],
-            "name": message["name"],
+            "position": self.last_adding_result["position"],
+            "color": self.last_adding_result["color"],
+            "name": self.last_adding_result["name"],
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
@@ -83,14 +83,16 @@ class Server:
 
     async def handle_join_message(self, websocket, message: dict, index):
         if index == 0:
-            self.last_adding_result = self.game.add_player(message["name"], websocket)
+            self.last_adding_result = self.game.add_player(message["name"], websocket) # here passing the wrong websocket sometimes, not always the first user in conn has to have right socket
+        
         if self.game.find_player_socket_by_name(message["name"]) == str(websocket):
             await self.send_create_message(websocket)
+        
         else:
             await self.send_new_player_message(websocket, message)
     
     async def handle_move_message(self, websocket, message: dict):
-        await self.send_message(websocket, message_types[MOVE], message)
+        await self.send_move_message(websocket, message)
     
     async def handle_recieved_message(self, websocket, message, index):
         msg = json.loads(message)
@@ -124,7 +126,5 @@ class Server:
 
     async def handler(self, websocket):
         print(f"New client connected {websocket}")
-        self.connected_players.add(websocket)
+        self.connected_players.append(websocket)
         await self.recieveMessages(websocket)
-
-
