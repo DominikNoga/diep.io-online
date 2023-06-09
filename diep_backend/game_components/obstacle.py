@@ -5,7 +5,7 @@ class Obstacle:
     def __init__(self, position,num_edges,radius):
         self.position = position
         self.num_edges=num_edges
-        self.radius=radius
+        self.radius=radius+4
         self.vertices = []
         self.edges = []
         self.normals = []

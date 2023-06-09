@@ -2,4 +2,4 @@ class Player:
     def __init__(self, name, position):
         self.name = name
         self.position = position
-        self.radius=25
+        self.radius=27
