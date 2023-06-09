@@ -92,16 +92,16 @@ class Game:
         return player.position
 
     def check_for_collisions(self, name):
-        player = self.find_player_index_by_name(name)
+        player = self.players[self.find_player_index_by_name(name)]
         self.check_for_player_player_collision(player)
-        for obstacle in self.obstacles:
-            if self.circle_polygon_collide(player,obstacle):
-                #TODO
-                x=0
-        for bullet in self.bullets_fired:
-            if self.circle_collide(bullet,player):
-                #TODO
-                x=0
+        # for obstacle in self.obstacles:
+        #     if self.circle_polygon_collide(player,obstacle):
+        #         #TODO
+        #         x=0
+        # for bullet in self.bullets_fired:
+        #     if self.circle_collide(bullet,player):
+        #         #TODO
+        #         x=0
     
     def check_for_player_player_collision(self, player):
         for other_player in self.players:
@@ -114,9 +114,6 @@ class Game:
                     new_y = other_player.position['y'] + (2 * 25 + 1) * math.sin(angle)
                     player.position['x'] = new_x
                     player.position['y'] = new_y
-    
-    def find_player_socket_by_name(self, name):
-        return self.players[self.find_player_index_by_name(name)].websocket
                 
     def circle_collide(self,obj1,obj2):
         distance = math.sqrt((obj1.position['x'] - obj2.position['x']) ** 2 + (obj1.position['y'] - obj2.position['y']) ** 2)
@@ -161,7 +158,7 @@ class Game:
     def project_polygon(self,axis, vertices):
         min_val = max_val = self.dot_product(axis,vertices[0])
         for i in range(1, len(vertices)):
-            value =self.dot_product(axis,vertices[i])
+            value = self.dot_product(axis,vertices[i])
             if value < min_val:
                 min_val = value
             elif value > max_val:
@@ -169,7 +166,7 @@ class Game:
         return min_val, max_val
 
     def project_circle(self, axis,position):
-        projection = self.dot_product(position,axis)
+        projection = self.dot_product(position, axis)
         projection -= math.sqrt(axis['x'] ** 2 + axis['y'] ** 2)
         projection += math.sqrt(axis['x'] ** 2 + axis['y'] ** 2)
         return projection
@@ -177,5 +174,6 @@ class Game:
     def generate_obstacles(self):
         return None
 
-
-
+    def find_player_id_by_name(self, name):
+        return self.players[self.find_player_index_by_name(name)].id
+    

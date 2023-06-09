@@ -12,7 +12,6 @@ export default class Game implements GameInterface{
     public height: number;
     public offset: Point;
     public obstacles: Obstacle[] = [];
-    public enemies: Player[] = [];
     public obstaclesNumber = 12;
     public firedBullets: Bullet[] = [];
     private shootingInerval: number;
@@ -38,7 +37,6 @@ export default class Game implements GameInterface{
         document.addEventListener("keydown", (e) =>{
             if(allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined){
                 this.gameMechanics.handleKeyDown(e.key);
-                console.log(this.gameMechanics.keysPressed)
                 websocket.send(JSON.stringify({
                     direction: this.gameMechanics.keysPressed,
                     type: 'move',
@@ -97,9 +95,8 @@ export default class Game implements GameInterface{
     };
 
     public draw(ctx: CanvasRenderingContext2D){
-        this.currentPlayer.draw(ctx);
+        this.renderPlayers(ctx);
         this.renderObstacles(ctx);
-        this.renderEnemies(ctx);
         this.renderBullets(ctx);
     };
 
@@ -109,9 +106,9 @@ export default class Game implements GameInterface{
         });
     };
 
-    public renderEnemies(ctx: CanvasRenderingContext2D){
-        this.enemies.forEach(enemy=>{
-            enemy.draw(ctx);
+    public renderPlayers(ctx: CanvasRenderingContext2D){
+        this.players.forEach(player=>{
+            player.draw(ctx);
         })
     }
 

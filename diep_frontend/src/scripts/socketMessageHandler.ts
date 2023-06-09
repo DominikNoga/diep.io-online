@@ -1,5 +1,5 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage } from "./interfaces/message.interfaces";
-import { createCanvas, removeForm, addJoinListener, createGameManager } from "./helper_services/gameStartHandlingFunctions.js";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage } from "./interfaces/message.interfaces";
+import { createGameManager, addJoinListener } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Game from "./game.js";
 import Player from "./components/player.js";
@@ -7,10 +7,14 @@ import GameManager from "./gameManager.js";
 
 export default class SocketMessageHandler{
     private gameManager: GameManager;
+    private _clientId: string;
     constructor(private websocket: WebSocket){}
 
     private handleMessage(message: Message){
         switch(message.type){
+            case MessageTypes.initConnection:
+                this.handleInitConnectionMessage(<InitConnectionMessage>message);
+                break;
             case MessageTypes.createGame:
                 this.handleCreateGameMessage(<CreateGameMessage>message);
                 break;
@@ -28,6 +32,14 @@ export default class SocketMessageHandler{
                 break;
         }
     };
+
+    private handleInitConnectionMessage(message: InitConnectionMessage){
+        if(typeof message !== undefined && typeof message.clientId !== undefined){
+            this._clientId = message.clientId;
+            addJoinListener(this.websocket, this.clientId);
+            console.log(`Connected and got new id ${this._clientId}`);
+        }
+    }
 
     private handleCreateGameMessage(message: CreateGameMessage){
         if(!message.success){
@@ -74,5 +86,9 @@ export default class SocketMessageHandler{
             let message = <Message>JSON.parse(data);
             this.handleMessage(message);
         }))
+    }
+
+    public get clientId(): string{
+        return this._clientId;
     }
 }
