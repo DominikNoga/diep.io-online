@@ -5,7 +5,7 @@ import GameManager from "../gameManager.js";
 import { playerColors } from "../constants.js";
 
 
-export const addJoinListener = (websocket: WebSocket) => {
+export const addJoinListener = (websocket: WebSocket, clientId: string) => {
     const joinForm: HTMLFormElement = document.querySelector('#join-form');
     const nameInp: HTMLInputElement = joinForm.querySelector('#playerNameInput')
     
@@ -17,15 +17,16 @@ export const addJoinListener = (websocket: WebSocket) => {
             alert('Name cannot be empty!')
         }
         else {
-            sendJoinRequest(websocket, nameInp.value)
+            sendJoinRequest(websocket, nameInp.value, clientId)
         }
     })
 }
 
-export const sendJoinRequest = (websocket: WebSocket, name: string) =>{
+export const sendJoinRequest = (websocket: WebSocket, name: string, clientId: string) =>{
     websocket.send(JSON.stringify({
         name: name,
         type: 'join',
+        clientId: clientId
     }));
 };
 

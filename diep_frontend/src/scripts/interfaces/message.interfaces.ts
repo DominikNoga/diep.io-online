@@ -57,3 +57,7 @@ export interface NewPlayerMessage extends Message {
     name: string;
     position?: Point;
 };
+
+export interface InitConnectionMessage extends Message {
+    clientId: string;
+};
