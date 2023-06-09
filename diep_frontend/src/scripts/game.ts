@@ -12,6 +12,7 @@ export default class Game implements GameInterface{
     public height: number;
     public offset: Point;
     public obstacles: Obstacle[] = [];
+    public enemies: Player[] = [];
     public obstaclesNumber = 12;
     public firedBullets: Bullet[] = [];
     private shootingInerval: number;
@@ -25,13 +26,24 @@ export default class Game implements GameInterface{
             x: 0,
             y: 0
         };
-        // this.generateObstacles();
+        const position = {
+            x: 100,
+            y: 100
+        }
+        this.obstacles.push(new Obstacle(ObstacleTypes.hard,position))
+        this.gameMechanics = new GameMechanics();
     };
 
-    public initHandlers(){
+    public initHandlers(websocket: WebSocket){
         document.addEventListener("keydown", (e) =>{
             if(allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined){
                 this.gameMechanics.handleKeyDown(e.key);
+                console.log(this.gameMechanics.keysPressed)
+                websocket.send(JSON.stringify({
+                    direction: this.gameMechanics.keysPressed,
+                    type: 'move',
+                    name: this.currentPlayer.name
+                }));
             }
         });
 
@@ -40,8 +52,7 @@ export default class Game implements GameInterface{
         });
 
         document.addEventListener('mousemove', (e) =>{
-            this.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
-            this.currentPlayer.calculateOffset(this.offset.x, this.offset.y); 
+            this.currentPlayer.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
         });
 
         document.addEventListener('mousedown', (e) =>{
@@ -74,24 +85,22 @@ export default class Game implements GameInterface{
         }
     };
 
-    public setCurrentPlayerAndGameMechanics(player: Player){
+    public setCurrentPlayer(player: Player){
         this.currentPlayer = player;
-        this.gameMechanics = new GameMechanics();
     }
 
-    public update(ctx: CanvasRenderingContext2D){
-        this.currentPlayer.update(this.gameMechanics.keysPressed);
+    public update(pos: Point){
+        this.currentPlayer.update(pos);
         // this.firedBullets.forEach(bullet => {
         //     bullet.update();
         // });
     };
 
     public draw(ctx: CanvasRenderingContext2D){
-        this.players.forEach(player =>{
-            player.draw(ctx);
-        })
-        // this.renderObstacles(ctx);
-        // this.renderBullets(ctx);
+        this.currentPlayer.draw(ctx);
+        this.renderObstacles(ctx);
+        this.renderEnemies(ctx);
+        this.renderBullets(ctx);
     };
 
     public renderObstacles(ctx: CanvasRenderingContext2D){
@@ -99,6 +108,12 @@ export default class Game implements GameInterface{
             obstacle.draw(ctx);
         });
     };
+
+    public renderEnemies(ctx: CanvasRenderingContext2D){
+        this.enemies.forEach(enemy=>{
+            enemy.draw(ctx);
+        })
+    }
 
     public renderBullets(ctx: CanvasRenderingContext2D){
         this.firedBullets.forEach(bullet => {
@@ -114,4 +129,8 @@ export default class Game implements GameInterface{
     }
 
     public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
+
+    public getCurrentPlayer(): Player { 
+        return this.currentPlayer;
+    };
 }

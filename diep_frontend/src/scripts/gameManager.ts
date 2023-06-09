@@ -1,4 +1,7 @@
+import Obstacle from "./components/obstacle.js";
+import Player from "./components/player.js";
 import Game from "./game.js";
+import { MoveMessage } from "./interfaces/message.interfaces";
 
 export default class GameManager{
     public ctx: CanvasRenderingContext2D;
@@ -9,15 +12,20 @@ export default class GameManager{
         this.game = game;
     };
 
-    public runGame(){
-        this.game.initHandlers();
+    public runGame(websocket: WebSocket){
+        this.game.initHandlers(websocket);
         this.animate();
     };
 
     public animate(){
         this.ctx.clearRect(0, 0, this.game.width, this.game.height);
-        this.game.update(this.ctx);
+        this.game.update(this.game.getCurrentPlayer().position);
         this.game.draw(this.ctx);
         requestAnimationFrame(() => {this.animate();});
     };
+
+    public update(enemies:Player [],obstacles:Obstacle[]){
+        this.game.enemies=enemies
+        this.game.obstacles=obstacles
+    }
 }

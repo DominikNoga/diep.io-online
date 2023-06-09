@@ -1,3 +1,10 @@
+import { CreateGameMessage } from "../interfaces/message.interfaces";
+import Game from "../game.js";
+import Player from "../components/player.js";
+import GameManager from "../gameManager.js";
+import { playerColors } from "../constants.js";
+
+
 export const addJoinListener = (websocket: WebSocket) => {
     const joinForm: HTMLFormElement = document.querySelector('#join-form');
     const nameInp: HTMLInputElement = joinForm.querySelector('#playerNameInput')
@@ -33,4 +40,18 @@ export const createCanvas = (width: number, height: number): HTMLCanvasElement =
 export const removeForm = (): void =>{
     const form = document.getElementById('join-form-wrapper');
     document.body.removeChild(form);
+};
+
+export const createGameManager = (message: CreateGameMessage): GameManager =>{
+    removeForm();
+    const canvas = createCanvas(message.width, message.height);
+    document.body.appendChild(canvas);
+    const game = new Game(canvas.width, canvas.height);
+    message.players.forEach(player =>{
+        game.players.push(new Player(game, player.name, playerColors[player.color], player.position))
+    });
+    const player = new Player(game, message.name, playerColors[message.color], message.position);
+    game.setCurrentPlayer(player);
+    const ctx = canvas.getContext('2d');
+    return new GameManager(game, ctx);
 };
