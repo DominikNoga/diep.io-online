@@ -42,7 +42,7 @@ class Server:
         event = self.last_adding_result
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
-        
+    
     async def send_new_player_message(self, websocket, message):
         event = {
             "type": message_types[NEW_PLAYER],
@@ -52,24 +52,6 @@ class Server:
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
-
-    async def send_message(self, websocket, message_type, message):
-        if message_type == message_types[MOVE]:
-            await self.send_move_message(websocket, message)
-
-        elif message_type == message_types[COLLISION]:
-            await self.send_collision_message(websocket, message)
-
-        elif message_type == message_types[ERROR]:
-            await self.send_error_message(websocket, message)
-
-        elif message_type == message_types[JOIN]:
-            await self.send_create_message(websocket)
-        
-        elif message_type == message_types[NEW_PLAYER]:
-            await self.send_new_player_message(websocket, message)
-
-        else: print(f"No such message type {message_type}")
 
     async def handle_join_message(self, websocket, message: dict, index):
         if index == 0:
@@ -97,7 +79,7 @@ class Server:
             else: print(f"No such message type {message_type}")
         
         except Exception as err:
-            await self.send_message(websocket, message_types[ERROR], {
+            await self.send_error_message(websocket, {
                 "content": f"there was an error {str(err)}"
             }) 
 

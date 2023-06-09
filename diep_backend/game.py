@@ -94,15 +94,19 @@ class Game:
     def check_for_collisions(self, name):
         player = self.find_player_index_by_name(name)
         self.check_for_player_player_collision(player)
-
-    def objects_colide(self, o1, o2):
-        distance = math.sqrt((o1.position['x'] - o2.position['x'])**2 +(o1.position['y'] - o2.position['y'])**2)
-        return distance <= (o1.radius + o2.radius)
+        for obstacle in self.obstacles:
+            if self.circle_polygon_collide(player,obstacle):
+                #TODO
+                x=0
+        for bullet in self.bullets_fired:
+            if self.circle_collide(bullet,player):
+                #TODO
+                x=0
     
     def check_for_player_player_collision(self, player):
         for other_player in self.players:
             if player != other_player:
-                if  self.objects_colide(player, other_player):
+                if self.circle_collide(player, other_player):
                     dx = player.position['x'] - other_player.position['x']
                     dy = player.position['y'] - other_player.position['y']
                     angle = math.atan2(dy, dx)
@@ -113,30 +117,7 @@ class Game:
     
     def find_player_socket_by_name(self, name):
         return self.players[self.find_player_index_by_name(name)].websocket
-    
-    def check_for_collisions(self,name):
-        for player in self.players:
-            if player.name == name:
-                polygon = Obstacle({'x': 100, 'y': 100}, 5, 25)
-                print(self.circle_polygon_collide(player,polygon))
-                for other_player in self.players:
-                    if player != other_player:
-                        if self.circle_collide(player,other_player):
-                            dx = player.position['x'] - other_player.position['x']
-                            dy = player.position['y'] - other_player.position['y']
-                            angle = math.atan2(dy, dx)
-                            new_x = other_player.position['x'] + (2 * 25 + 1) * math.cos(angle)
-                            new_y = other_player.position['y'] + (2 * 25 + 1) * math.sin(angle)
-                            player.position['x'] = new_x
-                            player.position['y'] = new_y
-                for obstacle in self.obstacles:
-                    if self.circle_polygon_collide(player,obstacle):
-                        #TODO
-                        x=0
-                for bullet in self.bullets_fired:
-                    if self.circle_collide(bullet,player):
-                        #TODO
-                        x=0
+                
     def circle_collide(self,obj1,obj2):
         distance = math.sqrt((obj1.position['x'] - obj2.position['x']) ** 2 + (obj1.position['y'] - obj2.position['y']) ** 2)
         return distance <=(obj1.radius+obj2.radius)
