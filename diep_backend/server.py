@@ -28,22 +28,14 @@ class Server:
         await asyncio.sleep(0.5)
 
     async def send_move_message(self, websocket, message: dict):
-        pos = self.game.get_player_position(message["name"])
-        if message["direction"]=="ArrowRight":
-            pos['x']+=10
-        if message["direction"]=="ArrowLeft":
-            pos['x']-=10
-        if message["direction"]=="ArrowUp":
-            pos['y']-=10
-        if message["direction"]=="ArrowDown":
-            pos['y']+=10
-        self.game.update_player_position(message["name"],pos)
+        updated_pos = self.game.update_player_position(message["name"], message["direction"])
         self.game.check_for_collisions(message["name"])
-        event={"type": message_types[MOVE],
-               "position": self.game.get_player_position(message["name"])
+        event={
+                "type": message_types[MOVE],
+               "position": updated_pos
                #"players": self.game.players,
                #"obstacles": self.game.obstacles
-               }
+        }
         await websocket.send(json.dumps(event))
 
     async def send_create_message(self, websocket):

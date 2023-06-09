@@ -3,5 +3,6 @@ class Player:
         self.name = name
         self.position = position
         self.color = color
-        self.radius = 27
+        self.radius = 25
         self.websocket = websocket
+        self.speed = 7

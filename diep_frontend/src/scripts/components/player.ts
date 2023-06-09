@@ -25,17 +25,22 @@ export default class Player implements PlayerInterface {
     public position: Point;
     public canShoot: boolean = true;
     public shootCooldown: number;
+    public offset: Point;
 
     public constructor(game: Game, name: string, color: GameObjectColor, startingPosition: Point) {
         this.game = game;
         this._name = name;
         this.color = color;
         this.position = startingPosition;
-        this._speed = 3;
         this._score = 0;
         this._lifeLeft = 100;
         this._radius = 25;
+        this._speed = 5
         this.shootCooldown = 700; // value in miliseconds
+        this.offset = {
+            x: 0,
+            y: 0,
+        }
     };
     
     public drawOther(ctx: CanvasRenderingContext2D){
@@ -43,6 +48,7 @@ export default class Player implements PlayerInterface {
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {
+        this.calculateOffset(this.offset.x, this.offset.y); 
         this.drawBarrel(this.barrelParams.position.x, this.barrelParams.position.y, ctx);
         this.drawPlayerObject(ctx);
     }
@@ -106,7 +112,7 @@ export default class Player implements PlayerInterface {
     // }
     public update(pos:Point)
     {
-        this.position=pos
+        this.position = pos
     }
     public shoot(){
         this.game.firedBullets.push(new Bullet(this))

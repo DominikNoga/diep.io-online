@@ -54,14 +54,25 @@ class Game:
     def find_random_position(self):
         return [random.randint(100, self.width - 100), random.randint(100, self.height - 100)]
 
-    def update_player_position(self, name, new_position):
+    def update_player_position(self, name, keysPressed):
         player_index = self.find_player_index_by_name(name)
         if player_index == None:
             print(f"Player {name} not found")
             return
 
-        self.players[player_index].position = new_position
-        print(f"Updated position of player {name} to {new_position}")
+        player = self.players[player_index]
+        if keysPressed['ArrowRight']:
+            player.position['x'] += player.speed
+        if keysPressed['ArrowLeft']:
+            player.position['x'] -= player.speed
+        if keysPressed['ArrowUp']:
+            player.position['y'] -= player.speed
+        if keysPressed['ArrowDown']:
+            player.position['y'] += player.speed
+        
+        self.players[player_index].position = player.position
+        print(f"Updated position of player {name} to {player.position}")
+        return player.position
 
     def find_player_index_by_name(self, player_name):
         ind = None

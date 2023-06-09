@@ -38,6 +38,7 @@ export default class Game implements GameInterface{
         document.addEventListener("keydown", (e) =>{
             if(allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined){
                 this.gameMechanics.handleKeyDown(e.key);
+                console.log(this.gameMechanics.keysPressed)
                 websocket.send(JSON.stringify({
                     direction: this.gameMechanics.keysPressed,
                     type: 'move',
@@ -51,8 +52,7 @@ export default class Game implements GameInterface{
         });
 
         document.addEventListener('mousemove', (e) =>{
-            this.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
-            this.currentPlayer.calculateOffset(this.offset.x, this.offset.y); 
+            this.currentPlayer.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
         });
 
         document.addEventListener('mousedown', (e) =>{
@@ -129,4 +129,8 @@ export default class Game implements GameInterface{
     }
 
     public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
+
+    public getCurrentPlayer(): Player { 
+        return this.currentPlayer;
+    };
 }

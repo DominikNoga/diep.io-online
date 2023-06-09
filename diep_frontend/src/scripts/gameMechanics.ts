@@ -5,7 +5,12 @@ export default class GameMechanics{
     public keysPressed: {[key: string]: boolean};
 
     constructor () {
-        this.keysPressed = {};
+        this.keysPressed = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+        };
     }
 
     public handleKeyDown(key: string){
