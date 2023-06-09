@@ -3,16 +3,9 @@ import Player from "./components/player.js"
 
 export default class GameMechanics{
     public keysPressed: {[key: string]: boolean};
-    private currentPlayer: Player;
 
-    constructor (currentPlayer: Player) {
-        this.keysPressed = {
-            ArrowUp: false,
-            ArrowDown: false,
-            ArrowLeft: false,
-            ArrowRight: false,
-          };
-        this.currentPlayer = currentPlayer;
+    constructor () {
+        this.keysPressed = {};
     }
 
     public handleKeyDown(key: string){

@@ -18,7 +18,7 @@ export default class Player implements PlayerInterface {
     private _radius: number;
     public color: GameObjectColor;
     private _lifeLeft: number;
-    public _name: string;
+    private _name: string;
     private _score: number;
     private _angle: number;
     private _speed: number;
@@ -37,9 +37,12 @@ export default class Player implements PlayerInterface {
         this._radius = 25;
         this.shootCooldown = 700; // value in miliseconds
     };
+    
+    public drawOther(ctx: CanvasRenderingContext2D){
 
-    public draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
-        this.calculateOffset(offsetX, offsetY) 
+    }
+
+    public draw(ctx: CanvasRenderingContext2D): void {
         this.drawBarrel(this.barrelParams.position.x, this.barrelParams.position.y, ctx);
         this.drawPlayerObject(ctx);
     }
@@ -78,7 +81,7 @@ export default class Player implements PlayerInterface {
         ctx.closePath(); 
     };
 
-    private calculateOffset(offsetX: number, offsetY: number): void {
+    public calculateOffset(offsetX: number, offsetY: number): void {
         this.barrelParams.angle = Math.atan2(offsetY, offsetX);
         this.barrelParams.position.x = this.radius * this.barrelParams.length * Math.cos(this.barrelParams.angle) + this.position.x
         this.barrelParams.position.y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y

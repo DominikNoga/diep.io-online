@@ -59,5 +59,6 @@ export enum MessageTypes {
     createGame = 'create',
     move = 'move',
     error = 'error',
-    collision = 'collision'
+    collision = 'collision',
+    newPlayer = 'new_player',
 };

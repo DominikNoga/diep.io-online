@@ -17,6 +17,7 @@ export default class Game implements GameInterface{
     public firedBullets: Bullet[] = [];
     private shootingInerval: number;
     public mouseDown: boolean = false;
+    private _players: Player[] = [];
 
     constructor(width: number, height: number){
         this.width = width;
@@ -30,7 +31,7 @@ export default class Game implements GameInterface{
             y: 100
         }
         this.obstacles.push(new Obstacle(ObstacleTypes.hard,position))
-        // this.generateObstacles();
+        this.gameMechanics = new GameMechanics();
     };
 
     public initHandlers(websocket: WebSocket){
@@ -40,7 +41,7 @@ export default class Game implements GameInterface{
                 websocket.send(JSON.stringify({
                     direction: this.gameMechanics.keysPressed,
                     type: 'move',
-                    name: this.currentPlayer._name
+                    name: this.currentPlayer.name
                 }));
             }
         });
@@ -51,6 +52,7 @@ export default class Game implements GameInterface{
 
         document.addEventListener('mousemove', (e) =>{
             this.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
+            this.currentPlayer.calculateOffset(this.offset.x, this.offset.y); 
         });
 
         document.addEventListener('mousedown', (e) =>{
@@ -83,12 +85,11 @@ export default class Game implements GameInterface{
         }
     };
 
-    public setCurrentPlayerAndGameMechanics(player: Player){
+    public setCurrentPlayer(player: Player){
         this.currentPlayer = player;
-        this.gameMechanics = new GameMechanics(player);
     }
 
-    public update(pos:Point){
+    public update(pos: Point){
         this.currentPlayer.update(pos);
         // this.firedBullets.forEach(bullet => {
         //     bullet.update();
@@ -96,7 +97,7 @@ export default class Game implements GameInterface{
     };
 
     public draw(ctx: CanvasRenderingContext2D){
-        this.currentPlayer.draw(ctx, this.offset.x, this.offset.y);
+        this.currentPlayer.draw(ctx);
         this.renderObstacles(ctx);
         this.renderEnemies(ctx);
         this.renderBullets(ctx);
@@ -110,7 +111,7 @@ export default class Game implements GameInterface{
 
     public renderEnemies(ctx: CanvasRenderingContext2D){
         this.enemies.forEach(enemy=>{
-            enemy.draw(ctx,this.offset.x, this.offset.y);
+            enemy.draw(ctx);
         })
     }
 
@@ -119,6 +120,13 @@ export default class Game implements GameInterface{
             bullet.draw(ctx);
         });
     };
+
+    public set players(players: Player[]){
+        this._players = players;
+    }
+    public get players(): Player[] {
+        return this._players;
+    }
 
     public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
 }

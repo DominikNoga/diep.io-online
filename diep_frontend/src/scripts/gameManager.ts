@@ -1,7 +1,7 @@
 import Obstacle from "./components/obstacle.js";
 import Player from "./components/player.js";
 import Game from "./game.js";
-import { MoveMessage } from "./interfaces/message.type.js";
+import { MoveMessage } from "./interfaces/message.interfaces";
 
 export default class GameManager{
     public ctx: CanvasRenderingContext2D;
