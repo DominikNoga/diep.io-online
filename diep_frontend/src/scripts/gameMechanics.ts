@@ -6,7 +6,12 @@ export default class GameMechanics{
     private currentPlayer: Player;
 
     constructor (currentPlayer: Player) {
-        this.keysPressed = {};
+        this.keysPressed = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+          };
         this.currentPlayer = currentPlayer;
     }
 
@@ -15,7 +20,7 @@ export default class GameMechanics{
     }
 
     public handleKeyUp(key: string){
-        delete this.keysPressed[key];
+        this.keysPressed[key]=false;
     };
     
     

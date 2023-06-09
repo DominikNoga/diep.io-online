@@ -28,20 +28,18 @@ class Server:
 
     async def send_play_message(self, websocket, message: dict):
         pos = self.game.get_player_position(message["name"])
-        if message["direction"]=="ArrowRight":
-            pos['x']+=10
-        if message["direction"]=="ArrowLeft":
-            pos['x']-=10
-        if message["direction"]=="ArrowUp":
-            pos['y']-=10
-        if message["direction"]=="ArrowDown":
-            pos['y']+=10
+        if message['direction']['ArrowRight']:
+            pos['x']+=1
+        if message['direction']['ArrowLeft']:
+            pos['x']-=1
+        if message['direction']['ArrowUp']:
+            pos['y']-=1
+        if message['direction']['ArrowDown']:
+            pos['y']+=1
         self.game.update_player_position(message["name"],pos)
         self.game.check_for_collisions(message["name"])
         event={"type": message_types[MOVE],
                "position": self.game.get_player_position(message["name"])
-               #"players": self.game.players,
-               #"obstacles": self.game.obstacles
                }
         await websocket.send(json.dumps(event))
 

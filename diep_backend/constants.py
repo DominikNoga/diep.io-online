@@ -7,3 +7,4 @@ JOIN = 3
 CREATE = 4
 
 message_types = ['move', 'error', 'collision', 'join', 'create']
+

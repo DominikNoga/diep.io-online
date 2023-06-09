@@ -25,6 +25,11 @@ export default class Game implements GameInterface{
             x: 0,
             y: 0
         };
+        const position = {
+            x: 100,
+            y: 100
+        }
+        this.obstacles.push(new Obstacle(ObstacleTypes.hard,position))
         // this.generateObstacles();
     };
 
@@ -33,7 +38,7 @@ export default class Game implements GameInterface{
             if(allowedKeys.find(allowedKey => allowedKey === e.key) !== undefined){
                 this.gameMechanics.handleKeyDown(e.key);
                 websocket.send(JSON.stringify({
-                    direction: e.key,
+                    direction: this.gameMechanics.keysPressed,
                     type: 'move',
                     name: this.currentPlayer._name
                 }));
