@@ -20,6 +20,7 @@ export default class GameManager{
     public animate(){
         this.ctx.clearRect(0, 0, this.game.width, this.game.height);
         this.game.draw(this.ctx);
+        this.game.updateBullets();
         requestAnimationFrame(() => {this.animate();});
     };
 

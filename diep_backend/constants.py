@@ -8,6 +8,7 @@ CREATE = 4
 NEW_PLAYER = 5
 INIT_CONNECTION = 6
 BARREL_MOVED = 7
+SHOOT = 8
 
 message_types = {
     MOVE: 'move',
@@ -18,4 +19,5 @@ message_types = {
     NEW_PLAYER: 'new_player',
     INIT_CONNECTION: 'init',
     BARREL_MOVED: 'barrel_moved',
+    SHOOT: 'shoot',
 }

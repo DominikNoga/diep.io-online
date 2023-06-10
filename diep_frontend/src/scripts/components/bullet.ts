@@ -1,34 +1,30 @@
-import { Point } from "../constants.js";
-import Player from "./player.js";
+import { GameObjectColor, Point, playerColors } from "../constants.js";
 
 export default class Bullet{
     public position: Point;
     public destination: Point;
     public speed: number;
-    public player: Player;
     public radius = 8;
     public angle: number;
+    public id: string;
 
-    constructor(player: Player) {
-        this.player = player;
-        this.position = {
-            x: this.player.barrelParams.position.x,
-            y: this.player.barrelParams.position.y
-        };  
-        this.speed = this.player.speed + 1;
-        this.angle = this.player.barrelParams.angle;
+    constructor(position: Point, angle: number, public color: GameObjectColor, id: string) {
+        this.position = position  
+        this.speed = 5;
+        this.angle = angle;
+        this.id = id;
     };
 
     public draw(ctx: CanvasRenderingContext2D): void {
         // draw the inside
         ctx.beginPath();
         ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = this.player.color.bg;
+        ctx.fillStyle =this.color.bg;
         ctx.fill();
         // draw the border
         ctx.beginPath();
         ctx.arc(this.position.x, this.position.y, this.radius + 2, 0, Math.PI*2);
-        ctx.strokeStyle = this.player.color.border;
+        ctx.strokeStyle = this.color.border;
         ctx.lineWidth = 2;
         ctx.stroke();
     };

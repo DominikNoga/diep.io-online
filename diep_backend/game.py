@@ -97,10 +97,9 @@ class Game:
         #     if self.circle_polygon_collide(player,obstacle):
         #         #TODO
         #         x=0
-        # for bullet in self.bullets_fired:
-        #     if self.circle_collide(bullet,player):
-        #         #TODO
-        #         x=0
+        for bullet in self.bullets_fired:
+            if self.circle_collide(bullet, player):
+                player.life_left -= bullet.damage
     
     def check_for_player_player_collision(self, player):
         for other_player in self.players:

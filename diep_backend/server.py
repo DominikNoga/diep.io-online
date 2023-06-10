@@ -5,6 +5,7 @@ import websockets
 from game import Game
 import uuid
 import traceback
+from game_components.bullet import Bullet
 
 
 class Server:
@@ -12,7 +13,7 @@ class Server:
         self.connected_players = {}
         self.game = Game()
         self.last_adding_result = None
-        self.sleep_time = 0.1
+        self.sleep_time = 0.01
 
 
     async def send_collision_message(self, websocket, message):
@@ -79,6 +80,24 @@ class Server:
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(self.sleep_time)
+        
+    async def handle_shoot_message(self, websocket, message):
+        self.game.bullets_fired.append(Bullet(message['bulletPosition'], message['playerName'], message['bulletId']))
+
+        if self.connected_players[message['clientId']] == websocket:
+            return
+        
+        event = {
+            'bulletId': message['bulletId'],
+            'playerName': message['playerName'],
+            'bulletPosition': message['bulletPosition'],
+            'bulletColor': message['bulletColor'],
+            'type': message_types[SHOOT],
+            'bulletAngle': message['bulletAngle'],
+        }
+        
+        await websocket.send(json.dumps(event))
+        await asyncio.sleep(self.sleep_time)
     
     async def handle_join_message(self, websocket, player_id, message: dict, index):
         if index == 0:
@@ -105,6 +124,9 @@ class Server:
             
             elif message_type == message_types[BARREL_MOVED]:
                 await self.handle_barrel_moved_message(websocket ,message)
+            
+            elif message_type == message_types[SHOOT]:
+                await self.handle_shoot_message(websocket, message)
             
             else: print(f"No such message type {message_type}")
         

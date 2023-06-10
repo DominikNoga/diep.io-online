@@ -18,8 +18,9 @@ export default class Game implements GameInterface{
     public firedBullets: Bullet[] = [];
     private shootingInerval: number;
     public mouseDown: boolean = false;
+    public clientId: string;
 
-    constructor(width: number, height: number){
+    constructor(width: number, height: number, clientId: string){
         this.width = width;
         this.height = height;
         this.offset ={
@@ -32,6 +33,7 @@ export default class Game implements GameInterface{
         }
         this.obstacles.push(new Obstacle(ObstacleTypes.hard,position))
         this.gameMechanics = new GameMechanics();
+        this.clientId = clientId;
     };
 
     public initHandlers(websocket: WebSocket){
@@ -55,9 +57,9 @@ export default class Game implements GameInterface{
             if(!this.gameMechanics.keysPressed[Keys.SPACE]){
                 this.mouseDown = true;
                 if(this.currentPlayer.canShoot)
-                    this.currentPlayer.shoot();
+                    this.currentPlayer.shoot(websocket);
                 this.shootingInerval = setInterval(() =>{
-                    this.currentPlayer.shoot();
+                    this.currentPlayer.shoot(websocket);
                 }, this.currentPlayer.shootCooldown);
             }
         });
@@ -74,9 +76,6 @@ export default class Game implements GameInterface{
 
     public update(position: Point, name: string){
         this.updatePlayer(position, name)
-        // this.firedBullets.forEach(bullet => {
-        //     bullet.update();
-        // });
     };
 
     private updatePlayer(position: Point, name: string){
@@ -90,7 +89,12 @@ export default class Game implements GameInterface{
         } catch (error) {
             alert(`Frontend Error: ${error}`);
         }
-        
+    }
+
+    public updateBullets(){
+        this.firedBullets.forEach(bullet => {
+            bullet.update();
+        });
     }
 
     public draw(ctx: CanvasRenderingContext2D){
