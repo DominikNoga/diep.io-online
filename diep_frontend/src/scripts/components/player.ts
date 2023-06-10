@@ -1,9 +1,9 @@
-import PlayerInterface from "../interfaces/player.interface";
 import { Point, Direction, Keys, GameObjectColor } from "../constants.js";
 import Game from "../game.js";
 import Bullet from "./bullet.js";
+import { drawBarrel, drawLifeBar, drawNameBar, drawPlayerObject } from "../helper_services/playerDrawingHelperFunctions.js";
 
-export default class Player implements PlayerInterface {
+export default class Player {
     public game: Game;
     public barrelParams = {
         length: 3,
@@ -48,55 +48,50 @@ export default class Player implements PlayerInterface {
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {
-        this.drawBarrel(this.barrelParams.position.x, this.barrelParams.position.y, ctx);
+        this.calculateOffset(this.offset.x, this.offset.y); 
+        this.drawNameBar(ctx);
+        this.drawLifeBar(ctx);
+        this.drawBarrel(ctx);
         this.drawPlayerObject(ctx);
     }
 
     private drawPlayerObject(ctx: CanvasRenderingContext2D): void {
-        // draw the inside
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = this.color.bg;
-        ctx.fill();
-        // draw the border
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius + 2, 0, Math.PI*2);
-        ctx.strokeStyle = this.color.border;
-        ctx.lineWidth = 3;
-        ctx.stroke();
+        drawPlayerObject(ctx, this);
     };
 
-    private drawBarrel(x: number, y: number,ctx: CanvasRenderingContext2D){
-        // border
-        ctx.beginPath()
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = this.barrelParams.width + 6;
-        ctx.moveTo(this.position.x, this.position.y);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.closePath(); 
-        
-        // inside
-        ctx.beginPath()
-        ctx.lineWidth = this.barrelParams.width;
-        ctx.strokeStyle = this.barrelParams.color;
-        ctx.moveTo(this.position.x, this.position.y);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.closePath(); 
+    private drawBarrel(ctx: CanvasRenderingContext2D){
+        drawBarrel(ctx, this);
     };
 
-    public update(pos:Point)
-    {
-        this.position = pos
+    private drawNameBar(ctx: CanvasRenderingContext2D){
+        drawNameBar(ctx, this);
     }
 
+    private drawLifeBar(ctx: CanvasRenderingContext2D){
+        drawLifeBar(ctx, this);
+    }
+
+    public calculateOffset(offsetX: number, offsetY: number): void {
+        this.barrelParams.angle = Math.atan2(offsetY, offsetX);
+        this.barrelParams.position.x = this.radius * this.barrelParams.length * Math.cos(this.barrelParams.angle) + this.position.x
+        this.barrelParams.position.y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
+    }
+
+    public update(position: Point)
+    {
+        this.position = position;
+    }
     public shoot(){
         this.game.firedBullets.push(new Bullet(this))
         this.canShoot = false;
         setTimeout(() =>{
             this.canShoot = true;   
-        }, this.shootCooldown)
+        }, this.shootCooldown);
+    }
+
+    public setBarrelParams(barrelAngle: number, barrelPosition: Point){
+        this.barrelParams.angle = barrelAngle;
+        this.barrelParams.position = barrelPosition
     }
 
     public get radius(): number {
@@ -146,10 +141,4 @@ export default class Player implements PlayerInterface {
     set speed(value: number) {
         this._speed = value;
     };
-
-    public setBarrelParams(barrel_angle: number, barrel_x: number, barrel_y: number){
-        this.barrelParams.angle = barrel_angle;
-        this.barrelParams.position.x = barrel_x;
-        this.barrelParams.position.y = barrel_y;
-    }
 }

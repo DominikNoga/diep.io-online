@@ -12,6 +12,7 @@ class Server:
         self.connected_players = {}
         self.game = Game()
         self.last_adding_result = None
+        self.sleep_time = 0.1
 
 
     async def send_collision_message(self, websocket, message):
@@ -20,7 +21,7 @@ class Server:
             "object": message['object'],
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
 
     async def send_error_message(self, websocket, message):
         event = {
@@ -28,7 +29,7 @@ class Server:
             "message": message['content']
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
 
     async def send_move_message(self, websocket, message: dict):
         updated_pos = self.game.update_player_position(message["name"], message["direction"])
@@ -40,13 +41,12 @@ class Server:
                #"players": self.game.players,
                #"obstacles": self.game.obstacles
         }
-        print(f"Moving plyer to: {event}\n")
         await websocket.send(json.dumps(event))
 
     async def send_create_message(self, websocket):
         event = self.last_adding_result
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
     
     async def send_new_player_message(self, websocket, message):
         event = {
@@ -56,23 +56,29 @@ class Server:
             "name": self.last_adding_result["name"],
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
 
+    
+    
     async def send_init_connection_message(self, websocket, id):
         event = {
             "type": message_types[INIT_CONNECTION],
             "clientId": id
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
     
-    async def send_barrel_moved_message(self, websocket, message):
+    async def handle_barrel_moved_message(self, websocket, message):
         index = self.game.find_player_index_by_name(message["name"])
-        event = self.game.players[index].calculateOffset(message["offset"])
-        event["name"] = message["name"]
-        event["type"] = message_types[BARREL_MOVED]
+        self.game.players[index].setBarrelParams(message['barrelPosition'], message['barrelAngle'])
+        event = {
+            "type": message_types[BARREL_MOVED],
+            "barrelPosition": message['barrelPosition'],
+            "barrelAngle": message['barrelAngle'],
+            "name": message['name'],
+        }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
     
     async def handle_join_message(self, websocket, player_id, message: dict, index):
         if index == 0:
@@ -98,7 +104,7 @@ class Server:
                 await self.handle_join_message(websocket, player_id, message, index)
             
             elif message_type == message_types[BARREL_MOVED]:
-                await self.send_barrel_moved_message(websocket, message)
+                await self.handle_barrel_moved_message(websocket ,message)
             
             else: print(f"No such message type {message_type}")
         
@@ -114,7 +120,6 @@ class Server:
     async def recieveMessages(self, websocket):
         try:
             async for message in websocket:
-                print(message)
                 for index, (player_id, player_socket) in enumerate(self.connected_players.items()):
                     await self.handle_recieved_message(player_socket, player_id, message, index)
 
@@ -133,8 +138,6 @@ class Server:
 
         # Store the WebSocket object with the generated client ID
         self.connected_players[client_id] = websocket
-        print(f"id for new clinet {client_id}")
-        print(self.connected_players)
 
         # Send the client ID to the client
         await self.send_init_connection_message(websocket, client_id)

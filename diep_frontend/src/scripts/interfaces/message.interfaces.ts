@@ -65,7 +65,6 @@ export interface InitConnectionMessage extends Message {
 
 export interface BarrelMovedMessage extends Message {
     name: string;
-    barrel_angle: number;
-    barrel_x: number;
-    barrel_y: number;
+    barrelAngle: number;
+    barrelPosition: Point;
 }

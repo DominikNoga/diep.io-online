@@ -69,11 +69,10 @@ export default class SocketMessageHandler{
     private handleMoveMessage(message: MoveMessage){
         this.gameManager.game.update(message.position, message.name)
         //this.gameManager.update(message.enemies,message.obstacles)
-
     };
 
     private handleNewPlayerMessage(message: NewPlayerMessage): void {
-        this.gameManager.game.players.push(
+        this.gameManager.game.enemies.push(
             new Player(
                 this.gameManager.game,
                 message.name, 
@@ -87,8 +86,12 @@ export default class SocketMessageHandler{
     };
 
     private handleBarrelMovedMessage(message: BarrelMovedMessage): void {
-        const index = this.gameManager.game.findIndexPlayerByName(message.name);
-        this.gameManager.game.players[index].setBarrelParams(message.barrel_angle, message.barrel_x, message.barrel_y);
+        if(message.name === this.gameManager.game.currentPlayer.name){
+            return;
+        }
+        const index = this.gameManager.game.findEnemyIndexByName(message.name);
+        this.gameManager.game.enemies[index].setBarrelParams(message.barrelAngle, message.barrelPosition);
+        // this.gameManager.game.players[index].setBarrelParams(message.barrel_angle, message.barrel_x, message.barrel_y);
     }
 
     public listen(){
