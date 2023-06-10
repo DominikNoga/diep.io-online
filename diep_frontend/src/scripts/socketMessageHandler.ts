@@ -1,4 +1,4 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage } from "./interfaces/message.interfaces";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage } from "./interfaces/message.interfaces";
 import { createGameManager, addJoinListener } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Game from "./game.js";
@@ -30,6 +30,11 @@ export default class SocketMessageHandler{
             case MessageTypes.newPlayer:
                 this.handleNewPlayerMessage(<NewPlayerMessage>message);
                 break;
+            case MessageTypes.barrelMoved:
+                this.handleBarrelMovedMessage(<BarrelMovedMessage>message);
+                break;
+            default: 
+                alert("Unknown message type: " + message.type)
         }
     };
 
@@ -77,9 +82,14 @@ export default class SocketMessageHandler{
         ));
     }
 
-    private handleErrorMessage(message: ErrorMessage){
+    private handleErrorMessage(message: ErrorMessage): void {
         alert(message.message)
     };
+
+    private handleBarrelMovedMessage(message: BarrelMovedMessage): void {
+        const index = this.gameManager.game.findIndexPlayerByName(message.name);
+        this.gameManager.game.players[index].setBarrelParams(message.barrel_angle, message.barrel_x, message.barrel_y);
+    }
 
     public listen(){
         this.websocket.addEventListener('message', (({data}) =>{

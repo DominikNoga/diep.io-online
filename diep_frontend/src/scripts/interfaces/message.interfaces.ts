@@ -62,3 +62,10 @@ export interface NewPlayerMessage extends Message {
 export interface InitConnectionMessage extends Message {
     clientId: string;
 };
+
+export interface BarrelMovedMessage extends Message {
+    name: string;
+    barrel_angle: number;
+    barrel_x: number;
+    barrel_y: number;
+}

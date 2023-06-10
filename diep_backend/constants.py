@@ -7,6 +7,7 @@ JOIN = 3
 CREATE = 4
 NEW_PLAYER = 5
 INIT_CONNECTION = 6
+BARREL_MOVED = 7
 
 message_types = {
     MOVE: 'move',
@@ -15,5 +16,6 @@ message_types = {
     JOIN: 'join',
     CREATE: 'create',
     NEW_PLAYER: 'new_player',
-    INIT_CONNECTION: 'init'
+    INIT_CONNECTION: 'init',
+    BARREL_MOVED: 'barrel_moved',
 }

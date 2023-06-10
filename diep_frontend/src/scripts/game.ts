@@ -1,7 +1,7 @@
 import GameInterface from "./interfaces/game.interface";
 import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
-import { Point, allowedKeys, ObstacleTypes, Keys } from "./constants.js";
+import { Point, allowedKeys, ObstacleTypes, Keys, MessageTypes } from "./constants.js";
 import Obstacle from "./components/obstacle.js";
 import Bullet from "./components/bullet.js";
 
@@ -39,7 +39,7 @@ export default class Game implements GameInterface{
                 this.gameMechanics.handleKeyDown(e.key);
                 websocket.send(JSON.stringify({
                     direction: this.gameMechanics.keysPressed,
-                    type: 'move',
+                    type: MessageTypes.move,
                     name: this.currentPlayer.name
                 }));
             }
@@ -50,7 +50,11 @@ export default class Game implements GameInterface{
         });
 
         document.addEventListener('mousemove', (e) =>{
-            this.currentPlayer.offset = this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position);
+            websocket.send(JSON.stringify({
+                offset: this.gameMechanics.getMousePlayerOffset({x: e.x, y: e.y}, this.currentPlayer.position),
+                name: this.currentPlayer.name,
+                type: MessageTypes.barrelMoved
+            }))
         });
 
         document.addEventListener('mousedown', (e) =>{
@@ -142,7 +146,7 @@ export default class Game implements GameInterface{
         return this.currentPlayer;
     };
 
-    private findIndexPlayerByName(name: string): number {
+    public findIndexPlayerByName(name: string): number {
         const player = this.players.find(p => p.name === name);
         const index = this.players.indexOf(player);
         if(index !== -1) {

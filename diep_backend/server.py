@@ -66,6 +66,14 @@ class Server:
         await websocket.send(json.dumps(event))
         await asyncio.sleep(0.5)
     
+    async def send_barrel_moved_message(self, websocket, message):
+        index = self.game.find_player_index_by_name(message["name"])
+        event = self.game.players[index].calculateOffset(message["offset"])
+        event["name"] = message["name"]
+        event["type"] = message_types[BARREL_MOVED]
+        await websocket.send(json.dumps(event))
+        await asyncio.sleep(0.5)
+    
     async def handle_join_message(self, websocket, player_id, message: dict, index):
         if index == 0:
             self.last_adding_result = self.game.add_player(message["name"], message["clientId"]) # here passing the wrong websocket sometimes, not always the first user in conn has to have right socket
@@ -80,14 +88,17 @@ class Server:
         await self.send_move_message(websocket, message)
     
     async def handle_recieved_message(self, websocket, player_id, message, index):
-        msg = json.loads(message)
-        message_type = msg['type']
+        message = json.loads(message)
+        message_type = message['type']
         try:
             if message_type == message_types[MOVE]:
-                await self.handle_move_message(websocket, msg)
+                await self.handle_move_message(websocket, message)
             
             elif message_type == message_types[JOIN]:
-                await self.handle_join_message(websocket, player_id, msg, index)
+                await self.handle_join_message(websocket, player_id, message, index)
+            
+            elif message_type == message_types[BARREL_MOVED]:
+                await self.send_barrel_moved_message(websocket, message)
             
             else: print(f"No such message type {message_type}")
         

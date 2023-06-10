@@ -48,7 +48,6 @@ export default class Player implements PlayerInterface {
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {
-        this.calculateOffset(this.offset.x, this.offset.y); 
         this.drawBarrel(this.barrelParams.position.x, this.barrelParams.position.y, ctx);
         this.drawPlayerObject(ctx);
     }
@@ -87,33 +86,11 @@ export default class Player implements PlayerInterface {
         ctx.closePath(); 
     };
 
-    public calculateOffset(offsetX: number, offsetY: number): void {
-        this.barrelParams.angle = Math.atan2(offsetY, offsetX);
-        this.barrelParams.position.x = this.radius * this.barrelParams.length * Math.cos(this.barrelParams.angle) + this.position.x
-        this.barrelParams.position.y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
-    }
-
-    // public update(keysPressed: any): void {
-    //     if(keysPressed[Direction.UP]){
-    //         this.position.y -= this.speed;
-    //     }
-    //     if(keysPressed[Direction.DOWN]){
-    //         this.position.y += this.speed;
-    //     }
-    //     if(keysPressed[Direction.LEFT]){
-    //         this.position.x -= this.speed;
-    //     }
-    //     if(keysPressed[Direction.RIGHT]){
-    //         this.position.x += this.speed;
-    //     }
-    //     if(keysPressed[Keys.SPACE] && this.canShoot && !this.game.mouseDown){
-    //         this.shoot();
-    //     }
-    // }
     public update(pos:Point)
     {
         this.position = pos
     }
+
     public shoot(){
         this.game.firedBullets.push(new Bullet(this))
         this.canShoot = false;
@@ -169,4 +146,10 @@ export default class Player implements PlayerInterface {
     set speed(value: number) {
         this._speed = value;
     };
+
+    public setBarrelParams(barrel_angle: number, barrel_x: number, barrel_y: number){
+        this.barrelParams.angle = barrel_angle;
+        this.barrelParams.position.x = barrel_x;
+        this.barrelParams.position.y = barrel_y;
+    }
 }
