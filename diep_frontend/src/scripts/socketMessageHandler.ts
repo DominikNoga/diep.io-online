@@ -62,7 +62,7 @@ export default class SocketMessageHandler{
     };
 
     private handleMoveMessage(message: MoveMessage){
-        this.gameManager.game.update(message.position)
+        this.gameManager.game.update(message.position, message.name)
         //this.gameManager.update(message.enemies,message.obstacles)
 
     };

@@ -87,12 +87,22 @@ export default class Game implements GameInterface{
         this.currentPlayer = player;
     }
 
-    public update(pos: Point){
-        this.currentPlayer.update(pos);
+    public update(position: Point, name: string){
+        this.updatePlayers(position, name)
         // this.firedBullets.forEach(bullet => {
         //     bullet.update();
         // });
     };
+
+    private updatePlayers(position: Point, name: string){
+        try {   
+            const index = this.findIndexPlayerByName(name);
+            this.players[index].position = position;
+        } catch (error) {
+            alert(`Frontend Error: ${error}`);
+        }
+        
+    }
 
     public draw(ctx: CanvasRenderingContext2D){
         this.renderPlayers(ctx);
@@ -109,8 +119,8 @@ export default class Game implements GameInterface{
     public renderPlayers(ctx: CanvasRenderingContext2D){
         this.players.forEach(player=>{
             player.draw(ctx);
-        })
-    }
+        });
+    };
 
     public renderBullets(ctx: CanvasRenderingContext2D){
         this.firedBullets.forEach(bullet => {
@@ -120,14 +130,24 @@ export default class Game implements GameInterface{
 
     public set players(players: Player[]){
         this._players = players;
-    }
+    };
+
     public get players(): Player[] {
         return this._players;
-    }
+    };
 
     public randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
 
     public getCurrentPlayer(): Player { 
         return this.currentPlayer;
     };
+
+    private findIndexPlayerByName(name: string): number {
+        const player = this.players.find(p => p.name === name);
+        const index = this.players.indexOf(player);
+        if(index !== -1) {
+            return index;
+        }
+        else throw new Error(`Player ${name} not found`);
+    }
 }

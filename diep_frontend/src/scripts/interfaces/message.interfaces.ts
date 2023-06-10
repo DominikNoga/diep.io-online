@@ -46,6 +46,7 @@ export interface MoveMessage extends Message {
     position?: Point;
     enemies?: Player[];
     obstacles?: Obstacle[];
+    name?: string;
 };
 
 export interface ErrorMessage extends Message {

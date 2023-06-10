@@ -35,10 +35,12 @@ class Server:
         self.game.check_for_collisions(message["name"])
         event={
                 "type": message_types[MOVE],
-               "position": updated_pos
+               "position": updated_pos,
+               "name": message["name"],
                #"players": self.game.players,
                #"obstacles": self.game.obstacles
         }
+        print(f"Moving plyer to: {event}\n")
         await websocket.send(json.dumps(event))
 
     async def send_create_message(self, websocket):
