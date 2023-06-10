@@ -2,9 +2,11 @@
     "compilerOptions": {
       "noImplicitAny": true,
       "target": "ES6",
+      "esModuleInterop": true,
+      "moduleResolution": "node"
     },
     
     "include": [
         "src/scripts/**/*.ts"
-, "src/scripts/helper_services/debounce.js"    ]
+, "src/scripts/helper_services/debounce.js"]
 }

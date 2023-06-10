@@ -43,11 +43,11 @@ export const removeForm = (): void =>{
     document.body.removeChild(form);
 };
 
-export const createGameManager = (message: CreateGameMessage): GameManager =>{
+export const createGameManager = (message: CreateGameMessage, clientId: string): GameManager =>{
     removeForm();
     const canvas = createCanvas(message.width, message.height);
     document.body.appendChild(canvas);
-    const game = new Game(canvas.width, canvas.height);
+    const game = new Game(canvas.width, canvas.height, clientId);
     message.players.filter(player => player.name !== message.name)
         .forEach(enemy =>{
             game.enemies.push(new Player(

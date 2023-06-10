@@ -1,9 +1,10 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage } from "./interfaces/message.interfaces";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage, ShootMessage } from "./interfaces/message.interfaces";
 import { createGameManager, addJoinListener } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Game from "./game.js";
 import Player from "./components/player.js";
 import GameManager from "./gameManager.js";
+import Bullet from "./components/bullet.js";
 
 export default class SocketMessageHandler{
     private gameManager: GameManager;
@@ -33,6 +34,9 @@ export default class SocketMessageHandler{
             case MessageTypes.barrelMoved:
                 this.handleBarrelMovedMessage(<BarrelMovedMessage>message);
                 break;
+            case MessageTypes.shoot:
+                this.handleShootMessage(<ShootMessage>message);
+                break;
             default: 
                 alert("Unknown message type: " + message.type)
         }
@@ -44,7 +48,7 @@ export default class SocketMessageHandler{
             addJoinListener(this.websocket, this.clientId);
             console.log(`Connected and got new id ${this._clientId}`);
         }
-    }
+    };
 
     private handleCreateGameMessage(message: CreateGameMessage){
         if(!message.success){
@@ -57,7 +61,7 @@ export default class SocketMessageHandler{
                 console.log(`Received message: ${message}`);
                 return;
             }
-            this.gameManager = createGameManager(message);
+            this.gameManager = createGameManager(message, this.clientId);
             this.gameManager.runGame(this.websocket);
         }
     };
@@ -79,7 +83,7 @@ export default class SocketMessageHandler{
                 playerColors[message.color], 
                 message.position
         ));
-    }
+    };
 
     private handleErrorMessage(message: ErrorMessage): void {
         alert(message.message)
@@ -91,17 +95,25 @@ export default class SocketMessageHandler{
         }
         const index = this.gameManager.game.findEnemyIndexByName(message.name);
         this.gameManager.game.enemies[index].setBarrelParams(message.barrelAngle, message.barrelPosition);
-        // this.gameManager.game.players[index].setBarrelParams(message.barrel_angle, message.barrel_x, message.barrel_y);
-    }
+    };
+
+    private handleShootMessage(message: ShootMessage): void {
+        this.gameManager.game.firedBullets.push(new Bullet(
+            message.bulletPosition,
+            message.bulletAngle,
+            message.bulletColor,
+            message.bulletId
+        ))
+    }; 
 
     public listen(){
         this.websocket.addEventListener('message', (({data}) =>{
             let message = <Message>JSON.parse(data);
             this.handleMessage(message);
         }))
-    }
+    };
 
     public get clientId(): string{
         return this._clientId;
-    }
+    };
 }

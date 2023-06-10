@@ -7,6 +7,7 @@ class Player:
         self.radius = 25
         self.speed = 7
         self.id = id
+        self.life_left = 100
         self.barrel_params = {
             "position": {
                 "x": 0,

@@ -67,4 +67,11 @@ export interface BarrelMovedMessage extends Message {
     name: string;
     barrelAngle: number;
     barrelPosition: Point;
-}
+};
+
+export interface ShootMessage extends Message {
+    bulletId: string;
+    bulletColor: GameObjectColor;
+    bulletPosition: Point;
+    bulletAngle: number;
+};

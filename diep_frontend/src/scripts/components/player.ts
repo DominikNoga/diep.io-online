@@ -1,7 +1,8 @@
-import { Point, Direction, Keys, GameObjectColor } from "../constants.js";
+import { Point, GameObjectColor, MessageTypes } from "../constants.js";
 import Game from "../game.js";
 import Bullet from "./bullet.js";
 import { drawBarrel, drawLifeBar, drawNameBar, drawPlayerObject } from "../helper_services/playerDrawingHelperFunctions.js";
+import { deepCopy } from "../helper_services/deepCopy.js";
 
 export default class Player {
     public game: Game;
@@ -43,10 +44,6 @@ export default class Player {
         }
     };
     
-    public drawOther(ctx: CanvasRenderingContext2D){
-
-    }
-
     public draw(ctx: CanvasRenderingContext2D): void {
         this.calculateOffset(this.offset.x, this.offset.y); 
         this.drawNameBar(ctx);
@@ -81,8 +78,18 @@ export default class Player {
     {
         this.position = position;
     }
-    public shoot(){
-        this.game.firedBullets.push(new Bullet(this))
+    public shoot(websocket: WebSocket): void{
+        const barrelCopy = deepCopy(this.barrelParams);
+        const bullet = new Bullet(barrelCopy.position, barrelCopy.angle, this.color, (Math.random()*10e9).toString());
+        this.game.firedBullets.push(bullet)
+        JSON.stringify({
+            playerName: this.name,
+            bulletPosition: bullet.position,
+            type: MessageTypes.shoot,
+            bulletColor: bullet.color,
+            bulletId : bullet.id,
+            clientId: this.game.clientId
+        })
         this.canShoot = false;
         setTimeout(() =>{
             this.canShoot = true;   
