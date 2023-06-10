@@ -12,6 +12,7 @@ class Server:
         self.connected_players = {}
         self.game = Game()
         self.last_adding_result = None
+        self.sleep_time = 0.1
 
 
     async def send_collision_message(self, websocket, message):
@@ -20,7 +21,7 @@ class Server:
             "object": message['object'],
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
 
     async def send_error_message(self, websocket, message):
         event = {
@@ -28,14 +29,15 @@ class Server:
             "message": message['content']
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
 
     async def send_move_message(self, websocket, message: dict):
         updated_pos = self.game.update_player_position(message["name"], message["direction"])
         self.game.check_for_collisions(message["name"])
         event={
                 "type": message_types[MOVE],
-               "position": updated_pos
+               "position": updated_pos,
+               "name": message["name"],
                #"players": self.game.players,
                #"obstacles": self.game.obstacles
         }
@@ -44,7 +46,7 @@ class Server:
     async def send_create_message(self, websocket):
         event = self.last_adding_result
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
     
     async def send_new_player_message(self, websocket, message):
         event = {
@@ -54,15 +56,29 @@ class Server:
             "name": self.last_adding_result["name"],
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
 
+    
+    
     async def send_init_connection_message(self, websocket, id):
         event = {
             "type": message_types[INIT_CONNECTION],
             "clientId": id
         }
         await websocket.send(json.dumps(event))
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(self.sleep_time)
+    
+    async def handle_barrel_moved_message(self, websocket, message):
+        index = self.game.find_player_index_by_name(message["name"])
+        self.game.players[index].setBarrelParams(message['barrelPosition'], message['barrelAngle'])
+        event = {
+            "type": message_types[BARREL_MOVED],
+            "barrelPosition": message['barrelPosition'],
+            "barrelAngle": message['barrelAngle'],
+            "name": message['name'],
+        }
+        await websocket.send(json.dumps(event))
+        await asyncio.sleep(self.sleep_time)
     
     async def handle_join_message(self, websocket, player_id, message: dict, index):
         if index == 0:
@@ -78,14 +94,17 @@ class Server:
         await self.send_move_message(websocket, message)
     
     async def handle_recieved_message(self, websocket, player_id, message, index):
-        msg = json.loads(message)
-        message_type = msg['type']
+        message = json.loads(message)
+        message_type = message['type']
         try:
             if message_type == message_types[MOVE]:
-                await self.handle_move_message(websocket, msg)
+                await self.handle_move_message(websocket, message)
             
             elif message_type == message_types[JOIN]:
-                await self.handle_join_message(websocket, player_id, msg, index)
+                await self.handle_join_message(websocket, player_id, message, index)
+            
+            elif message_type == message_types[BARREL_MOVED]:
+                await self.handle_barrel_moved_message(websocket ,message)
             
             else: print(f"No such message type {message_type}")
         
@@ -101,7 +120,6 @@ class Server:
     async def recieveMessages(self, websocket):
         try:
             async for message in websocket:
-                print(message)
                 for index, (player_id, player_socket) in enumerate(self.connected_players.items()):
                     await self.handle_recieved_message(player_socket, player_id, message, index)
 
@@ -120,8 +138,6 @@ class Server:
 
         # Store the WebSocket object with the generated client ID
         self.connected_players[client_id] = websocket
-        print(f"id for new clinet {client_id}")
-        print(self.connected_players)
 
         # Send the client ID to the client
         await self.send_init_connection_message(websocket, client_id)

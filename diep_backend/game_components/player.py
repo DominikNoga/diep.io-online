@@ -1,3 +1,4 @@
+import math
 class Player:
     def __init__(self, name, position, color, id):
         self.name = name
@@ -6,3 +7,15 @@ class Player:
         self.radius = 25
         self.speed = 7
         self.id = id
+        self.barrel_params = {
+            "position": {
+                "x": 0,
+                "y": 0,
+            },
+            "angle": math.pi/2,
+            "length": 3
+        }
+
+    def setBarrelParams(self, position, angle):
+        self.barrel_params["position"] = position
+        self.barrel_params["angle"] = angle

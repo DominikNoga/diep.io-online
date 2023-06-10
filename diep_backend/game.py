@@ -27,7 +27,7 @@ class Game:
         color_index = random.randint(0, 2)
         player = Player(player_name, {'x': x, 'y': y}, color_index, str(websocket))
         self.players.append(player)
-        print(f"Adding player on position: {player.position}")
+        print(f"Adding player {player.name} on position: {player.position}")
         return {
             'type': message_types[CREATE],
             'success': True,
@@ -71,7 +71,6 @@ class Game:
             player.position['y'] += player.speed
         
         self.players[player_index].position = player.position
-        print(f"Updated position of player {name} to {player.position}")
         return player.position
 
     def find_player_index_by_name(self, player_name):

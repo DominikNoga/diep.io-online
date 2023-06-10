@@ -1,4 +1,4 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage } from "./interfaces/message.interfaces";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage } from "./interfaces/message.interfaces";
 import { createGameManager, addJoinListener } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Game from "./game.js";
@@ -30,6 +30,11 @@ export default class SocketMessageHandler{
             case MessageTypes.newPlayer:
                 this.handleNewPlayerMessage(<NewPlayerMessage>message);
                 break;
+            case MessageTypes.barrelMoved:
+                this.handleBarrelMovedMessage(<BarrelMovedMessage>message);
+                break;
+            default: 
+                alert("Unknown message type: " + message.type)
         }
     };
 
@@ -62,13 +67,12 @@ export default class SocketMessageHandler{
     };
 
     private handleMoveMessage(message: MoveMessage){
-        this.gameManager.game.update(message.position)
+        this.gameManager.game.update(message.position, message.name)
         //this.gameManager.update(message.enemies,message.obstacles)
-
     };
 
     private handleNewPlayerMessage(message: NewPlayerMessage): void {
-        this.gameManager.game.players.push(
+        this.gameManager.game.enemies.push(
             new Player(
                 this.gameManager.game,
                 message.name, 
@@ -77,9 +81,18 @@ export default class SocketMessageHandler{
         ));
     }
 
-    private handleErrorMessage(message: ErrorMessage){
+    private handleErrorMessage(message: ErrorMessage): void {
         alert(message.message)
     };
+
+    private handleBarrelMovedMessage(message: BarrelMovedMessage): void {
+        if(message.name === this.gameManager.game.currentPlayer.name){
+            return;
+        }
+        const index = this.gameManager.game.findEnemyIndexByName(message.name);
+        this.gameManager.game.enemies[index].setBarrelParams(message.barrelAngle, message.barrelPosition);
+        // this.gameManager.game.players[index].setBarrelParams(message.barrel_angle, message.barrel_x, message.barrel_y);
+    }
 
     public listen(){
         this.websocket.addEventListener('message', (({data}) =>{

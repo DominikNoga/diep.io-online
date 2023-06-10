@@ -48,8 +48,14 @@ export const createGameManager = (message: CreateGameMessage): GameManager =>{
     const canvas = createCanvas(message.width, message.height);
     document.body.appendChild(canvas);
     const game = new Game(canvas.width, canvas.height);
-    message.players.forEach(player =>{
-        game.players.push(new Player(game, player.name, playerColors[player.color], player.position))
+    message.players.filter(player => player.name !== message.name)
+        .forEach(enemy =>{
+            game.enemies.push(new Player(
+                game,
+                enemy.name,
+                playerColors[enemy.color],
+                enemy.position
+            ));
     });
     const player = new Player(game, message.name, playerColors[message.color], message.position);
     game.setCurrentPlayer(player);

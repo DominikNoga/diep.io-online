@@ -61,5 +61,6 @@ export enum MessageTypes {
     error = 'error',
     collision = 'collision',
     newPlayer = 'new_player',
-    initConnection = 'init'
+    initConnection = 'init',
+    barrelMoved = 'barrel_moved'
 };

@@ -19,13 +19,12 @@ export default class GameManager{
 
     public animate(){
         this.ctx.clearRect(0, 0, this.game.width, this.game.height);
-        this.game.update(this.game.getCurrentPlayer().position);
         this.game.draw(this.ctx);
         requestAnimationFrame(() => {this.animate();});
     };
 
     public update(enemies:Player [],obstacles:Obstacle[]){
-        this.game.enemies=enemies
+        // this.game.enemies=enemies
         this.game.obstacles=obstacles
     }
 }

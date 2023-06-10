@@ -2,3 +2,4 @@
 __pycache__
 node_modules
 diep_frontend/dist
+test

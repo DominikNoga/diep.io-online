@@ -46,6 +46,7 @@ export interface MoveMessage extends Message {
     position?: Point;
     enemies?: Player[];
     obstacles?: Obstacle[];
+    name?: string;
 };
 
 export interface ErrorMessage extends Message {
@@ -61,3 +62,9 @@ export interface NewPlayerMessage extends Message {
 export interface InitConnectionMessage extends Message {
     clientId: string;
 };
+
+export interface BarrelMovedMessage extends Message {
+    name: string;
+    barrelAngle: number;
+    barrelPosition: Point;
+}
