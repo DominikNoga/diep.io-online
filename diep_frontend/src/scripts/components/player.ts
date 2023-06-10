@@ -3,6 +3,7 @@ import Game from "../game.js";
 import Bullet from "./bullet.js";
 import { drawBarrel, drawLifeBar, drawNameBar, drawPlayerObject } from "../helper_services/playerDrawingHelperFunctions.js";
 import { deepCopy } from "../helper_services/deepCopy.js";
+// import { v4 as uuidv4 } from 'uuid';
 
 export default class Player {
     public game: Game;
@@ -78,18 +79,19 @@ export default class Player {
     {
         this.position = position;
     }
-    public shoot(websocket: WebSocket): void{
-        const barrelCopy = deepCopy(this.barrelParams);
+    public shoot(websocket: WebSocket){
+        const barrelCopy = deepCopy(this.barrelParams)
         const bullet = new Bullet(barrelCopy.position, barrelCopy.angle, this.color, (Math.random()*10e9).toString());
         this.game.firedBullets.push(bullet)
-        JSON.stringify({
+        websocket.send(JSON.stringify({
             playerName: this.name,
             bulletPosition: bullet.position,
             type: MessageTypes.shoot,
             bulletColor: bullet.color,
             bulletId : bullet.id,
-            clientId: this.game.clientId
-        })
+            clientId: this.game.clientId,
+            bulletAngle: bullet.angle
+        }))
         this.canShoot = false;
         setTimeout(() =>{
             this.canShoot = true;   
