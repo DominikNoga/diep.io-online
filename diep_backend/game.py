@@ -55,12 +55,11 @@ class Game:
         return [random.randint(100, self.width - 100), random.randint(100, self.height - 100)]
 
     def update_player_position(self, name, keysPressed):
-        player_index = self.find_player_index_by_name(name)
-        if player_index == None:
+        player = self.find_object_by_property("name", name, "player")
+        if player == None:
             print(f"Player {name} not found")
             return
 
-        player = self.players[player_index]
         if keysPressed['ArrowRight']:
             player.position['x'] += player.speed
         if keysPressed['ArrowLeft']:
@@ -70,36 +69,30 @@ class Game:
         if keysPressed['ArrowDown']:
             player.position['y'] += player.speed
         
-        self.players[player_index].position = player.position
-        return player.position
-
-    def find_player_index_by_name(self, player_name):
-        ind = None
-        for index, player in enumerate(self.players):
-            if player.name == player_name:
-                ind = index
-                break
-        return ind
-    
-    def get_player_position(self,name):
-        index = self.find_player_index_by_name(name)
-        if index == None:
-            print(f"Player {name} not found")
-            return
-        player  = self.players[index]
-        print(f"Player {name} position: {player.position}")
         return player.position
 
     def check_for_collisions(self, name):
-        player = self.players[self.find_player_index_by_name(name)]
+        player = self.find_object_by_property("name", name, "player")
         self.check_for_player_player_collision(player)
         # for obstacle in self.obstacles:
         #     if self.circle_polygon_collide(player,obstacle):
         #         #TODO
         #         x=0
-        for bullet in self.bullets_fired:
+        self.check_for_bullet_player_collision()
+    
+    def check_for_bullet_player_collision(self):
+        damaged_players = []
+        buletts_ids = []
+        for bullet, player in zip(self.bullets_fired, self.players):
             if self.circle_collide(bullet, player):
                 player.life_left -= bullet.damage
+                damaged_players.append({
+                    "name": player.name,
+                    "life_left": player.life_left
+                })
+                buletts_ids.append(bullet.id)
+                
+        return damaged_players, buletts_ids
     
     def check_for_player_player_collision(self, player):
         for other_player in self.players:
@@ -173,5 +166,28 @@ class Game:
         return None
 
     def find_player_id_by_name(self, name):
-        return self.players[self.find_player_index_by_name(name)].id
+        return self.find_object_by_property("name", name, "player").id
     
+    
+    def find_object_by_property(self, prop_name, prop_value, object_type):
+        """Method used to find object by its property -> it should be unique
+
+        Args:
+            prop_name (string): name of the property for eg. "name"
+            prop_value (Any): value of the property for eg. "Tom"
+            object_type (string): one of the game objects: 'obstacle', 'bullet', 'player'
+
+        Returns:
+            Reference to the object with the property that we are looking for
+        """
+        if object_type == 'player':
+            return next((player for  player in self.players if getattr(player, prop_name) == prop_value), None)
+        
+        elif object_type == 'bullet':
+            return next((bullet for  bullet in self.bullets_fired if getattr(bullet, prop_name) == prop_value), None)
+        
+        elif object_type == 'obstacle':
+            return next((obstacle for  obstacle in self.obstacles if getattr(obstacle, prop_name) == prop_value), None)
+        
+        else: print("Unknown object type")
+        

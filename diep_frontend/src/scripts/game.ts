@@ -1,4 +1,3 @@
-import GameInterface from "./interfaces/game.interface";
 import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
 import { Point, allowedKeys, ObstacleTypes, Keys, MessageTypes } from "./constants.js";
@@ -6,7 +5,7 @@ import Obstacle from "./components/obstacle.js";
 import Bullet from "./components/bullet.js";
 import { throttle, debounce } from "./helper_services/delayRequest.js";
 
-export default class Game implements GameInterface{
+export default class Game{
     private gameMechanics: GameMechanics
     public currentPlayer: Player;
     public width: number;
@@ -91,10 +90,18 @@ export default class Game implements GameInterface{
         }
     }
 
-    public updateBullets(){
+    public updateBullets(websocket: WebSocket){
         this.firedBullets.forEach(bullet => {
             bullet.update();
         });
+        const updatedBullets = this.firedBullets.map(bullet => ({
+            id: bullet.id,
+            position: bullet.position
+        }));
+        websocket.send(JSON.stringify({
+            updatedBullets: updatedBullets,
+            type: MessageTypes.bulletsUpdate
+        }))
     }
 
     public draw(ctx: CanvasRenderingContext2D){

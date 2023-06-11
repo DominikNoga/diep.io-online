@@ -14,14 +14,15 @@ export default class GameManager{
 
     public runGame(websocket: WebSocket){
         this.game.initHandlers(websocket);
-        this.animate();
+        this.animate(websocket);
     };
 
-    public animate(){
+    public animate(websocket: WebSocket){
         this.ctx.clearRect(0, 0, this.game.width, this.game.height);
         this.game.draw(this.ctx);
-        this.game.updateBullets();
-        requestAnimationFrame(() => {this.animate();});
+        if(this.game.firedBullets.length)
+            this.game.updateBullets(websocket);
+        requestAnimationFrame(() => {this.animate(websocket);});
     };
 
     public update(enemies:Player [],obstacles:Obstacle[]){

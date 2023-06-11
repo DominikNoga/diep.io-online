@@ -9,6 +9,8 @@ NEW_PLAYER = 5
 INIT_CONNECTION = 6
 BARREL_MOVED = 7
 SHOOT = 8
+BULLETS_UPDATE = 9
+BULLET_COLLISION = 10
 
 message_types = {
     MOVE: 'move',
@@ -20,4 +22,6 @@ message_types = {
     INIT_CONNECTION: 'init',
     BARREL_MOVED: 'barrel_moved',
     SHOOT: 'shoot',
+    BULLETS_UPDATE: 'bullets_update',
+    BULLET_COLLISION: 'bullet_collision',
 }

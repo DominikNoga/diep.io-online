@@ -75,3 +75,13 @@ export interface ShootMessage extends Message {
     bulletPosition: Point;
     bulletAngle: number;
 };
+
+type PlayerLifeInfo = {
+    name: string;
+    lifeLeft: number;
+}
+export interface BulletCollisionMessage extends Message {
+    damagedPlayers?: PlayerLifeInfo[];
+    bulletIds: string[];
+    wasCollision: boolean;
+};
