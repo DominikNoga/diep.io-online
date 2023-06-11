@@ -54,7 +54,8 @@ export const createGameManager = (message: CreateGameMessage, clientId: string):
                 game,
                 enemy.name,
                 playerColors[enemy.color],
-                enemy.position
+                enemy.position,
+                enemy.lifeLeft
             ));
     });
     const player = new Player(game, message.name, playerColors[message.color], message.position);

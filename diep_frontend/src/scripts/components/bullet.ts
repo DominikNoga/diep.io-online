@@ -1,4 +1,4 @@
-import { GameObjectColor, Point, playerColors } from "../constants.js";
+import { GameObjectColor, MessageTypes, Point, playerColors } from "../constants.js";
 
 export default class Bullet{
     public position: Point;

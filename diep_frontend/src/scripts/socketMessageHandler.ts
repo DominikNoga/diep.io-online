@@ -1,7 +1,6 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage, ShootMessage } from "./interfaces/message.interfaces";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage, ShootMessage, BulletCollisionMessage } from "./interfaces/message.interfaces";
 import { createGameManager, addJoinListener } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
-import Game from "./game.js";
 import Player from "./components/player.js";
 import GameManager from "./gameManager.js";
 import Bullet from "./components/bullet.js";
@@ -9,6 +8,7 @@ import Bullet from "./components/bullet.js";
 export default class SocketMessageHandler{
     private gameManager: GameManager;
     private _clientId: string;
+    private gameCreated: boolean = false;
     constructor(private websocket: WebSocket){}
 
     private handleMessage(message: Message){
@@ -37,6 +37,9 @@ export default class SocketMessageHandler{
             case MessageTypes.shoot:
                 this.handleShootMessage(<ShootMessage>message);
                 break;
+            case MessageTypes.bulletCollision:
+                this.handleBulletCollisionMessage(<BulletCollisionMessage>message);
+                break;
             default: 
                 alert("Unknown message type: " + message.type)
         }
@@ -62,20 +65,23 @@ export default class SocketMessageHandler{
                 return;
             }
             this.gameManager = createGameManager(message, this.clientId);
+            this.gameCreated = true;
             this.gameManager.runGame(this.websocket);
         }
     };
 
     private handleCollisionMessage(message: CollisionMessage){
-
+        if(!this.gameCreated) return;
     };
 
     private handleMoveMessage(message: MoveMessage){
+        if(!this.gameCreated) return;
         this.gameManager.game.update(message.position, message.name)
         //this.gameManager.update(message.enemies,message.obstacles)
     };
 
     private handleNewPlayerMessage(message: NewPlayerMessage): void {
+        if(!this.gameCreated) return;
         this.gameManager.game.enemies.push(
             new Player(
                 this.gameManager.game,
@@ -86,10 +92,12 @@ export default class SocketMessageHandler{
     };
 
     private handleErrorMessage(message: ErrorMessage): void {
+        if(!this.gameCreated) return;
         alert(message.message)
     };
 
     private handleBarrelMovedMessage(message: BarrelMovedMessage): void {
+        if(!this.gameCreated) return;
         if(message.name === this.gameManager.game.currentPlayer.name){
             return;
         }
@@ -98,13 +106,34 @@ export default class SocketMessageHandler{
     };
 
     private handleShootMessage(message: ShootMessage): void {
+        if(!this.gameCreated) return;
         this.gameManager.game.firedBullets.push(new Bullet(
             message.bulletPosition,
             message.bulletAngle,
             message.bulletColor,
             message.bulletId
         ))
-    }; 
+    };
+
+    private handleBulletCollisionMessage(message: BulletCollisionMessage): void {
+        if(!this.gameCreated) return;
+        
+        const result = message.damagedPlayers.find(player => player.name === this.gameManager.game.currentPlayer.name)
+        if(result !== undefined) {
+            this.gameManager.game.currentPlayer.lifeLeft = result.lifeLeft;
+            console.log(`Current player: ${this.gameManager.game.currentPlayer.name} life left: ${result.lifeLeft}`)
+        }
+        this.gameManager.game.enemies.forEach(enemy => {
+            for(let player of message.damagedPlayers) {
+                if(player.name === enemy.name){
+                    enemy.lifeLeft = player.lifeLeft;
+                    console.log(`Enemy: ${enemy.name} life left: ${enemy.lifeLeft}`)
+                    break;
+                }
+            }
+        });
+        this.gameManager.game.firedBullets = this.gameManager.game.firedBullets.filter(bullet => !message.bulletIds.includes(bullet.id));
+    }
 
     public listen(){
         this.websocket.addEventListener('message', (({data}) =>{

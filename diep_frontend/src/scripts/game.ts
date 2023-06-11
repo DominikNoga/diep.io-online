@@ -1,4 +1,3 @@
-import GameInterface from "./interfaces/game.interface";
 import Player from "./components/player.js";
 import GameMechanics from "./gameMechanics.js";
 import { Point, allowedKeys, ObstacleTypes, Keys, MessageTypes } from "./constants.js";
@@ -6,7 +5,7 @@ import Obstacle from "./components/obstacle.js";
 import Bullet from "./components/bullet.js";
 import { throttle, debounce } from "./helper_services/delayRequest.js";
 
-export default class Game implements GameInterface{
+export default class Game{
     private gameMechanics: GameMechanics
     public currentPlayer: Player;
     public width: number;
@@ -54,7 +53,7 @@ export default class Game implements GameInterface{
         });
 
         document.addEventListener('mousedown', (e) =>{
-            if(!this.gameMechanics.keysPressed[Keys.SPACE]){
+            if(!this.gameMechanics.keysPressed[Keys.SPACE] && e.button == 0){
                 this.mouseDown = true;
                 if(this.currentPlayer.canShoot)
                     this.currentPlayer.shoot(websocket);
@@ -91,10 +90,30 @@ export default class Game implements GameInterface{
         }
     }
 
-    public updateBullets(){
+    public updateBullets(websocket: WebSocket){
+        const bulletsToDelete: string[] = [];
         this.firedBullets.forEach(bullet => {
-            bullet.update();
+            if(
+                bullet.position.x < (this.width + bullet.radius*2)  
+                && bullet.position.y < (this.height + bullet.radius*2) 
+                && bullet.position.x > -bullet.radius*2 
+                && bullet.position.y > -bullet.radius*2
+            ){
+                bullet.update();
+            }
+            else {
+                bulletsToDelete.push(bullet.id);
+            }
         });
+        const updatedBullets = this.firedBullets.map(bullet => ({
+            id: bullet.id,
+            position: bullet.position
+        }));
+        websocket.send(JSON.stringify({
+            updatedBullets: updatedBullets,
+            type: MessageTypes.bulletsUpdate
+        }))
+        this.firedBullets = this.firedBullets.filter(bullet => !bulletsToDelete.includes(bullet.id));
     }
 
     public draw(ctx: CanvasRenderingContext2D){

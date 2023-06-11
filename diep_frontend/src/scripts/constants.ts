@@ -64,4 +64,6 @@ export enum MessageTypes {
     initConnection = 'init',
     barrelMoved = 'barrel_moved',
     shoot = 'shoot',
+    bulletsUpdate = 'bullets_update',
+    bulletCollision = 'bullet_collision',
 };
