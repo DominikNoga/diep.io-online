@@ -130,8 +130,7 @@ class MessageHandler:
         event = {
             'damagedPlayers': damaged_players,
             'bulletIds': colided_bullets_ids,
-            'type': message_types[BULLET_COLLISION],
-            'wasCollision': True
+            'type': message_types[BULLET_COLLISION]
         }
         
         self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in colided_bullets_ids]

@@ -29,13 +29,13 @@ export default class Player {
     public shootCooldown: number;
     public offset: Point;
 
-    public constructor(game: Game, name: string, color: GameObjectColor, startingPosition: Point) {
+    public constructor(game: Game, name: string, color: GameObjectColor, startingPosition: Point, lifeLeft=100) {
         this.game = game;
         this._name = name;
         this.color = color;
         this.position = startingPosition;
         this._score = 0;
-        this._lifeLeft = 100;
+        this._lifeLeft = lifeLeft;
         this._radius = 25;
         this._speed = 5
         this.shootCooldown = 700; // value in miliseconds

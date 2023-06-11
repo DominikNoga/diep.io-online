@@ -26,6 +26,7 @@ type PlayerMsg = {
     position: Point;
     name: string;
     color: number;
+    lifeLeft: number;
 }
 
 export interface CreateGameMessage extends Message {
@@ -83,5 +84,4 @@ type PlayerLifeInfo = {
 export interface BulletCollisionMessage extends Message {
     damagedPlayers?: PlayerLifeInfo[];
     bulletIds: string[];
-    wasCollision: boolean;
 };

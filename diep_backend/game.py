@@ -39,7 +39,8 @@ class Game:
             'players': [{
                     'name': player.name, 
                     'position': player.position, 
-                    'color': player.color
+                    'color': player.color,
+                    'lifeLeft': player.life_left,
                 } for player in self.players
             ]
         }
