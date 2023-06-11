@@ -5,19 +5,22 @@ class Obstacle:
     def __init__(self, position,num_edges,radius):
         self.position = position
         self.num_edges=num_edges
+        self.num_edges += 2
         self.radius=radius+4
         self.vertices = []
         self.edges = []
         self.normals = []
         if num_edges == 1:
             self.type ='basic'
+            self.life_left = 5
         elif num_edges == 2:
             self.type ='medium'
+            self.life_left = 10
         elif num_edges == 3:
             self.type ='hard'
-        self.num_edges += 2
-        angle = 360 / num_edges
-        for vertex_index in range(num_edges):
+            self.life_left = 15
+        angle = 360 / self.num_edges
+        for vertex_index in range(self.num_edges):
             radian_angle = math.radians(angle * vertex_index)
             x = self.radius * math.cos(radian_angle)+self.position['x']
             y = self.radius * math.sin(radian_angle)+self.position['y']

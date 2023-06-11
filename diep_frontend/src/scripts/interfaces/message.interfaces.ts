@@ -48,7 +48,7 @@ export interface CreateGameMessage extends Message {
 };
 
 export interface CollisionMessage extends Message {
-
+    name?: string;
 };
 
 export interface MoveMessage extends Message {

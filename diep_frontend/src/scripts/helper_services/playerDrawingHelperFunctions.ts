@@ -1,4 +1,5 @@
 import Player from "../components/player";
+import Obstacle from "../components/obstacle";
 
 export const drawPlayerObject = (ctx: CanvasRenderingContext2D, player: Player): void =>{
     // draw the inside
@@ -71,6 +72,20 @@ export const drawLifeBar = (ctx: CanvasRenderingContext2D, player: Player) => {
 
     const rectX = player.position.x - outerWidth/2;
     const rectY = player.position.y - 3 * player.radius;
+    ctx.strokeStyle = 'black';
+    ctx.strokeRect(rectX, rectY, outerWidth, rectHeight + borderWidth);
+    ctx.fillStyle = '#0db53a';
+    ctx.fillRect(rectX + borderWidth/2, rectY + borderWidth/2, innerWidth, rectHeight);
+}
+
+export const drawObstacleLifeBar = (ctx: CanvasRenderingContext2D, obstacle: Obstacle) => {
+    const borderWidth = 6;
+    const innerWidth = obstacle.radius * 4 * obstacle.lifeLeft/obstacle.maxLife;
+    const outerWidth = obstacle.radius * 4 + borderWidth;
+    const rectHeight = obstacle.radius*0.8;
+
+    const rectX = obstacle.position.x - outerWidth/2;
+    const rectY = obstacle.position.y - 3 * obstacle.radius;
     ctx.strokeStyle = 'black';
     ctx.strokeRect(rectX, rectY, outerWidth, rectHeight + borderWidth);
     ctx.fillStyle = '#0db53a';

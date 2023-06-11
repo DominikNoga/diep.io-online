@@ -77,7 +77,6 @@ export default class SocketMessageHandler{
     private handleMoveMessage(message: MoveMessage){
         if(!this.gameCreated) return;
         this.gameManager.game.update(message.position, message.name)
-        //this.gameManager.update(message.enemies,message.obstacles)
     };
 
     private handleNewPlayerMessage(message: NewPlayerMessage): void {
