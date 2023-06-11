@@ -43,7 +43,12 @@ class Game:
                     'color': player.color,
                     'lifeLeft': player.life_left,
                 } for player in self.players
-            ]}
+            ],
+            'obstacles': [{
+                'type': obstacle.type,
+                'position': obstacle.position
+            } for obstacle in self.obstacles]}
+
     
     def there_is_such_player(self, player_name: str):
         isIn = False

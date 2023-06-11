@@ -3,7 +3,7 @@ import Game from "../game.js";
 import Player from "../components/player.js";
 import GameManager from "../gameManager.js";
 import { playerColors } from "../constants.js";
-import Obstacle from "../components/obstacle";
+import Obstacle from "../components/obstacle.js";
 
 
 export const addJoinListener = (websocket: WebSocket, clientId: string) => {
