@@ -85,10 +85,11 @@ class Game:
         buletts_ids = []
         for bullet, player in zip(self.bullets_fired, self.players):
             if self.circle_collide(bullet, player):
-                player.life_left -= bullet.damage
+                if player.life_left > 0:
+                    player.life_left -= bullet.damage
                 damaged_players.append({
                     "name": player.name,
-                    "life_left": player.life_left
+                    "lifeLeft": player.life_left
                 })
                 buletts_ids.append(bullet.id)
                 

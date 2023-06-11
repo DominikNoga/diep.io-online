@@ -12,9 +12,11 @@ class Server:
         self.connected_players = {}
         self.game = Game()
         self.message_handler = MessageHandler(self.game)
+        self.first_shooting_client = None
     
     async def handle_recieved_message(self, websocket, player_id, message, index):
         message = json.loads(message)
+        
         message_type = message['type']
         try:
             if message_type == message_types[MOVE]:
@@ -30,7 +32,8 @@ class Server:
                 await self.message_handler.handle_shoot_message(self.connected_players ,websocket, message)
                 
             elif message_type == message_types[BULLETS_UPDATE]:
-                await self.message_handler.handle_bullets_update_message(websocket, message, index)
+                if index == 0:
+                    await self.message_handler.handle_bullets_update_message(self.connected_players, message)
             
             else: print(f"No such message type {message_type}")
         
@@ -44,7 +47,7 @@ class Server:
     async def recieveMessages(self, websocket):
         try:
             async for message in websocket:
-                for index, (player_id, player_socket) in enumerate(self.connected_players.items()):
+                for index, (player_socket, player_id) in enumerate(self.connected_players.items()):
                     await self.handle_recieved_message(player_socket, player_id, message, index)
 
         except websockets.exceptions.ConnectionClosed as e:
@@ -59,7 +62,7 @@ class Server:
     async def handler(self, websocket):
         print(f"New client connected {websocket}")
         client_id = str(uuid.uuid4())
-        self.connected_players[client_id] = websocket
+        self.connected_players[websocket] = client_id
 
         await self.message_handler.send_init_connection_message(websocket, client_id)
         await self.recieveMessages(websocket)

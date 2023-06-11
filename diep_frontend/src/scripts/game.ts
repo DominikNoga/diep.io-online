@@ -53,7 +53,7 @@ export default class Game{
         });
 
         document.addEventListener('mousedown', (e) =>{
-            if(!this.gameMechanics.keysPressed[Keys.SPACE]){
+            if(!this.gameMechanics.keysPressed[Keys.SPACE] && e.button == 0){
                 this.mouseDown = true;
                 if(this.currentPlayer.canShoot)
                     this.currentPlayer.shoot(websocket);
@@ -91,8 +91,19 @@ export default class Game{
     }
 
     public updateBullets(websocket: WebSocket){
+        const bulletsToDelete: string[] = [];
         this.firedBullets.forEach(bullet => {
-            bullet.update();
+            if(
+                bullet.position.x < (this.width + bullet.radius*2)  
+                && bullet.position.y < (this.height + bullet.radius*2) 
+                && bullet.position.x > -bullet.radius*2 
+                && bullet.position.y > -bullet.radius*2
+            ){
+                bullet.update();
+            }
+            else {
+                bulletsToDelete.push(bullet.id);
+            }
         });
         const updatedBullets = this.firedBullets.map(bullet => ({
             id: bullet.id,
@@ -102,6 +113,7 @@ export default class Game{
             updatedBullets: updatedBullets,
             type: MessageTypes.bulletsUpdate
         }))
+        this.firedBullets = this.firedBullets.filter(bullet => !bulletsToDelete.includes(bullet.id));
     }
 
     public draw(ctx: CanvasRenderingContext2D){

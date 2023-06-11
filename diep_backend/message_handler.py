@@ -7,10 +7,12 @@ from game import Game
 class MessageHandler:
     def __init__(self, game: Game):
         self.game = game
-        self.sleep_time = 0.01
+        self.sleep_time = 0.1
         self.last_adding_result = None
         self.last_bullet_update_result = None
-    
+        self.bullets_to_delete = set()
+        self.delete_bullets_treshold = 15
+        
     async def send_collision_message(self, websocket, message):
         event = {
             "type": message_types[COLLISION],
@@ -44,7 +46,7 @@ class MessageHandler:
         await websocket.send(json.dumps(event))
         await asyncio.sleep(self.sleep_time)
     
-    async def send_new_player_message(self, websocket, message):
+    async def send_new_player_message(self, websocket):
         event = {
             "type": message_types[NEW_PLAYER],
             "position": self.last_adding_result["position"],
@@ -77,9 +79,9 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
         
     async def handle_shoot_message(self, connected_players, websocket, message):
-        self.game.bullets_fired.append(Bullet(message['bulletPosition'], message['playerName'], message['bulletId']))
 
-        if connected_players[message['clientId']] == websocket:
+        if connected_players[websocket] == message['clientId']:
+            self.game.bullets_fired.append(Bullet(message['bulletPosition'], message['playerName'], message['bulletId']))
             return
         
         event = {
@@ -102,47 +104,39 @@ class MessageHandler:
             await self.send_create_message(websocket)
         
         else:
-            await self.send_new_player_message(websocket, message)
+            await self.send_new_player_message(websocket)
     
     async def handle_move_message(self, websocket, message: dict):
         await self.send_move_message(websocket, message)
     
-    async def handle_bullets_update_message(self, websocket, message, index):
-        if index == 0:
-            bullet_ids = []
-            for bullet in message["updatedBullets"]:
-                position = bullet['position']
-                if position['x'] > self.game.width or position['x'] < 0 or position['y'] > self.game.height or position['y'] < 0:
-                    bullet_ids.append(bullet['id'])
-                b = self.game.find_object_by_property('id', bullet['id'], 'bullet')
-                if b is not None:
-                    b.position = position
-                
-            damaged_players, colided_bullets_ids = self.game.check_for_bullet_player_collision()
-            for id in colided_bullets_ids:
-                bullet_ids.append(id)
-                
-            self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in bullet_ids]
+    async def handle_bullets_update_message(self, connected_players, message):
+        for bullet in message["updatedBullets"]:
+            position = bullet['position']
+            if position['x'] > self.game.width or position['x'] < 0 or position['y'] > self.game.height or position['y'] < 0:
+                self.bullets_to_delete.add(bullet['id'])
+                continue
+            b = self.game.find_object_by_property('id', bullet['id'], 'bullet')
+            if b is not None:
+                b.position = position
             
-            if len(bullet_ids) <= 0:
-                self.last_bullet_update_result = None
-            
-            if len(damaged_players) <= 0:
-                self.last_bullet_update_result = {
-                    'bulletIds': bullet_ids,
-                    'type': message_types[BULLET_COLLISION],
-                    'wasCollision': False
-                }
-            
-            else:   
-                self.last_bullet_update_result = {
-                    'damagedPlayers': damaged_players,
-                    'bulletIds': bullet_ids,
-                    'type': message_types[BULLET_COLLISION],
-                    'wasCollision': True
-                }
-        print(self.last_bullet_update_result)
-        if self.last_bullet_update_result == None:
+        damaged_players, colided_bullets_ids = self.game.check_for_bullet_player_collision()
+        
+        if len(self.bullets_to_delete) > 0:
+            self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in self.bullets_to_delete]
+        
+        if len(damaged_players) <= 0:
             return
-        await websocket.send(json.dumps(self.last_bullet_update_result))
-        await asyncio.sleep(self.sleep_time)
+        
+        event = {
+            'damagedPlayers': damaged_players,
+            'bulletIds': colided_bullets_ids,
+            'type': message_types[BULLET_COLLISION],
+            'wasCollision': True
+        }
+        
+        self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in colided_bullets_ids]
+        
+        print(event)
+        for ws in connected_players:
+            await ws.send(json.dumps(event))
+            await asyncio.sleep(self.sleep_time)

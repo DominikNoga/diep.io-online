@@ -118,24 +118,34 @@ export default class SocketMessageHandler{
     private handleBulletCollisionMessage(message: BulletCollisionMessage): void {
         if(!this.gameCreated) return;
         if(!message.wasCollision){
+            console.log("before: ")
+            console.log(this.gameManager.game.firedBullets)
             if(message.bulletIds.length > 0)
                 this.gameManager.game.firedBullets = this.gameManager.game.firedBullets.filter(bullet => !message.bulletIds.includes(bullet.id));
+            
+            console.log("after: ")
+            console.log(this.gameManager.game.firedBullets)
             return;
         }
         const result = message.damagedPlayers.find(player => player.name === this.gameManager.game.currentPlayer.name)
         if(result !== undefined) {
             this.gameManager.game.currentPlayer.lifeLeft = result.lifeLeft;
-            console.log(this.gameManager.game.currentPlayer)
+            console.log(`Current player: ${this.gameManager.game.currentPlayer.name} life left: ${result.lifeLeft}`)
         }
         this.gameManager.game.enemies.forEach(enemy => {
-            message.damagedPlayers.forEach(player => {
+            for(let player of message.damagedPlayers) {
                 if(player.name === enemy.name){
                     enemy.lifeLeft = player.lifeLeft;
-                    console.log(enemy)
+                    console.log(`Enemy: ${enemy.name} life left: ${enemy.lifeLeft}`)
+                    break;
                 }
-            })
+            }
         });
+        console.log("before: ")
+        console.log(this.gameManager.game.firedBullets)
         this.gameManager.game.firedBullets = this.gameManager.game.firedBullets.filter(bullet => !message.bulletIds.includes(bullet.id));
+        console.log("after: ")
+        console.log(this.gameManager.game.firedBullets)
     }
 
     public listen(){
