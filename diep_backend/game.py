@@ -10,9 +10,10 @@ class Game:
         self.width = 1600
         self.height = 900
         self.players = []
-        self.obstacles = []
+        self.obstacles = self.generate_obstacles(20)
         self.bullets_fired = []
         self.players_colors_length = 2
+
         
     def add_player(self, player_name: str, websocket):
         if len(self.players) > 0 and self.there_is_such_player(player_name):
@@ -38,12 +39,11 @@ class Game:
             'color': color_index,
             'players': [{
                     'name': player.name, 
-                    'position': player.position, 
+                    'position': player.position,
                     'color': player.color,
                     'lifeLeft': player.life_left,
                 } for player in self.players
-            ]
-        }
+            ]}
     
     def there_is_such_player(self, player_name: str):
         isIn = False
@@ -164,9 +164,6 @@ class Game:
         projection += math.sqrt(axis['x'] ** 2 + axis['y'] ** 2)
         return projection
 
-    def generate_obstacles(self):
-        return None
-
     def find_player_id_by_name(self, name):
         return self.find_object_by_property("name", name, "player").id
     
@@ -192,4 +189,19 @@ class Game:
             return next((obstacle for  obstacle in self.obstacles if getattr(obstacle, prop_name) == prop_value), None)
         
         else: print("Unknown object type")
-        
+
+    def generate_obstacles(self,num_obstacles):
+        radius=25
+        i=0
+        obstacles=[]
+        while i<num_obstacles:
+            x = random.randint(0, self.width)
+            y = random.randint(0, self.height)
+            num_edges = random.randint(1, 3)
+            obstacle2 = Obstacle({'x':x,'y': y },num_edges,radius)
+            if all(not self.polygons_collide(obstacle1,obstacle2)for obstacle1 in obstacles):
+                obstacles.append(obstacle2)
+            else:
+                i-=1
+            i+=1
+        return obstacles

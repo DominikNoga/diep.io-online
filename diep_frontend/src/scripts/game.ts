@@ -30,7 +30,6 @@ export default class Game{
             x: 100,
             y: 100
         }
-        this.obstacles.push(new Obstacle(ObstacleTypes.hard,position))
         this.gameMechanics = new GameMechanics();
         this.clientId = clientId;
     };

@@ -7,6 +7,7 @@ export default class Obstacle{
     public lifeLeft: number;
     public edges: number;
     public radius: number;
+    public type: ObstacleTypeString;
     public color = {
         bg: "",
         border: ""
@@ -33,6 +34,7 @@ export default class Obstacle{
               console.log(`No such obstacle type: ${type}`);
               break;
         }
+        this.type=type;
         this.position = position;
         this.radius = 25;
     }

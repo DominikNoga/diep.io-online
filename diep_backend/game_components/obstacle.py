@@ -9,6 +9,13 @@ class Obstacle:
         self.vertices = []
         self.edges = []
         self.normals = []
+        if num_edges == 1:
+            self.type ='basic'
+        elif num_edges == 2:
+            self.type ='medium'
+        elif num_edges == 3:
+            self.type ='hard'
+        self.num_edges += 2
         angle = 360 / num_edges
         for vertex_index in range(num_edges):
             radian_angle = math.radians(angle * vertex_index)

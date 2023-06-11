@@ -36,8 +36,6 @@ class MessageHandler:
                 "type": message_types[MOVE],
                "position": updated_pos,
                "name": message["name"],
-               #"players": self.game.players,
-               #"obstacles": self.game.obstacles
         }
         await websocket.send(json.dumps(event))
 

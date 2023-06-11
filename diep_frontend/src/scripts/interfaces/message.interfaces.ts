@@ -1,6 +1,7 @@
 import Player from "../components/player.js";
 import Obstacle from "../components/obstacle.js";
 import { GameObjectColor, Point } from "../constants.js";
+import { ObstacleTypeString } from "../constants.js";
 
 export interface Message {
     type: string;
@@ -19,6 +20,7 @@ export interface Message {
  * @property height: height of a map
  * @property name: name of a new player passed in form
  * @property players: list of players that is already in game
+ * @property obstacles: list of obstacles
  * @extends {Message}
  */
 
@@ -29,6 +31,11 @@ type PlayerMsg = {
     lifeLeft: number;
 }
 
+type ObstacleMsg={
+    position: Point;
+    type: ObstacleTypeString;
+}
+
 export interface CreateGameMessage extends Message {
     position?: Point;
     color?: number;
@@ -37,6 +44,7 @@ export interface CreateGameMessage extends Message {
     height?: number;
     name?: string;
     players?: PlayerMsg[];
+    obstacles?: ObstacleMsg[];
 };
 
 export interface CollisionMessage extends Message {
