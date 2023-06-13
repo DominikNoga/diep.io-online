@@ -13,7 +13,6 @@ class Game:
         self.obstacles = self.generate_obstacles(20)
         self.bullets_fired = []
         self.players_colors_length = 2
-        self.players.append(Player("x", {'x': 100, 'y': 100}, 1, 10))
 
         
     def add_player(self, player_name: str, websocket):
@@ -24,8 +23,8 @@ class Game:
                 'success': False, 
                 'target_client': ''
             }
-        
-        x, y = self.find_random_position()
+
+        x, y = self.find_random_not_occupied_position()
         color_index = random.randint(0, 2)
         player = Player(player_name, {'x': x, 'y': y}, color_index, str(websocket))
         self.players.append(player)
@@ -58,9 +57,14 @@ class Game:
             if player.name == player_name:
                 isIn = True
         return isIn
-    
-    def find_random_position(self):
-        return [random.randint(100, self.width - 100), random.randint(100, self.height - 100)]
+
+    def find_random_not_occupied_position(self):
+        while True:
+            x,y=[random.randint(100, self.width - 100), random.randint(100, self.height - 100)]
+            point={'x': x, 'y': y}
+            if all(self.distance(point,obstacle.position)>50  for obstacle in self.obstacles):
+                break
+        return x,y
 
     def update_player_position(self, name, keysPressed):
         player = self.find_object_by_property("name", name, "player")
