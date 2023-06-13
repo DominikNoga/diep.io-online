@@ -4,7 +4,7 @@ import { MessageTypes, playerColors } from "./constants.js";
 import Player from "./components/player.js";
 import GameManager from "./gameManager.js";
 import Bullet from "./components/bullet.js";
-import Obstacle from "./components/obstacle";
+import Obstacle from "./components/obstacle.js";
 
 export default class SocketMessageHandler{
     private gameManager: GameManager;
@@ -146,6 +146,13 @@ export default class SocketMessageHandler{
                 }
             }
         });
+        message.newObstacles.forEach(obstacle =>{
+            this.gameManager.game.obstacles.push(new Obstacle(
+                obstacle.type,
+                obstacle.position,
+                obstacle.id
+        ));
+    });
         const currentScore=message.scoreMsg.find(player=>player.name=== this.gameManager.game.currentPlayer.name);
         this.gameManager.game.currentPlayer.score=currentScore.score;
         console.log(currentScore)

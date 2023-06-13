@@ -119,7 +119,7 @@ class MessageHandler:
             if b is not None:
                 b.position = position
         damaged_players, collided_bullets_ids = self.game.check_for_bullet_player_collision()
-        damaged_obstacles,collided_bullets_ids_obs =self.game.check_for_bullet_obstacle_collision()
+        damaged_obstacles,collided_bullets_ids_obs,new_obstacles =self.game.check_for_bullet_obstacle_collision()
 
 
         if len(self.bullets_to_delete) > 0:
@@ -133,7 +133,8 @@ class MessageHandler:
             'bulletIds': collided_bullets_ids+collided_bullets_ids_obs,
             'type': message_types[BULLET_COLLISION],
             'scoreMsg':[{'name':player.name,
-                      'score':player.score}for player in self.game.players]
+                      'score':player.score}for player in self.game.players],
+            'newObstacles':new_obstacles
         }
         
         self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in collided_bullets_ids]

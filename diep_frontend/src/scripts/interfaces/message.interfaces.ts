@@ -99,4 +99,5 @@ export interface BulletCollisionMessage extends Message {
     damagedObstacles?: ObstacleLifeInfo[];
     bulletIds: string[];
     scoreMsg:ScoreMsg[];
+    newObstacles: ObstacleMsg[];
 };

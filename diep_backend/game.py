@@ -183,6 +183,7 @@ class Game:
     def check_for_bullet_obstacle_collision(self):
         damaged_obstacles = []
         buletts_ids = []
+        new_obstacles=[]
         for bullet in self.bullets_fired:
             for obstacle in self.obstacles:
                 if self.circle_collide(bullet, obstacle):
@@ -201,11 +202,11 @@ class Game:
                                     player.score+=300;
                                 if obstacle.type=="hard":
                                     player.score+=500;
+                        new_obstacles.append(self.add_new_obstacle(obstacle.id))
                         self.obstacles.remove(obstacle)
-
                     buletts_ids.append(bullet.id)
                     self.bullets_fired.remove(bullet)
-        return damaged_obstacles, buletts_ids
+        return damaged_obstacles, buletts_ids,new_obstacles
 
 
     def circle_collide(self,obj1,obj2):
@@ -305,3 +306,14 @@ class Game:
                 i-=1
             i+=1
         return obstacles
+
+    def add_new_obstacle(self,id):
+        x,y=self.find_random_not_occupied_position()
+        num_edges = random.randint(1, 3)
+        radius = 25
+        obstacle=Obstacle({'x': x, 'y': y}, num_edges, radius, id)
+        self.obstacles.append(obstacle)
+        return {'type':obstacle.type,
+                'position': obstacle.position,
+                'id':obstacle.id}
+
