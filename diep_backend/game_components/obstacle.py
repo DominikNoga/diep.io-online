@@ -2,7 +2,7 @@ import math
 
 
 class Obstacle:
-    def __init__(self, position,num_edges,radius):
+    def __init__(self, position,num_edges,radius,id):
         self.position = position
         self.num_edges=num_edges
         self.num_edges += 2
@@ -10,6 +10,7 @@ class Obstacle:
         self.vertices = []
         self.edges = []
         self.normals = []
+        self.id=id
         if num_edges == 1:
             self.type ='basic'
             self.life_left = 5

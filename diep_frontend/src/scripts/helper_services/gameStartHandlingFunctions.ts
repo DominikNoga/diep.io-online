@@ -62,7 +62,8 @@ export const createGameManager = (message: CreateGameMessage, clientId: string):
     message.obstacles.forEach(obstacle =>{
             game.obstacles.push(new Obstacle(
                 obstacle.type,
-                obstacle.position
+                obstacle.position,
+                obstacle.id
             ));
     });
     const player = new Player(game, message.name, playerColors[message.color], message.position);

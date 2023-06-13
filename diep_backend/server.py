@@ -21,28 +21,30 @@ class Server:
         try:
             if message_type == message_types[MOVE]:
                 await self.message_handler.handle_move_message(websocket, message)
-            
+
             elif message_type == message_types[JOIN]:
                 await self.message_handler.handle_join_message(websocket, player_id, message, index)
-            
+
             elif message_type == message_types[BARREL_MOVED]:
                 await self.message_handler.handle_barrel_moved_message(websocket ,message)
-            
+
             elif message_type == message_types[SHOOT]:
                 await self.message_handler.handle_shoot_message(self.connected_players ,websocket, message)
-                
+
             elif message_type == message_types[BULLETS_UPDATE]:
                 if index == 0:
                     await self.message_handler.handle_bullets_update_message(self.connected_players, message)
-            
+
             else: print(f"No such message type {message_type}")
-        
+
         except Exception as err:
             traceback_info = traceback.format_exc()
             print(traceback_info)
             await self.message_handler.send_error_message(websocket, {
                 "content": f"there was an error {str(err)}"
-            }) 
+            })
+
+
 
     async def recieveMessages(self, websocket):
         try:

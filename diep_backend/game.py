@@ -13,6 +13,7 @@ class Game:
         self.obstacles = self.generate_obstacles(20)
         self.bullets_fired = []
         self.players_colors_length = 2
+        self.players.append(Player("x", {'x': 100, 'y': 100}, 1, 10))
 
         
     def add_player(self, player_name: str, websocket):
@@ -46,7 +47,8 @@ class Game:
             ],
             'obstacles': [{
                 'type': obstacle.type,
-                'position': obstacle.position
+                'position': obstacle.position,
+                'id': obstacle.id
             } for obstacle in self.obstacles]}
 
     
@@ -156,13 +158,8 @@ class Game:
     #     return intersection_point
     def check_for_obstacle_player_collision(self,player):
         for obstacle in self.obstacles:
-            if self.circle_polygon_collide(player,obstacle):
-                msg= {
-                    'type': message_types[COLLISION],
-                    'name': player.name
-                }
+            if self.circle_collide(player,obstacle):
                 self.players.remove(player)
-                return msg
                 # dx = player.position['x'] - obstacle.position['x']
                 # dy = player.position['y'] - obstacle.position['y']
                 # angle = math.atan2(dy, dx)
@@ -175,18 +172,29 @@ class Game:
     def check_for_bullet_obstacle_collision(self):
         damaged_obstacles = []
         buletts_ids = []
-        for bullet, obstacle in zip(self.bullets_fired, self.obstacles):
-            if self.circle_polygon_collide(bullet, obstacle):
-                if obstacle.life_left > 0:
-                    obstacle.life_left -= bullet.damage
-                damaged_obstacles.append({
-                    "id": obstacle.id,
-                    "lifeLeft": obstacle.life_left
-                })
-                buletts_ids.append(bullet.id)
-                if(obstacle.life_left<0):
-                 self.obstacles.remove(obstacle)
-                self.bullets_fired.remove(bullet)
+        for bullet in self.bullets_fired:
+            for obstacle in self.obstacles:
+                if self.circle_collide(bullet, obstacle):
+                    if obstacle.life_left > 0:
+                        obstacle.life_left -= bullet.damage
+                    damaged_obstacles.append({
+                        "id": obstacle.id,
+                        "lifeLeft": obstacle.life_left
+                    })
+                    if (obstacle.life_left <= 0):
+                        for player in self.players:
+                            if player.name == bullet.player_name:
+                                if obstacle.type=="basic":
+                                    player.score+=100;
+                                if obstacle.type=="medium":
+                                    player.score+=300;
+                                if obstacle.type=="hard":
+                                    player.score+=500;
+                        self.obstacles.remove(obstacle)
+
+                    buletts_ids.append(bullet.id)
+                    self.bullets_fired.remove(bullet)
+        return damaged_obstacles, buletts_ids
 
 
     def circle_collide(self,obj1,obj2):
@@ -279,7 +287,7 @@ class Game:
             x = random.randint(0, self.width)
             y = random.randint(0, self.height)
             num_edges = random.randint(1, 3)
-            obstacle2 = Obstacle({'x':x,'y': y },num_edges,radius)
+            obstacle2 = Obstacle({'x':x,'y': y },num_edges,radius,i)
             if all(not self.polygons_collide(obstacle1,obstacle2)for obstacle1 in obstacles):
                 obstacles.append(obstacle2)
             else:

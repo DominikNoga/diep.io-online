@@ -4,6 +4,7 @@ import { MessageTypes, playerColors } from "./constants.js";
 import Player from "./components/player.js";
 import GameManager from "./gameManager.js";
 import Bullet from "./components/bullet.js";
+import Obstacle from "./components/obstacle";
 
 export default class SocketMessageHandler{
     private gameManager: GameManager;
@@ -127,10 +128,24 @@ export default class SocketMessageHandler{
                 if(player.name === enemy.name){
                     enemy.lifeLeft = player.lifeLeft;
                     console.log(`Enemy: ${enemy.name} life left: ${enemy.lifeLeft}`)
+                    if(enemy.lifeLeft==0)this.gameManager.game.enemies=this.gameManager.game.enemies.filter((player:Player) => player !== enemy);
                     break;
                 }
             }
         });
+        this.gameManager.game.obstacles.forEach(obstacle => {
+            for(let dmg_obstacle of message.damagedObstacles) {
+                if(obstacle.id === dmg_obstacle.id){
+                    obstacle.lifeLeft = dmg_obstacle.lifeLeft;
+                    console.log(`Obstacle:  life left: ${obstacle.lifeLeft}`)
+                    if(obstacle.lifeLeft==0)this.gameManager.game.obstacles=this.gameManager.game.obstacles.filter((obs:Obstacle) => obs !== obstacle);
+                    break;
+                }
+            }
+        });
+        const currentScore=message.scoreMsg.find(player=>player.name=== this.gameManager.game.currentPlayer.name);
+        this.gameManager.game.currentPlayer.score=currentScore.score;
+        console.log(currentScore)
         this.gameManager.game.firedBullets = this.gameManager.game.firedBullets.filter(bullet => !message.bulletIds.includes(bullet.id));
     }
 

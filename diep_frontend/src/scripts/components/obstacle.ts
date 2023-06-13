@@ -10,21 +10,22 @@ export default class Obstacle{
     public radius: number;
     public type: ObstacleTypeString;
     public maxLife: number;
+    public id;
     public color = {
         bg: "",
         border: ""
     };
 
-    constructor(type: ObstacleTypeString, position: Point){
+    constructor(type: ObstacleTypeString, position: Point,id:number){
         switch (type) {
             case ObstacleTypes.basic:
-              this.edges = 4;
+              this.edges = 3;
               this.color.bg = ObstacleColors.obstacle_basic_color;
               this.color.border = ObstacleColors.obstacle_basic_border_color;
               this.maxLife=5;
               break;
             case ObstacleTypes.medium:
-              this.edges = 3;
+              this.edges = 4;
               this.color.bg = ObstacleColors.obstacle_medium_color;
               this.color.border = ObstacleColors.obstacle_medium_border_color;
               this.maxLife=10;
@@ -43,6 +44,7 @@ export default class Obstacle{
         this.position = position;
         this.radius = 25;
         this.lifeLeft=this.maxLife;
+        this.id=id;
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {
