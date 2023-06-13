@@ -98,7 +98,12 @@ class Game:
                     "lifeLeft": player.life_left
                 })
                 buletts_ids.append(bullet.id)
-                
+                if player.life_left<=0:
+                    for enemy in self.players:
+                        if enemy.name == bullet.player_name:
+                            enemy.score+=player.score
+                    self.players.remove(player)
+
         return damaged_players, buletts_ids
     
     def check_for_player_player_collision(self, player):
