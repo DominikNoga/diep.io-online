@@ -58,6 +58,7 @@ export interface MoveMessage extends Message {
     position?: Point;
     enemies?: Player[];
     obstacles?: Obstacle[];
+    isAlive?: boolean;
 };
 
 export interface ErrorMessage extends Message {

@@ -165,4 +165,7 @@ export default class Game{
             name: this.currentPlayer.name
         }));
     }, 1000/40)
+    public gameOver(){
+        location.reload()
+    }
 }

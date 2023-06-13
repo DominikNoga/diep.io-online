@@ -31,11 +31,13 @@ class MessageHandler:
 
     async def send_move_message(self, websocket, message: dict):
         updated_pos = self.game.update_player_position(message["name"], message["direction"])
-        self.game.check_for_collisions(message["name"])
+
+        is_alive=self.game.check_for_collisions(message["name"])
         event={
                 "type": message_types[MOVE],
                "position": updated_pos,
                "name": message["name"],
+                "isAlive": is_alive
         }
         await websocket.send(json.dumps(event))
 

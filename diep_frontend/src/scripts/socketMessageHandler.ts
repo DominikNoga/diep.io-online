@@ -78,6 +78,9 @@ export default class SocketMessageHandler{
     private handleMoveMessage(message: MoveMessage){
         if(!this.gameCreated) return;
         this.gameManager.game.update(message.position, message.name)
+        if(!message.isAlive){
+            this.gameManager.game.gameOver();
+        }
     };
 
     private handleNewPlayerMessage(message: NewPlayerMessage): void {

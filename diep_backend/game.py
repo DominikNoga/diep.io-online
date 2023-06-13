@@ -82,9 +82,9 @@ class Game:
     def check_for_collisions(self, name):
         player = self.find_object_by_property("name", name, "player")
         self.check_for_player_player_collision(player)
-        self.check_for_obstacle_player_collision(player)
-        self.check_for_bullet_player_collision()
-        self.check_for_bullet_obstacle_collision()
+        return self.check_for_obstacle_player_collision(player)
+        #self.check_for_bullet_player_collision()
+        #self.check_for_bullet_obstacle_collision()
     
     def check_for_bullet_player_collision(self):
         damaged_players = []
@@ -165,6 +165,8 @@ class Game:
         for obstacle in self.obstacles:
             if self.circle_collide(player,obstacle):
                 self.players.remove(player)
+                return False
+        return True
                 # dx = player.position['x'] - obstacle.position['x']
                 # dy = player.position['y'] - obstacle.position['y']
                 # angle = math.atan2(dy, dx)
