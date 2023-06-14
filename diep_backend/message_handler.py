@@ -30,9 +30,10 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
 
     async def send_move_message(self, websocket, message: dict):
-        updated_pos = self.game.update_player_position(message["name"], message["direction"])
-
+        updated_pos={'x':-100,'y':-100}
         is_alive=self.game.check_for_collisions(message["name"])
+        if is_alive:
+            updated_pos = self.game.update_player_position(message["name"], message["direction"])
         event={
                 "type": message_types[MOVE],
                "position": updated_pos,

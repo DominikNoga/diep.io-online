@@ -13,6 +13,7 @@ class Game:
         self.obstacles = self.generate_obstacles(20)
         self.bullets_fired = []
         self.players_colors_length = 2
+        self.players_to_remove=[]
 
         
     def add_player(self, player_name: str, websocket):
@@ -86,9 +87,7 @@ class Game:
     def check_for_collisions(self, name):
         player = self.find_object_by_property("name", name, "player")
         self.check_for_player_player_collision(player)
-        return self.check_for_obstacle_player_collision(player)
-        #self.check_for_bullet_player_collision()
-        #self.check_for_bullet_obstacle_collision()
+        return not self.check_for_obstacle_player_collision(player)
     
     def check_for_bullet_player_collision(self):
         damaged_players = []
@@ -122,63 +121,12 @@ class Game:
                     player.position['x'] = new_x
                     player.position['y'] = new_y
 
-    # def calculate_line_equation(self,vertex, prev_vertex):
-    #     a = vertex['y'] - prev_vertex['y']
-    #     b = prev_vertex['x'] - vertex['x']
-    #     c = (vertex['x'] * prev_vertex['y']) - (prev_vertex['x'] * vertex['y'])
-    #     return a, b, c
-    #
-    # def find_closest_edge(self, point,vertices):
-    #     min_distance = math.inf
-    #     closest_edge = None
-    #     closest_vertex_index = 0
-    #     prev_vertex=None
-    #     first_vertex=None
-    #     i = 0
-    #     for vertex in vertices:
-    #         if prev_vertex is not None:
-    #             a,b,c=self.calculate_line_equation(vertex,prev_vertex)
-    #             distance = abs(a * point['x'] + b * point['y'] + c) / math.sqrt(a ** 2 + b ** 2)
-    #             print(distance)
-    #             if distance < min_distance:
-    #                 min_distance = distance
-    #                 closest_edge = {'x': prev_vertex['x'] - vertex['x'], 'y': prev_vertex['y'] - vertex['y']}
-    #                 closest_vertex_index = i
-    #         else:
-    #             first_vertex = vertex
-    #         prev_vertex = vertex
-    #         i += 1
-    #     a, b, c = self.calculate_line_equation(prev_vertex, first_vertex)
-    #     print(a)
-    #     print(b)
-    #     print(c)
-    #     distance = abs(a * point['x'] + b * point['y'] + c) / math.sqrt(a ** 2 + b ** 2)
-    #     print(distance)
-    #     if distance < min_distance:
-    #         closest_edge = {'x': first_vertex['x'] - prev_vertex['x'], 'y': first_vertex['y'] - prev_vertex['y']}
-    #         closest_vertex_index = i
-    #
-    #     return closest_edge, closest_vertex_index
-    # def find_intersection(self,p1, v1, p2, v2):
-    #     t1 = (v2['x'] * (p1['y'] - p2['y']) - v2['y'] * (p1['x'] - p2['x'])) / (v1['x'] * v2['y'] - v1['y'] * v2['x'])
-    #     t2 = (v1['x'] * (p1['y'] - p2['y']) - v1['y'] * (p1['x'] - p2['x'])) / (v1['x'] * v2['y'] - v1['y'] * v2['x'])
-    #
-    #     intersection_point = [p1['x'] + t1 * v1['x'], p1['y'] + t1 * v1['y']]
-    #     return intersection_point
     def check_for_obstacle_player_collision(self,player):
         for obstacle in self.obstacles:
             if self.circle_collide(player,obstacle):
-                self.players.remove(player)
-                return False
-        return True
-                # dx = player.position['x'] - obstacle.position['x']
-                # dy = player.position['y'] - obstacle.position['y']
-                # angle = math.atan2(dy, dx)
-                # closest_edge,closest_vertex_index=self.find_closest_edge(player.position,obstacle.vertices)
-                # vector= {'x':player.position['x'] - obstacle.position['x'],'y': player.position['y'] - obstacle.position['y']}
-                # new_position=self.find_intersection(obstacle.vertices[closest_vertex_index],closest_edge,player.position,vector)
-                # player.position['x'] = new_position[0]+math.cos(angle)*25
-                # player.position['y'] = new_position[1]+math.sin(angle)*25
+                #self.players.remove(player)
+                return True
+        return False
 
     def check_for_bullet_obstacle_collision(self):
         damaged_obstacles = []

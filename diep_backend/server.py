@@ -47,6 +47,9 @@ class Server:
 
 
     async def recieveMessages(self, websocket):
+        for player in  self.game.players_to_remove:
+            self.game.players.remove(player)
+            self.game.players_to_remove.remove(player)
         try:
             async for message in websocket:
                 for index, (player_socket, player_id) in enumerate(self.connected_players.items()):
