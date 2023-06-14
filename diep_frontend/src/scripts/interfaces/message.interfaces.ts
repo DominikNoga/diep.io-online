@@ -1,9 +1,11 @@
 import Player from "../components/player.js";
 import Obstacle from "../components/obstacle.js";
 import { GameObjectColor, Point } from "../constants.js";
+import { ObstacleTypeString } from "../constants.js";
 
 export interface Message {
     type: string;
+    name?:string;
     success?: boolean;
 }
 
@@ -19,14 +21,24 @@ export interface Message {
  * @property height: height of a map
  * @property name: name of a new player passed in form
  * @property players: list of players that is already in game
+ * @property obstacles: list of obstacles
  * @extends {Message}
  */
-
+type ScoreMsg={
+    name:string;
+    score:number;
+}
 type PlayerMsg = {
     position: Point;
     name: string;
     color: number;
     lifeLeft: number;
+}
+
+type ObstacleMsg={
+    position: Point;
+    type: ObstacleTypeString;
+    id: number;
 }
 
 export interface CreateGameMessage extends Message {
@@ -35,19 +47,18 @@ export interface CreateGameMessage extends Message {
     errorMessage?: string;
     width?: number;
     height?: number;
-    name?: string;
     players?: PlayerMsg[];
+    obstacles?: ObstacleMsg[];
 };
 
 export interface CollisionMessage extends Message {
-
 };
 
 export interface MoveMessage extends Message {
     position?: Point;
     enemies?: Player[];
     obstacles?: Obstacle[];
-    name?: string;
+    isAlive?: boolean;
 };
 
 export interface ErrorMessage extends Message {
@@ -56,7 +67,6 @@ export interface ErrorMessage extends Message {
 
 export interface NewPlayerMessage extends Message {
     color: number;
-    name: string;
     position?: Point;
 };
 
@@ -65,7 +75,6 @@ export interface InitConnectionMessage extends Message {
 };
 
 export interface BarrelMovedMessage extends Message {
-    name: string;
     barrelAngle: number;
     barrelPosition: Point;
 };
@@ -81,7 +90,14 @@ type PlayerLifeInfo = {
     name: string;
     lifeLeft: number;
 }
+type ObstacleLifeInfo = {
+    id: number;
+    lifeLeft: number;
+}
 export interface BulletCollisionMessage extends Message {
     damagedPlayers?: PlayerLifeInfo[];
+    damagedObstacles?: ObstacleLifeInfo[];
     bulletIds: string[];
+    scoreMsg:ScoreMsg[];
+    newObstacles: ObstacleMsg[];
 };

@@ -29,4 +29,7 @@ export default class GameManager{
         // this.game.enemies=enemies
         this.game.obstacles=obstacles
     }
+    public removePlayer(name: string)
+    {
+    }
 }

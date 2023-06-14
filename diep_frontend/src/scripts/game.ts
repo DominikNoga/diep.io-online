@@ -30,7 +30,6 @@ export default class Game{
             x: 100,
             y: 100
         }
-        this.obstacles.push(new Obstacle(ObstacleTypes.hard,position))
         this.gameMechanics = new GameMechanics();
         this.clientId = clientId;
     };
@@ -166,4 +165,7 @@ export default class Game{
             name: this.currentPlayer.name
         }));
     }, 1000/40)
+    public gameOver(){
+        location.reload()
+    }
 }

@@ -10,9 +10,11 @@ class Game:
         self.width = 1600
         self.height = 900
         self.players = []
-        self.obstacles = []
+        self.obstacles = self.generate_obstacles(20)
         self.bullets_fired = []
         self.players_colors_length = 2
+        self.players_to_remove=[]
+
         
     def add_player(self, player_name: str, websocket):
         if len(self.players) > 0 and self.there_is_such_player(player_name):
@@ -22,8 +24,8 @@ class Game:
                 'success': False, 
                 'target_client': ''
             }
-        
-        x, y = self.find_random_position()
+
+        x, y = self.find_random_not_occupied_position()
         color_index = random.randint(0, 2)
         player = Player(player_name, {'x': x, 'y': y}, color_index, str(websocket))
         self.players.append(player)
@@ -38,12 +40,17 @@ class Game:
             'color': color_index,
             'players': [{
                     'name': player.name, 
-                    'position': player.position, 
+                    'position': player.position,
                     'color': player.color,
                     'lifeLeft': player.life_left,
                 } for player in self.players
-            ]
-        }
+            ],
+            'obstacles': [{
+                'type': obstacle.type,
+                'position': obstacle.position,
+                'id': obstacle.id
+            } for obstacle in self.obstacles]}
+
     
     def there_is_such_player(self, player_name: str):
         isIn = False
@@ -51,9 +58,14 @@ class Game:
             if player.name == player_name:
                 isIn = True
         return isIn
-    
-    def find_random_position(self):
-        return [random.randint(100, self.width - 100), random.randint(100, self.height - 100)]
+
+    def find_random_not_occupied_position(self):
+        while True:
+            x,y=[random.randint(100, self.width - 100), random.randint(100, self.height - 100)]
+            point={'x': x, 'y': y}
+            if all(self.distance(point,obstacle.position)>50  for obstacle in self.obstacles):
+                break
+        return x,y
 
     def update_player_position(self, name, keysPressed):
         player = self.find_object_by_property("name", name, "player")
@@ -75,11 +87,7 @@ class Game:
     def check_for_collisions(self, name):
         player = self.find_object_by_property("name", name, "player")
         self.check_for_player_player_collision(player)
-        # for obstacle in self.obstacles:
-        #     if self.circle_polygon_collide(player,obstacle):
-        #         #TODO
-        #         x=0
-        self.check_for_bullet_player_collision()
+        return not self.check_for_obstacle_player_collision(player)
     
     def check_for_bullet_player_collision(self):
         damaged_players = []
@@ -93,7 +101,12 @@ class Game:
                     "lifeLeft": player.life_left
                 })
                 buletts_ids.append(bullet.id)
-                
+                if player.life_left<=0:
+                    for enemy in self.players:
+                        if enemy.name == bullet.player_name:
+                            enemy.score+=player.score
+                    self.players.remove(player)
+
         return damaged_players, buletts_ids
     
     def check_for_player_player_collision(self, player):
@@ -107,7 +120,43 @@ class Game:
                     new_y = other_player.position['y'] + (2 * 25 + 1) * math.sin(angle)
                     player.position['x'] = new_x
                     player.position['y'] = new_y
-                
+
+    def check_for_obstacle_player_collision(self,player):
+        for obstacle in self.obstacles:
+            if self.circle_collide(player,obstacle):
+                #self.players.remove(player)
+                return True
+        return False
+
+    def check_for_bullet_obstacle_collision(self):
+        damaged_obstacles = []
+        buletts_ids = []
+        new_obstacles=[]
+        for bullet in self.bullets_fired:
+            for obstacle in self.obstacles:
+                if self.circle_collide(bullet, obstacle):
+                    if obstacle.life_left > 0:
+                        obstacle.life_left -= bullet.damage
+                    damaged_obstacles.append({
+                        "id": obstacle.id,
+                        "lifeLeft": obstacle.life_left
+                    })
+                    if (obstacle.life_left <= 0):
+                        for player in self.players:
+                            if player.name == bullet.player_name:
+                                if obstacle.type=="basic":
+                                    player.score+=100;
+                                if obstacle.type=="medium":
+                                    player.score+=300;
+                                if obstacle.type=="hard":
+                                    player.score+=500;
+                        new_obstacles.append(self.add_new_obstacle(obstacle.id))
+                        self.obstacles.remove(obstacle)
+                    buletts_ids.append(bullet.id)
+                    self.bullets_fired.remove(bullet)
+        return damaged_obstacles, buletts_ids,new_obstacles
+
+
     def circle_collide(self,obj1,obj2):
         distance = math.sqrt((obj1.position['x'] - obj2.position['x']) ** 2 + (obj1.position['y'] - obj2.position['y']) ** 2)
         return distance <=(obj1.radius+obj2.radius)
@@ -164,9 +213,6 @@ class Game:
         projection += math.sqrt(axis['x'] ** 2 + axis['y'] ** 2)
         return projection
 
-    def generate_obstacles(self):
-        return None
-
     def find_player_id_by_name(self, name):
         return self.find_object_by_property("name", name, "player").id
     
@@ -192,4 +238,30 @@ class Game:
             return next((obstacle for  obstacle in self.obstacles if getattr(obstacle, prop_name) == prop_value), None)
         
         else: print("Unknown object type")
-        
+
+    def generate_obstacles(self,num_obstacles):
+        radius=25
+        i=0
+        obstacles=[]
+        while i<num_obstacles:
+            x = random.randint(0, self.width)
+            y = random.randint(0, self.height)
+            num_edges = random.randint(1, 3)
+            obstacle2 = Obstacle({'x':x,'y': y },num_edges,radius,i)
+            if all(not self.polygons_collide(obstacle1,obstacle2)for obstacle1 in obstacles):
+                obstacles.append(obstacle2)
+            else:
+                i-=1
+            i+=1
+        return obstacles
+
+    def add_new_obstacle(self,id):
+        x,y=self.find_random_not_occupied_position()
+        num_edges = random.randint(1, 3)
+        radius = 25
+        obstacle=Obstacle({'x': x, 'y': y}, num_edges, radius, id)
+        self.obstacles.append(obstacle)
+        return {'type':obstacle.type,
+                'position': obstacle.position,
+                'id':obstacle.id}
+

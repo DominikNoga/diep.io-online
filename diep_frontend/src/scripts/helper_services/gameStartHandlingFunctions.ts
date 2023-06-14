@@ -3,6 +3,7 @@ import Game from "../game.js";
 import Player from "../components/player.js";
 import GameManager from "../gameManager.js";
 import { playerColors } from "../constants.js";
+import Obstacle from "../components/obstacle.js";
 
 
 export const addJoinListener = (websocket: WebSocket, clientId: string) => {
@@ -56,6 +57,13 @@ export const createGameManager = (message: CreateGameMessage, clientId: string):
                 playerColors[enemy.color],
                 enemy.position,
                 enemy.lifeLeft
+            ));
+    });
+    message.obstacles.forEach(obstacle =>{
+            game.obstacles.push(new Obstacle(
+                obstacle.type,
+                obstacle.position,
+                obstacle.id
             ));
     });
     const player = new Player(game, message.name, playerColors[message.color], message.position);

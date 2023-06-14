@@ -8,6 +8,7 @@ class Player:
         self.speed = 7
         self.id = id
         self.life_left = 100
+        self.score=0
         self.barrel_params = {
             "position": {
                 "x": 0,

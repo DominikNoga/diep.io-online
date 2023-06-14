@@ -30,14 +30,15 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
 
     async def send_move_message(self, websocket, message: dict):
-        updated_pos = self.game.update_player_position(message["name"], message["direction"])
-        self.game.check_for_collisions(message["name"])
+        updated_pos={'x':-100,'y':-100}
+        is_alive=self.game.check_for_collisions(message["name"])
+        if is_alive:
+            updated_pos = self.game.update_player_position(message["name"], message["direction"])
         event={
                 "type": message_types[MOVE],
                "position": updated_pos,
                "name": message["name"],
-               #"players": self.game.players,
-               #"obstacles": self.game.obstacles
+                "isAlive": is_alive
         }
         await websocket.send(json.dumps(event))
 
@@ -118,22 +119,26 @@ class MessageHandler:
             b = self.game.find_object_by_property('id', bullet['id'], 'bullet')
             if b is not None:
                 b.position = position
-            
-        damaged_players, colided_bullets_ids = self.game.check_for_bullet_player_collision()
-        
+        damaged_players, collided_bullets_ids = self.game.check_for_bullet_player_collision()
+        damaged_obstacles,collided_bullets_ids_obs,new_obstacles =self.game.check_for_bullet_obstacle_collision()
+
+
         if len(self.bullets_to_delete) > 0:
             self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in self.bullets_to_delete]
         
-        if len(damaged_players) <= 0:
+        if len(damaged_players) <= 0 and len(damaged_obstacles)<=0:
             return
-        
         event = {
             'damagedPlayers': damaged_players,
-            'bulletIds': colided_bullets_ids,
-            'type': message_types[BULLET_COLLISION]
+            'damagedObstacles': damaged_obstacles,
+            'bulletIds': collided_bullets_ids+collided_bullets_ids_obs,
+            'type': message_types[BULLET_COLLISION],
+            'scoreMsg':[{'name':player.name,
+                      'score':player.score}for player in self.game.players],
+            'newObstacles':new_obstacles
         }
         
-        self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in colided_bullets_ids]
+        self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in collided_bullets_ids]
         
         print(event)
         for ws in connected_players:
