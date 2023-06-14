@@ -60,7 +60,7 @@ export const drawNameBar = (ctx: CanvasRenderingContext2D, player: Player) =>{
     const textY = rectY + rectHeight / 2;
 
     // Render text on the rectangle
-    ctx.fillText(player.name, textX, textY);
+    ctx.fillText(player.name+" "+player.score, textX, textY);
 }
 
 export const drawLifeBar = (ctx: CanvasRenderingContext2D, player: Player) => {
