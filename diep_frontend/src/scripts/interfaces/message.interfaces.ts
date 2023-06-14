@@ -74,11 +74,6 @@ export interface InitConnectionMessage extends Message {
     clientId: string;
 };
 
-export interface BarrelMovedMessage extends Message {
-    barrelAngle: number;
-    barrelPosition: Point;
-};
-
 export interface ShootMessage extends Message {
     bulletId: string;
     bulletColor: GameObjectColor;

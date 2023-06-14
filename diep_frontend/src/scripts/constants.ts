@@ -7,16 +7,12 @@ export enum Direction {
 
 export const arrows = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT];
 
-export enum Keys{
-    SPACE = ' ',
-}
-
 export type Point = {
     x: number,
     y: number
 }
 
-export const allowedKeys = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT, Keys.SPACE]
+export const allowedKeys = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
 
 export type GameObjectColor = {
     bg: string,
@@ -62,8 +58,8 @@ export enum MessageTypes {
     collision = 'collision',
     newPlayer = 'new_player',
     initConnection = 'init',
-    barrelMoved = 'barrel_moved',
     shoot = 'shoot',
     bulletsUpdate = 'bullets_update',
     bulletCollision = 'bullet_collision',
+    playerDead = 'player_dead',
 };

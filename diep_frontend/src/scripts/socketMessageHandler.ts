@@ -1,10 +1,11 @@
-import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, BarrelMovedMessage, ShootMessage, BulletCollisionMessage } from "./interfaces/message.interfaces";
+import { CreateGameMessage, Message, CollisionMessage, ErrorMessage, MoveMessage, NewPlayerMessage, InitConnectionMessage, ShootMessage, BulletCollisionMessage } from "./interfaces/message.interfaces";
 import { createGameManager, addJoinListener } from "./helper_services/gameStartHandlingFunctions.js";
 import { MessageTypes, playerColors } from "./constants.js";
 import Player from "./components/player.js";
 import GameManager from "./gameManager.js";
 import Bullet from "./components/bullet.js";
 import Obstacle from "./components/obstacle.js";
+import { setEndGameScreen } from "./helper_services/endGameHandlingFunctions.js";
 
 export default class SocketMessageHandler{
     private gameManager: GameManager;
@@ -20,9 +21,6 @@ export default class SocketMessageHandler{
             case MessageTypes.createGame:
                 this.handleCreateGameMessage(<CreateGameMessage>message);
                 break;
-            case MessageTypes.collision:
-                this.handleCollisionMessage(<CollisionMessage>message);
-                break;
             case MessageTypes.move:
                 this.handleMoveMessage(<MoveMessage>message);
                 break;
@@ -31,9 +29,6 @@ export default class SocketMessageHandler{
                 break;
             case MessageTypes.newPlayer:
                 this.handleNewPlayerMessage(<NewPlayerMessage>message);
-                break;
-            case MessageTypes.barrelMoved:
-                this.handleBarrelMovedMessage(<BarrelMovedMessage>message);
                 break;
             case MessageTypes.shoot:
                 this.handleShootMessage(<ShootMessage>message);
@@ -71,16 +66,9 @@ export default class SocketMessageHandler{
         }
     };
 
-    private handleCollisionMessage(message: CollisionMessage){
-        if(!this.gameCreated) return;
-    };
-
     private handleMoveMessage(message: MoveMessage){
         if(!this.gameCreated) return;
-        this.gameManager.game.update(message.position, message.name)
-        if(!message.isAlive){
-            this.gameManager.game.gameOver();
-        }
+        this.gameManager.game.updateEnemies(message.position, message.name)
     };
 
     private handleNewPlayerMessage(message: NewPlayerMessage): void {
@@ -96,16 +84,7 @@ export default class SocketMessageHandler{
 
     private handleErrorMessage(message: ErrorMessage): void {
         if(!this.gameCreated) return;
-        alert(message.message)
-    };
-
-    private handleBarrelMovedMessage(message: BarrelMovedMessage): void {
-        if(!this.gameCreated) return;
-        if(message.name === this.gameManager.game.currentPlayer.name){
-            return;
-        }
-        const index = this.gameManager.game.findEnemyIndexByName(message.name);
-        this.gameManager.game.enemies[index].setBarrelParams(message.barrelAngle, message.barrelPosition);
+        alert(message.message);
     };
 
     private handleShootMessage(message: ShootMessage): void {
@@ -115,7 +94,7 @@ export default class SocketMessageHandler{
             message.bulletAngle,
             message.bulletColor,
             message.bulletId
-        ))
+        ));
     };
 
     private handleBulletCollisionMessage(message: BulletCollisionMessage): void {
@@ -124,14 +103,18 @@ export default class SocketMessageHandler{
         const result = message.damagedPlayers.find(player => player.name === this.gameManager.game.currentPlayer.name)
         if(result !== undefined) {
             this.gameManager.game.currentPlayer.lifeLeft = result.lifeLeft;
-            console.log(`Current player: ${this.gameManager.game.currentPlayer.name} life left: ${result.lifeLeft}`)
+            if(result.lifeLeft === 0) {
+                setEndGameScreen(this.gameManager.game.currentPlayer.score, this.gameManager.game.currentPlayer.name);
+                this.gameCreated = false;
+                cancelAnimationFrame(this.gameManager.renderLoop);
+                return;
+            }
         }
         this.gameManager.game.enemies.forEach(enemy => {
             for(let player of message.damagedPlayers) {
                 if(player.name === enemy.name){
                     enemy.lifeLeft = player.lifeLeft;
-                    console.log(`Enemy: ${enemy.name} life left: ${enemy.lifeLeft}`)
-                    if(enemy.lifeLeft==0)this.gameManager.game.enemies=this.gameManager.game.enemies.filter((player:Player) => player !== enemy);
+                    if(enemy.lifeLeft==0)this.gameManager.game.enemies=this.gameManager.game.enemies.filter((player) => player !== enemy);
                     break;
                 }
             }

@@ -20,13 +20,10 @@ class Server:
         message_type = message['type']
         try:
             if message_type == message_types[MOVE]:
-                await self.message_handler.handle_move_message(websocket, message)
+                await self.message_handler.handle_move_message(websocket, message, self.connected_players)
 
             elif message_type == message_types[JOIN]:
                 await self.message_handler.handle_join_message(websocket, player_id, message, index)
-
-            elif message_type == message_types[BARREL_MOVED]:
-                await self.message_handler.handle_barrel_moved_message(websocket ,message)
 
             elif message_type == message_types[SHOOT]:
                 await self.message_handler.handle_shoot_message(self.connected_players ,websocket, message)
