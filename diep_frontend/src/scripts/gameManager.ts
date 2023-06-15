@@ -1,11 +1,9 @@
-import Obstacle from "./components/obstacle.js";
-import Player from "./components/player.js";
 import Game from "./game.js";
-import { MoveMessage } from "./interfaces/message.interfaces";
 
 export default class GameManager{
     public ctx: CanvasRenderingContext2D;
     public game: Game;
+    public renderLoop: number;
 
     constructor(game: Game, ctx: CanvasRenderingContext2D){
         this.ctx = ctx;
@@ -20,16 +18,9 @@ export default class GameManager{
     public animate(websocket: WebSocket){
         this.ctx.clearRect(0, 0, this.game.width, this.game.height);
         this.game.draw(this.ctx);
+        this.game.updateCurrentPlayer(websocket);
         if(this.game.firedBullets.length)
             this.game.updateBullets(websocket);
-        requestAnimationFrame(() => {this.animate(websocket);});
+        this.renderLoop = requestAnimationFrame(() => {this.animate(websocket);});
     };
-
-    public update(enemies:Player [],obstacles:Obstacle[]){
-        // this.game.enemies=enemies
-        this.game.obstacles=obstacles
-    }
-    public removePlayer(name: string)
-    {
-    }
 }

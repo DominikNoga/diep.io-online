@@ -1,4 +1,4 @@
-import { Point, GameObjectColor, MessageTypes } from "../constants.js";
+import { Point, GameObjectColor, MessageTypes, Direction } from "../constants.js";
 import Game from "../game.js";
 import Bullet from "./bullet.js";
 import { drawBarrel, drawLifeBar, drawNameBar, drawPlayerObject } from "../helper_services/playerDrawingHelperFunctions.js";
@@ -75,9 +75,25 @@ export default class Player {
         this.barrelParams.position.y = this.radius * this.barrelParams.length * Math.sin(this.barrelParams.angle) + this.position.y
     }
 
-    public update(position: Point)
-    {
-        this.position = position;
+    public update(keysPressed: any, websocket: WebSocket, clientId: string): void {
+        if(keysPressed[Direction.UP]){
+            this.position.y -= this.speed;
+        }
+        if(keysPressed[Direction.DOWN]){
+            this.position.y += this.speed;
+        }
+        if(keysPressed[Direction.LEFT]){
+            this.position.x -= this.speed;
+        }
+        if(keysPressed[Direction.RIGHT]){
+            this.position.x += this.speed;
+        }
+        websocket.send(JSON.stringify({
+            position: this.position,
+            type: MessageTypes.move,
+            name: this.name,
+            clientId: clientId
+        }));
     }
     public shoot(websocket: WebSocket){
         const barrelCopy = deepCopy(this.barrelParams)

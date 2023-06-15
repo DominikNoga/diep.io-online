@@ -2,6 +2,7 @@ import { Point, ObstacleColors, ObstacleTypes, ObstacleTypeString } from "../con
 import Game from "../game.js";
 import { drawObstacleLifeBar } from "../helper_services/playerDrawingHelperFunctions.js";
 
+const bulletDamage = 20;
 
 export default class Obstacle{
     public position: Point;
@@ -22,19 +23,19 @@ export default class Obstacle{
               this.edges = 3;
               this.color.bg = ObstacleColors.obstacle_basic_color;
               this.color.border = ObstacleColors.obstacle_basic_border_color;
-              this.maxLife=5;
+              this.maxLife=bulletDamage;
               break;
             case ObstacleTypes.medium:
               this.edges = 4;
               this.color.bg = ObstacleColors.obstacle_medium_color;
               this.color.border = ObstacleColors.obstacle_medium_border_color;
-              this.maxLife=10;
+              this.maxLife=bulletDamage*2;
               break;
             case ObstacleTypes.hard:
               this.color.bg = ObstacleColors.obstacle_advanced_color;
               this.color.border = ObstacleColors.obstacle_advanced_border_color
               this.edges = 5;
-              this.maxLife=15;
+              this.maxLife=bulletDamage*3;
               break;
             default:
               console.log(`No such obstacle type: ${type}`);

@@ -10,7 +10,7 @@ class Game:
         self.width = 1600
         self.height = 900
         self.players = []
-        self.obstacles = self.generate_obstacles(20)
+        self.obstacles = self.generate_obstacles(10)
         self.bullets_fired = []
         self.players_colors_length = 2
         self.players_to_remove=[]
@@ -67,22 +67,12 @@ class Game:
                 break
         return x,y
 
-    def update_player_position(self, name, keysPressed):
+    def update_player_position(self, name, position):
         player = self.find_object_by_property("name", name, "player")
         if player == None:
             print(f"Player {name} not found")
             return
-
-        if keysPressed['ArrowRight']:
-            player.position['x'] += player.speed
-        if keysPressed['ArrowLeft']:
-            player.position['x'] -= player.speed
-        if keysPressed['ArrowUp']:
-            player.position['y'] -= player.speed
-        if keysPressed['ArrowDown']:
-            player.position['y'] += player.speed
-        
-        return player.position
+        player.position = position
 
     def check_for_collisions(self, name):
         player = self.find_object_by_property("name", name, "player")
@@ -145,11 +135,11 @@ class Game:
                         for player in self.players:
                             if player.name == bullet.player_name:
                                 if obstacle.type=="basic":
-                                    player.score+=100;
+                                    player.score+=100
                                 if obstacle.type=="medium":
-                                    player.score+=300;
+                                    player.score+=300
                                 if obstacle.type=="hard":
-                                    player.score+=500;
+                                    player.score+=500
                         new_obstacles.append(self.add_new_obstacle(obstacle.id))
                         self.obstacles.remove(obstacle)
                     buletts_ids.append(bullet.id)

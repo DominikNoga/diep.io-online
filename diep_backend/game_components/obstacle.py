@@ -1,5 +1,6 @@
 import math
 
+bullet_damage = 20
 
 class Obstacle:
     def __init__(self, position,num_edges,radius,id):
@@ -13,13 +14,13 @@ class Obstacle:
         self.id=id
         if num_edges == 1:
             self.type ='basic'
-            self.life_left = 5
+            self.life_left = bullet_damage
         elif num_edges == 2:
             self.type ='medium'
-            self.life_left = 10
+            self.life_left = 2*bullet_damage
         elif num_edges == 3:
             self.type ='hard'
-            self.life_left = 15
+            self.life_left = 3*bullet_damage
         angle = 360 / self.num_edges
         for vertex_index in range(self.num_edges):
             radian_angle = math.radians(angle * vertex_index)
@@ -41,4 +42,3 @@ class Obstacle:
         y = first_vertex['y'] - prev_vertex['y']
         self.edges.append({'x': x, 'y': y})
         self.normals.append({'x': -y, 'y': x})
-

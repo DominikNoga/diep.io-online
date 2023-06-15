@@ -29,18 +29,15 @@ class MessageHandler:
         await websocket.send(json.dumps(event))
         await asyncio.sleep(self.sleep_time)
 
-    async def send_move_message(self, websocket, message: dict):
-        updated_pos={'x':-100,'y':-100}
-        is_alive=self.game.check_for_collisions(message["name"])
-        if is_alive:
-            updated_pos = self.game.update_player_position(message["name"], message["direction"])
+    async def send_move_message(self, websocket, message: dict, connected_players):
+        self.game.update_player_position(message["name"], message["position"])
         event={
                 "type": message_types[MOVE],
-               "position": updated_pos,
-               "name": message["name"],
-                "isAlive": is_alive
+               "position": message['position'],
+               "name": message["name"]
         }
-        await websocket.send(json.dumps(event))
+        if connected_players[websocket] != message['clientId']:
+            await websocket.send(json.dumps(event))
 
     async def send_create_message(self, websocket):
         event = self.last_adding_result
@@ -63,18 +60,6 @@ class MessageHandler:
         event = {
             "type": message_types[INIT_CONNECTION],
             "clientId": id
-        }
-        await websocket.send(json.dumps(event))
-        await asyncio.sleep(self.sleep_time)
-    
-    async def handle_barrel_moved_message(self, websocket, message):
-        player = self.game.find_object_by_property("name", message["name"], "player")
-        player.setBarrelParams(message['barrelPosition'], message['barrelAngle'])
-        event = {
-            "type": message_types[BARREL_MOVED],
-            "barrelPosition": message['barrelPosition'],
-            "barrelAngle": message['barrelAngle'],
-            "name": message['name'],
         }
         await websocket.send(json.dumps(event))
         await asyncio.sleep(self.sleep_time)
@@ -107,8 +92,8 @@ class MessageHandler:
         else:
             await self.send_new_player_message(websocket)
     
-    async def handle_move_message(self, websocket, message: dict):
-        await self.send_move_message(websocket, message)
+    async def handle_move_message(self, websocket, message: dict, connected_players):
+        await self.send_move_message(websocket, message, connected_players)
     
     async def handle_bullets_update_message(self, connected_players, message):
         for bullet in message["updatedBullets"]:
@@ -140,7 +125,6 @@ class MessageHandler:
         
         self.game.bullets_fired = [bullet for bullet in self.game.bullets_fired if bullet.id not in collided_bullets_ids]
         
-        print(event)
         for ws in connected_players:
             await ws.send(json.dumps(event))
             await asyncio.sleep(self.sleep_time)
