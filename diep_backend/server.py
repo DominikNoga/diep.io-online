@@ -8,13 +8,30 @@ from message_handler import MessageHandler
 
 
 class Server:
+    """WebSocket server for the game.
+
+    Attributes:
+        connected_players (dict): A dictionary mapping WebSocket connections to player IDs.
+        game (Game): The game instance.
+        message_handler (MessageHandler): The message handler instance.
+        first_shooting_client: The WebSocket connection of the first client who shoots.
+    """
     def __init__(self):
+        """Initialize the WebSocket server."""
         self.connected_players = {}
         self.game = Game()
         self.message_handler = MessageHandler(self.game)
         self.first_shooting_client = None
     
     async def handle_recieved_message(self, websocket, player_id, message, index):
+        """Handles the received message based on its type.
+
+        Args:
+            websocket: The WebSocket connection.
+            player_id (str): The ID of the player who sent the message.
+            message (str): The received message.
+            index (int): The index of the player in the connected players list.
+        """
         message = json.loads(message)
         
         message_type = message['type']
@@ -44,6 +61,11 @@ class Server:
 
 
     async def recieveMessages(self, websocket):
+        """Receives messages from a WebSocket connection and handles them.
+
+        Args:
+            websocket: The WebSocket connection.
+        """
         for player in  self.game.players_to_remove:
             self.game.players.remove(player)
             self.game.players_to_remove.remove(player)
@@ -62,6 +84,11 @@ class Server:
                     break
 
     async def handler(self, websocket):
+        """Handles a new WebSocket connection.
+
+        Args:
+            websocket: The WebSocket connection.
+        """
         print(f"New client connected {websocket}")
         client_id = str(uuid.uuid4())
         self.connected_players[websocket] = client_id

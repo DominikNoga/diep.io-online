@@ -5,7 +5,21 @@ from game_components.bullet import Bullet
 from game import Game
 
 class MessageHandler:
+    """
+    Attributes:
+        game (Game): The game instance.
+        sleep_time (float): The sleep time between sending messages.
+        last_adding_result (dict): The result of the last adding operation.
+        last_bullet_update_result (dict): The result of the last bullet update operation.
+        bullets_to_delete (set): A set of bullet IDs to delete.
+        delete_bullets_treshold (int): The threshold value to trigger bullet deletion.
+    """
     def __init__(self, game: Game):
+        """Initialize the MessageHandler.
+
+        Args:
+            game (Game): The game instance.
+        """
         self.game = game
         self.sleep_time = 0.1
         self.last_adding_result = None
@@ -14,6 +28,13 @@ class MessageHandler:
         self.delete_bullets_treshold = 15
         
     async def send_collision_message(self, websocket, message):
+        """Send a collision message to the specified websocket.
+
+        Args:
+            websocket: The websocket to send the message to.
+            message: The collision message.
+
+        """
         event = {
             "type": message_types[COLLISION],
             "object": message['object'],
@@ -22,6 +43,13 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
 
     async def send_error_message(self, websocket, message):
+        """Send an error message to the specified websocket.
+
+        Args:
+            websocket: The websocket to send the message to.
+            message: The error message.
+
+        """
         event = {
             "type": message_types[ERROR],
             "message": message['content']
@@ -30,6 +58,15 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
 
     async def send_move_message(self, websocket, message: dict, connected_players):
+        """Send a move message to the specified websocket.
+
+        Args:
+            websocket: The websocket to send the message to.
+            message (dict): The move message.
+            connected_players: A dictionary mapping websockets to player IDs.
+
+        """
+
         self.game.update_player_position(message["name"], message["position"])
         event={
                 "type": message_types[MOVE],
@@ -40,11 +77,23 @@ class MessageHandler:
             await websocket.send(json.dumps(event))
 
     async def send_create_message(self, websocket):
+        """Send a create message to the specified websocket.
+
+        Args:
+            websocket: The websocket to send the message to.
+
+        """
         event = self.last_adding_result
         await websocket.send(json.dumps(event))
         await asyncio.sleep(self.sleep_time)
     
     async def send_new_player_message(self, websocket):
+        """Send a new player message to the specified websocket.
+
+        Args:
+            websocket: The websocket to send the message to.
+
+        """
         event = {
             "type": message_types[NEW_PLAYER],
             "position": self.last_adding_result["position"],
@@ -57,6 +106,13 @@ class MessageHandler:
     
     
     async def send_init_connection_message(self, websocket, id):
+        """Send an initialization connection message to the specified websocket.
+
+        Args:
+            websocket: The websocket to send the message to.
+            id: The client ID.
+
+        """
         event = {
             "type": message_types[INIT_CONNECTION],
             "clientId": id
@@ -65,6 +121,14 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
         
     async def handle_shoot_message(self, connected_players, websocket, message):
+        """Handle a shoot message.
+
+        Args:
+            connected_players: A dictionary mapping websockets to player IDs.
+            websocket: The websocket the message is received from.
+            message: The shoot message.
+
+        """
 
         if connected_players[websocket] == message['clientId']:
             self.game.bullets_fired.append(Bullet(message['bulletPosition'], message['playerName'], message['bulletId']))
@@ -83,6 +147,15 @@ class MessageHandler:
         await asyncio.sleep(self.sleep_time)
     
     async def handle_join_message(self, websocket, player_id, message: dict, index):
+        """Handle a join message.
+
+        Args:
+            websocket: The websocket the message is received from.
+            player_id: The ID of the player.
+            message (dict): The join message.
+            index: The index of the player in the connection.
+
+        """
         if index == 0:
             self.last_adding_result = self.game.add_player(message["name"], message["clientId"]) # here passing the wrong websocket sometimes, not always the first user in conn has to have right socket
         
@@ -93,9 +166,24 @@ class MessageHandler:
             await self.send_new_player_message(websocket)
     
     async def handle_move_message(self, websocket, message: dict, connected_players):
+        """Handle a move message.
+
+        Args:
+            websocket: The websocket the message is received from.
+            message (dict): The move message.
+            connected_players: A dictionary mapping websockets to player IDs.
+
+        """
         await self.send_move_message(websocket, message, connected_players)
     
     async def handle_bullets_update_message(self, connected_players, message):
+        """Handle a bullets update message.
+
+        Args:
+            connected_players: A dictionary mapping websockets to player IDs.
+            message: The bullets update message.
+
+        """
         for bullet in message["updatedBullets"]:
             position = bullet['position']
             if position['x'] > self.game.width or position['x'] < 0 or position['y'] > self.game.height or position['y'] < 0:
