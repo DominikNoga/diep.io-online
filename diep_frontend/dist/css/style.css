@@ -1,0 +1,104 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightgrey;
+}
+
+.map {
+  width: calc(100vw - 20px);
+  height: calc(100vh - 20px);
+  background-color: lightgrey;
+  border: solid 10px black;
+}
+
+.join-form-wrapper {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: min(800px, 95%);
+  padding: 3em 1em;
+  border-radius: 1em;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.join-form-wrapper .form-field {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+}
+.join-form-wrapper .form-input {
+  font-size: 20px;
+  padding: 0.4em 1em;
+  border: 2px solid #333;
+}
+.join-form-wrapper .btn-submit {
+  font-size: 20px;
+  padding: 0.4em 1em;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(48, 190, 48);
+}
+.join-form-wrapper .btn-submit:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+.tank {
+  height: 100px;
+  width: 100px;
+  background-color: red;
+  border-radius: 50%;
+  border: solid 4px darkred;
+  position: absolute;
+  right: 5%;
+  top: 10%;
+}
+.tank::before {
+  content: "";
+  position: absolute;
+  width: 48px;
+  height: 36px;
+  top: 50%;
+  left: 100%;
+  translate: 0 -50%;
+  border: 2px black solid;
+  background-color: darkgrey;
+  border-radius: 3px;
+}
+
+.end-game-screen {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  align-items: center;
+  width: min(800px, 95%);
+  padding: 3em 1em;
+  border-radius: 1em;
+  background-color: white;
+}
+.end-game-screen .message, .end-game-screen .final-message {
+  display: block;
+}
+.end-game-screen #final-score {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.end-game-screen .rejoin-button {
+  font-size: 1.2rem;
+  padding: 0.4em 1em;
+  font-weight: bold;
+  color: white;
+  width: 60%;
+  background-color: rgb(196, 30, 30);
+}
+.end-game-screen .rejoin-button:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}

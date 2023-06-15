@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ebba56b2-7376-4ebd-bc6b-bc2346977a15" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/js/components/player.js" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/js/components/player.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/js/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/js/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/js/game.js" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/js/game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/js/gameMechanics.js" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/js/gameMechanics.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/dist/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/dist/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/sass/components/player.scss" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/sass/components/player.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/sass/globals.scss" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/sass/globals.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/sass/style.scss" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/sass/style.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/scripts/components/player.ts" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/scripts/components/player.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/scripts/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/scripts/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/scripts/game.ts" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/scripts/game.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/scripts/gameMechanics.ts" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/scripts/gameMechanics.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diep_frontend/src/scripts/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/diep_frontend/src/scripts/index.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2QZSv2VugYm7eQnqMiAHWvBYgag" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/DominikN/py_interpreters&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ebba56b2-7376-4ebd-bc6b-bc2346977a15" name="Changes" comment="" />
+      <created>1685559837820</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1685559837820</updated>
+    </task>
+    <servers />
+  </component>
+</project>
