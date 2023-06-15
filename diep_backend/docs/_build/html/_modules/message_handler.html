@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>message_handler &mdash; diep.io  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            diep.io
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">diep_backend</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">diep.io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">message_handler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for message_handler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">game_components.bullet</span> <span class="kn">import</span> <span class="n">Bullet</span>
+<span class="kn">from</span> <span class="nn">game</span> <span class="kn">import</span> <span class="n">Game</span>
+
+<div class="viewcode-block" id="MessageHandler"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler">[docs]</a><span class="k">class</span> <span class="nc">MessageHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param game (Game): The game instance.</span>
+<span class="sd">    :param sleep_time (float): The sleep time between sending messages.</span>
+<span class="sd">    :param last_adding_result (dict): The result of the last adding operation.</span>
+<span class="sd">    :param last_bullet_update_result (dict): The result of the last bullet update operation.</span>
+<span class="sd">    :param bullets_to_delete (set): A set of bullet IDs to delete.</span>
+<span class="sd">    :param delete_bullets_treshold (int): The threshold value to trigger bullet deletion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game</span><span class="p">:</span> <span class="n">Game</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the MessageHandler.</span>
+
+<span class="sd">        </span>
+<span class="sd">            :param game (Game): The game instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="n">game</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_adding_result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_bullet_update_result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bullets_to_delete</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_bullets_treshold</span> <span class="o">=</span> <span class="mi">15</span>
+        
+<div class="viewcode-block" id="MessageHandler.send_collision_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.send_collision_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_collision_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send a collision message to the specified websocket.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket to send the message to.</span>
+<span class="sd">        :param message: The collision message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">COLLISION</span><span class="p">],</span>
+            <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageHandler.send_error_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.send_error_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_error_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send an error message to the specified websocket.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket to send the message to.</span>
+<span class="sd">        :param message: The error message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">ERROR</span><span class="p">],</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageHandler.send_move_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.send_move_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_move_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">connected_players</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send a move message to the specified websocket.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket to send the message to.</span>
+<span class="sd">        :param message (dict): The move message.</span>
+<span class="sd">        :param connected_players: A dictionary mapping websockets to player IDs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">update_player_position</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">])</span>
+        <span class="n">event</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">MOVE</span><span class="p">],</span>
+               <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">],</span>
+               <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">connected_players</span><span class="p">[</span><span class="n">websocket</span><span class="p">]</span> <span class="o">!=</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;clientId&#39;</span><span class="p">]:</span>
+            <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MessageHandler.send_create_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.send_create_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_create_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send a create message to the specified websocket.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket to send the message to.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_adding_result</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MessageHandler.send_new_player_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.send_new_player_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_new_player_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send a new player message to the specified websocket.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket to send the message to.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">NEW_PLAYER</span><span class="p">],</span>
+            <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_adding_result</span><span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_adding_result</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_adding_result</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div>
+
+    
+    
+<div class="viewcode-block" id="MessageHandler.send_init_connection_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.send_init_connection_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_init_connection_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send an initialization connection message to the specified websocket.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket to send the message to.</span>
+<span class="sd">        :param id: The client ID.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">INIT_CONNECTION</span><span class="p">],</span>
+            <span class="s2">&quot;clientId&quot;</span><span class="p">:</span> <span class="nb">id</span>
+        <span class="p">}</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="MessageHandler.handle_shoot_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.handle_shoot_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handle_shoot_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connected_players</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a shoot message.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param connected_players: A dictionary mapping websockets to player IDs.</span>
+<span class="sd">        :param websocket: The websocket the message is received from.</span>
+<span class="sd">        :param message: The shoot message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">connected_players</span><span class="p">[</span><span class="n">websocket</span><span class="p">]</span> <span class="o">==</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;clientId&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">bullets_fired</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Bullet</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;bulletPosition&#39;</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;playerName&#39;</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;bulletId&#39;</span><span class="p">]))</span>
+            <span class="k">return</span>
+        
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bulletId&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;bulletId&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;playerName&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;playerName&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;bulletPosition&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;bulletPosition&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;bulletColor&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;bulletColor&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">SHOOT</span><span class="p">],</span>
+            <span class="s1">&#39;bulletAngle&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;bulletAngle&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MessageHandler.handle_join_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.handle_join_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handle_join_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a join message.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket the message is received from.</span>
+<span class="sd">        :param player_id: The ID of the player.</span>
+<span class="sd">        :param message (dict): The join message.</span>
+<span class="sd">        :param index: The index of the player in the connection.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_adding_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">add_player</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;clientId&quot;</span><span class="p">])</span> <span class="c1"># here passing the wrong websocket sometimes, not always the first user in conn has to have right socket</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">find_player_id_by_name</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">player_id</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_create_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_new_player_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MessageHandler.handle_move_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.handle_move_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handle_move_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">connected_players</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a move message.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param websocket: The websocket the message is received from.</span>
+<span class="sd">        :param message (dict): The move message.</span>
+<span class="sd">        :param connected_players: A dictionary mapping websockets to player IDs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_move_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">connected_players</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MessageHandler.handle_bullets_update_message"><a class="viewcode-back" href="../message_handler.html#message_handler.MessageHandler.handle_bullets_update_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handle_bullets_update_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connected_players</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a bullets update message.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param connected_players: A dictionary mapping websockets to player IDs.</span>
+<span class="sd">        :param message: The bullets update message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">bullet</span> <span class="ow">in</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;updatedBullets&quot;</span><span class="p">]:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">bullet</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">width</span> <span class="ow">or</span> <span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">height</span> <span class="ow">or</span> <span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bullets_to_delete</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bullet</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                <span class="k">continue</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">find_object_by_property</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">bullet</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="s1">&#39;bullet&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="n">damaged_players</span><span class="p">,</span> <span class="n">collided_bullets_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">check_for_bullet_player_collision</span><span class="p">()</span>
+        <span class="n">damaged_obstacles</span><span class="p">,</span><span class="n">collided_bullets_ids_obs</span><span class="p">,</span><span class="n">new_obstacles</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">check_for_bullet_obstacle_collision</span><span class="p">()</span>
+
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bullets_to_delete</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">bullets_fired</span> <span class="o">=</span> <span class="p">[</span><span class="n">bullet</span> <span class="k">for</span> <span class="n">bullet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">bullets_fired</span> <span class="k">if</span> <span class="n">bullet</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bullets_to_delete</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">damaged_players</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">damaged_obstacles</span><span class="p">)</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;damagedPlayers&#39;</span><span class="p">:</span> <span class="n">damaged_players</span><span class="p">,</span>
+            <span class="s1">&#39;damagedObstacles&#39;</span><span class="p">:</span> <span class="n">damaged_obstacles</span><span class="p">,</span>
+            <span class="s1">&#39;bulletIds&#39;</span><span class="p">:</span> <span class="n">collided_bullets_ids</span><span class="o">+</span><span class="n">collided_bullets_ids_obs</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">BULLET_COLLISION</span><span class="p">],</span>
+            <span class="s1">&#39;scoreMsg&#39;</span><span class="p">:[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="n">player</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                      <span class="s1">&#39;score&#39;</span><span class="p">:</span><span class="n">player</span><span class="o">.</span><span class="n">score</span><span class="p">}</span><span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">players</span><span class="p">],</span>
+            <span class="s1">&#39;newObstacles&#39;</span><span class="p">:</span><span class="n">new_obstacles</span>
+        <span class="p">}</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">bullets_fired</span> <span class="o">=</span> <span class="p">[</span><span class="n">bullet</span> <span class="k">for</span> <span class="n">bullet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">bullets_fired</span> <span class="k">if</span> <span class="n">bullet</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">collided_bullets_ids</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">ws</span> <span class="ow">in</span> <span class="n">connected_players</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Marcin Szmidt Dominik Noga.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>game module &mdash; diep.io  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="message_handler module" href="message_handler.html" />
+    <link rel="prev" title="constants module" href="constants.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            diep.io
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">diep_backend</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html">constants module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">game module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#game.Game"><code class="docutils literal notranslate"><span class="pre">Game</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.Game"><code class="docutils literal notranslate"><span class="pre">Game.Game</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.add_new_obstacle"><code class="docutils literal notranslate"><span class="pre">Game.add_new_obstacle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.add_player"><code class="docutils literal notranslate"><span class="pre">Game.add_player()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.check_for_bullet_obstacle_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_bullet_obstacle_collision()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.check_for_bullet_player_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_bullet_player_collision()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.check_for_collisions"><code class="docutils literal notranslate"><span class="pre">Game.check_for_collisions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.check_for_obstacle_player_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_obstacle_player_collision()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.check_for_player_player_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_player_player_collision()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.circle_collide"><code class="docutils literal notranslate"><span class="pre">Game.circle_collide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.closest_point_on_segment"><code class="docutils literal notranslate"><span class="pre">Game.closest_point_on_segment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.distance"><code class="docutils literal notranslate"><span class="pre">Game.distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.dot_product"><code class="docutils literal notranslate"><span class="pre">Game.dot_product()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.find_object_by_property"><code class="docutils literal notranslate"><span class="pre">Game.find_object_by_property()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.find_player_id_by_name"><code class="docutils literal notranslate"><span class="pre">Game.find_player_id_by_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.find_random_not_occupied_position"><code class="docutils literal notranslate"><span class="pre">Game.find_random_not_occupied_position()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.generate_obstacles"><code class="docutils literal notranslate"><span class="pre">Game.generate_obstacles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.polygons_collide"><code class="docutils literal notranslate"><span class="pre">Game.polygons_collide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.project_polygon"><code class="docutils literal notranslate"><span class="pre">Game.project_polygon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.there_is_such_player"><code class="docutils literal notranslate"><span class="pre">Game.there_is_such_player()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#game.Game.update_player_position"><code class="docutils literal notranslate"><span class="pre">Game.update_player_position()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="message_handler.html">message_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html">game_components package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">diep.io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">diep_backend</a></li>
+      <li class="breadcrumb-item active">game module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/game.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-game">
+<span id="game-module"></span><h1>game module<a class="headerlink" href="#module-game" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="game.Game">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">game.</span></span><span class="sig-name descname"><span class="pre">Game</span></span><a class="reference internal" href="_modules/game.html#Game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="game.Game.Game">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Game</span></span><a class="reference internal" href="_modules/game.html#Game.Game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.Game" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing the game logic and component management.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>int</strong><strong>)</strong> (<em>players_colors_length</em>) – The width of the game area.</p></li>
+<li><p><strong>(</strong><strong>int</strong><strong>)</strong> – The height of the game area.</p></li>
+<li><p><strong>(</strong><strong>list</strong><strong>)</strong> (<em>players_to_remove</em>) – A list of Player objects representing the players in the game.</p></li>
+<li><p><strong>(</strong><strong>list</strong><strong>)</strong> – A list of Obstacle objects representing the obstacles in the game.</p></li>
+<li><p><strong>(</strong><strong>list</strong><strong>)</strong> – A list of Bullet objects representing the fired bullets in the game.</p></li>
+<li><p><strong>(</strong><strong>int</strong><strong>)</strong> – The number of available colors for players.</p></li>
+<li><p><strong>(</strong><strong>list</strong><strong>)</strong> – A list of players to be removed from the game.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.add_new_obstacle">
+<span class="sig-name descname"><span class="pre">add_new_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.add_new_obstacle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.add_new_obstacle" title="Permalink to this definition"></a></dt>
+<dd><p>Add a new obstacle to the game.</p>
+<blockquote>
+<div><p>id (int): The ID of the obstacle.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict: A dictionary containing information about the added obstacle, including its type, position, and ID.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.add_player">
+<span class="sig-name descname"><span class="pre">add_player</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.add_player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.add_player" title="Permalink to this definition"></a></dt>
+<dd><p>Add a new player to the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>player_name</em>) – The name of the player.</p></li>
+<li><p><strong>websocket</strong> – The WebSocket associated with the player.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(dict) A dictionary containing information about the success of the operation and game state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.check_for_bullet_obstacle_collision">
+<span class="sig-name descname"><span class="pre">check_for_bullet_obstacle_collision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.check_for_bullet_obstacle_collision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.check_for_bullet_obstacle_collision" title="Permalink to this definition"></a></dt>
+<dd><p>Check for collisions between bullets and obstacles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>tuple[list[dict], list[int], list[Obstacle]]: A tuple containing a list of damaged obstacles,</dt><dd><p>a list of bullet IDs, and a list of new obstacles to be added.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.check_for_bullet_player_collision">
+<span class="sig-name descname"><span class="pre">check_for_bullet_player_collision</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.check_for_bullet_player_collision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.check_for_bullet_player_collision" title="Permalink to this definition"></a></dt>
+<dd><p>Check for collisions between bullets and players.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[list[dict], list[int]]: A tuple containing a list of damaged players and a list of bullet IDs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.check_for_collisions">
+<span class="sig-name descname"><span class="pre">check_for_collisions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.check_for_collisions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.check_for_collisions" title="Permalink to this definition"></a></dt>
+<dd><p>Check for collisions between game objects and handle them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>name</em>) – The name of the player to check collisions for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool: True if a collision with an obstacle occurs, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.check_for_obstacle_player_collision">
+<span class="sig-name descname"><span class="pre">check_for_obstacle_player_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.check_for_obstacle_player_collision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.check_for_obstacle_player_collision" title="Permalink to this definition"></a></dt>
+<dd><p>Check for collisions between players and obstacles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>Player</strong><strong>)</strong> (<em>player</em>) – The player to check collisions for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool: True if a collision with an obstacle occurs, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.check_for_player_player_collision">
+<span class="sig-name descname"><span class="pre">check_for_player_player_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.check_for_player_player_collision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.check_for_player_player_collision" title="Permalink to this definition"></a></dt>
+<dd><p>Check for collisions between players and handle them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>Player</strong><strong>)</strong> (<em>player</em>) – The player to check collisions for.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.circle_collide">
+<span class="sig-name descname"><span class="pre">circle_collide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.circle_collide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.circle_collide" title="Permalink to this definition"></a></dt>
+<dd><p>Check if two circular objects collide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj1</strong> – The first object to check.</p></li>
+<li><p><strong>obj2</strong> – The second object to check.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool: True if the objects collide, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.closest_point_on_segment">
+<span class="sig-name descname"><span class="pre">closest_point_on_segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.closest_point_on_segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.closest_point_on_segment" title="Permalink to this definition"></a></dt>
+<dd><p>Find the closest point on a line segment to a given point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>dict</strong><strong>)</strong> (<em>v2</em>) – The coordinates of the point, with keys ‘x’ and ‘y’.</p></li>
+<li><p><strong>(</strong><strong>dict</strong><strong>)</strong> – The coordinates of the first endpoint of the line segment, with keys ‘x’ and ‘y’.</p></li>
+<li><p><strong>(</strong><strong>dict</strong><strong>)</strong> – The coordinates of the second endpoint of the line segment, with keys ‘x’ and ‘y’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[float, float]: The coordinates of the closest point on the line segment.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.distance">
+<span class="sig-name descname"><span class="pre">distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.distance" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the distance between two points in 2D space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>dict</strong><strong>)</strong> (<em>p2</em>) – The coordinates of the first point, with keys ‘x’ and ‘y’.</p></li>
+<li><p><strong>(</strong><strong>dict</strong><strong>)</strong> – The coordinates of the second point, with keys ‘x’ and ‘y’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float: The distance between the two points.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.dot_product">
+<span class="sig-name descname"><span class="pre">dot_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.dot_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.dot_product" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.find_object_by_property">
+<span class="sig-name descname"><span class="pre">find_object_by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.find_object_by_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.find_object_by_property" title="Permalink to this definition"></a></dt>
+<dd><p>Method used to find object by its property -&gt; it should be unique</p>
+<blockquote>
+<div><p>prop_name (string): name of the property for eg. “name”
+prop_value (Any): value of the property for eg. “Tom”
+object_type (string): one of the game objects: ‘obstacle’, ‘bullet’, ‘player’</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the object with the property that we are looking for</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.find_player_id_by_name">
+<span class="sig-name descname"><span class="pre">find_player_id_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.find_player_id_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.find_player_id_by_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.find_random_not_occupied_position">
+<span class="sig-name descname"><span class="pre">find_random_not_occupied_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.find_random_not_occupied_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.find_random_not_occupied_position" title="Permalink to this definition"></a></dt>
+<dd><p>Find a random position in the game that is not occupied by any obstacles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, int]: The x and y coordinates of the randomly generated position.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.generate_obstacles">
+<span class="sig-name descname"><span class="pre">generate_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_obstacles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.generate_obstacles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.generate_obstacles" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a specified number of obstacles.</p>
+<blockquote>
+<div><p>num_obstacles (int): The number of obstacles to generate.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[Obstacle]: A list of generated obstacles.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Note:</dt><dd><p>The method ensures that the generated obstacles do not collide with each other.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.polygons_collide">
+<span class="sig-name descname"><span class="pre">polygons_collide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.polygons_collide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.polygons_collide" title="Permalink to this definition"></a></dt>
+<dd><p>Check if two polygons collide with each other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>Obstacle</strong><strong>)</strong> (<em>obj2</em>) – The first polygon object.</p></li>
+<li><p><strong>(</strong><strong>Obstacle</strong><strong>)</strong> – The second polygon object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool: True if the polygons collide, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.project_polygon">
+<span class="sig-name descname"><span class="pre">project_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.project_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.project_polygon" title="Permalink to this definition"></a></dt>
+<dd><p>Project a polygon onto an axis and determine the minimum and maximum values.</p>
+<blockquote>
+<div><p>axis (dict): The axis to project onto, with keys ‘x’ and ‘y’.
+vertices (list[dict]): The vertices of the polygon, each with keys ‘x’ and ‘y’.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[float, float]: The minimum and maximum values of the projected polygon on the axis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.there_is_such_player">
+<span class="sig-name descname"><span class="pre">there_is_such_player</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.there_is_such_player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.there_is_such_player" title="Permalink to this definition"></a></dt>
+<dd><p>Check if a player with the given name already exists in the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>player_name</em>) – The name of the player to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool: True if a player with the given name already exists, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="game.Game.update_player_position">
+<span class="sig-name descname"><span class="pre">update_player_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/game.html#Game.update_player_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#game.Game.update_player_position" title="Permalink to this definition"></a></dt>
+<dd><p>Update the position of a player in the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>name</em>) – The name of the player to update.</p></li>
+<li><p><strong>(</strong><strong>dict</strong><strong>)</strong> (<em>position</em>) – The new position of the player.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="constants.html" class="btn btn-neutral float-left" title="constants module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="message_handler.html" class="btn btn-neutral float-right" title="message_handler module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Marcin Szmidt Dominik Noga.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

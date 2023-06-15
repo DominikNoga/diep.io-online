@@ -10,37 +10,13 @@ class Game:
     class Game:
         """Class representing the game logic and component management.
 
-        Attributes:
-            width (int): The width of the game area.
-            height (int): The height of the game area.
-            players (list): A list of Player objects representing the players in the game.
-            obstacles (list): A list of Obstacle objects representing the obstacles in the game.
-            bullets_fired (list): A list of Bullet objects representing the fired bullets in the game.
-            players_colors_length (int): The number of available colors for players.
-            players_to_remove (list): A list of players to be removed from the game.
-
-        Methods:
-            add_player(player_name, websocket): Add a new player to the game.
-            there_is_such_player(player_name): Check if a player with the given name already exists in the game.
-            find_random_not_occupied_position(): Find a random position in the game that is not occupied by any obstacles.
-            update_player_position(name, position): Update the position of a player in the game.
-            check_for_collisions(name): Check for collisions between game objects.
-            check_for_bullet_player_collision(): Check for collisions between bullets and players.
-            check_for_player_player_collision(player): Check for collisions between players.
-            check_for_obstacle_player_collision(player): Check for collisions between players and obstacles.
-            check_for_bullet_obstacle_collision(): Check for collisions between bullets and obstacles.
-            circle_collide(obj1, obj2): Check if two circular objects collide.
-            dot_product(vector1, vector2): Calculate the dot product of two vectors.
-            polygons_collide(obj1, obj2): Check if two polygons collide.
-            distance(p1, p2): Calculate the distance between two points.
-            circle_polygon_collide(round_obj, polygon_obj): Check if a circular object and a polygon collide.
-            closest_point_on_segment(c, v1, v2): Find the closest point on a line segment to a given point.
-            project_polygon(axis, vertices): Project a polygon onto an axis.
-            project_circle(axis, position): Project a circle onto an axis.
-            find_player_id_by_name(name): Find the player's ID based on their name.
-            find_object_by_property(prop_name, prop_value, object_type): Find an object by its property value and type.
-            generate_obstacles(num_obstacles): Generate random obstacles for the game.
-            add_new_obstacle(id): Add a new obstacle to the game.
+      :param   width (int): The width of the game area.
+      :param   height (int): The height of the game area.
+      :param   players (list): A list of Player objects representing the players in the game.
+      :param   obstacles (list): A list of Obstacle objects representing the obstacles in the game.
+      :param  bullets_fired (list): A list of Bullet objects representing the fired bullets in the game.
+      :param   players_colors_length (int): The number of available colors for players.
+      :param   players_to_remove (list): A list of players to be removed from the game.
         """
 
     def __init__(self):
@@ -55,12 +31,10 @@ class Game:
     def add_player(self, player_name: str, websocket):
         """Add a new player to the game.
 
-        Args:
-            player_name (str): The name of the player.
-            websocket: The WebSocket associated with the player.
+        :param  player_name (str): The name of the player.
+        :param  websocket: The WebSocket associated with the player.
 
-        Returns:
-            dict: A dictionary containing information about the success of the operation and game state.
+        :return: (dict) A dictionary containing information about the success of the operation and game state.
         """
         if len(self.players) > 0 and self.there_is_such_player(player_name):
             return {
@@ -99,10 +73,10 @@ class Game:
     def there_is_such_player(self, player_name: str):
         """Check if a player with the given name already exists in the game.
 
-        Args:
-            player_name (str): The name of the player to check.
 
-        Returns:
+        :param player_name (str): The name of the player to check.
+
+        :return:
             bool: True if a player with the given name already exists, False otherwise.
         """
         isIn = False
@@ -114,7 +88,7 @@ class Game:
     def find_random_not_occupied_position(self):
         """Find a random position in the game that is not occupied by any obstacles.
 
-        Returns:
+        :return:
             tuple[int, int]: The x and y coordinates of the randomly generated position.
         """
         while True:
@@ -127,9 +101,8 @@ class Game:
     def update_player_position(self, name, position):
         """Update the position of a player in the game.
 
-        Args:
-            name (str): The name of the player to update.
-            position (dict): The new position of the player.
+        :param name (str): The name of the player to update.
+        :param position (dict): The new position of the player.
         """
         player = self.find_object_by_property("name", name, "player")
         if player == None:
@@ -140,10 +113,9 @@ class Game:
     def check_for_collisions(self, name):
         """Check for collisions between game objects and handle them.
 
-        Args:
-            name (str): The name of the player to check collisions for.
+        :param name (str): The name of the player to check collisions for.
 
-        Returns:
+        :return:
             bool: True if a collision with an obstacle occurs, False otherwise.
         """
         player = self.find_object_by_property("name", name, "player")
@@ -153,7 +125,7 @@ class Game:
     def check_for_bullet_player_collision(self):
         """Check for collisions between bullets and players.
 
-        Returns:
+        :return:
             tuple[list[dict], list[int]]: A tuple containing a list of damaged players and a list of bullet IDs.
         """
         damaged_players = []
@@ -178,8 +150,7 @@ class Game:
     def check_for_player_player_collision(self, player):
         """Check for collisions between players and handle them.
 
-        Args:
-            player (Player): The player to check collisions for.
+        :param player (Player): The player to check collisions for.
         """
         for other_player in self.players:
             if player != other_player:
@@ -195,10 +166,10 @@ class Game:
     def check_for_obstacle_player_collision(self, player):
         """Check for collisions between players and obstacles.
 
-        Args:
-            player (Player): The player to check collisions for.
+        
+        :param player (Player): The player to check collisions for.
 
-        Returns:
+        :return:
             bool: True if a collision with an obstacle occurs, False otherwise.
         """
         for obstacle in self.obstacles:
@@ -210,7 +181,7 @@ class Game:
     def check_for_bullet_obstacle_collision(self):
         """Check for collisions between bullets and obstacles.
 
-        Returns:
+        :return:
             tuple[list[dict], list[int], list[Obstacle]]: A tuple containing a list of damaged obstacles,
                 a list of bullet IDs, and a list of new obstacles to be added.
         """
@@ -244,11 +215,11 @@ class Game:
     def circle_collide(self, obj1, obj2):
         """Check if two circular objects collide.
 
-        Args:
-            obj1: The first object to check.
-            obj2: The second object to check.
+        
+        :param obj1: The first object to check.
+        :param obj2: The second object to check.
 
-        Returns:
+        :return:
             bool: True if the objects collide, False otherwise.
         """
         distance = math.sqrt(
@@ -261,11 +232,11 @@ class Game:
     def polygons_collide(self, obj1, obj2):
         """Check if two polygons collide with each other.
 
-        Args:
-            obj1 (Obstacle): The first polygon object.
-            obj2 (Obstacle): The second polygon object.
+        
+        :param obj1 (Obstacle): The first polygon object.
+        :param obj2 (Obstacle): The second polygon object.
 
-        Returns:
+        :return:
             bool: True if the polygons collide, False otherwise.
         """
         for axis in obj1.normals + obj2.normals:
@@ -278,11 +249,11 @@ class Game:
     def distance(self, p1, p2):
         """Calculate the distance between two points in 2D space.
 
-        Args:
-            p1 (dict): The coordinates of the first point, with keys 'x' and 'y'.
-            p2 (dict): The coordinates of the second point, with keys 'x' and 'y'.
+        
+        :param p1 (dict): The coordinates of the first point, with keys 'x' and 'y'.
+        :param p2 (dict): The coordinates of the second point, with keys 'x' and 'y'.
 
-        Returns:
+        :return:
             float: The distance between the two points.
         """
         return math.sqrt((p1['x'] - p2['x']) ** 2 + (p1['y'] - p2['y']) ** 2)
@@ -290,12 +261,12 @@ class Game:
     def closest_point_on_segment(self, c, v1, v2):
         """Find the closest point on a line segment to a given point.
 
-        Args:
-            c (dict): The coordinates of the point, with keys 'x' and 'y'.
-            v1 (dict): The coordinates of the first endpoint of the line segment, with keys 'x' and 'y'.
-            v2 (dict): The coordinates of the second endpoint of the line segment, with keys 'x' and 'y'.
+        
+        :param c (dict): The coordinates of the point, with keys 'x' and 'y'.
+        :param v1 (dict): The coordinates of the first endpoint of the line segment, with keys 'x' and 'y'.
+        :param v2 (dict): The coordinates of the second endpoint of the line segment, with keys 'x' and 'y'.
 
-        Returns:
+        :return:
             tuple[float, float]: The coordinates of the closest point on the line segment.
         """
         dx = v2['x'] - v1['x']
@@ -309,11 +280,11 @@ class Game:
     def project_polygon(self, axis, vertices):
         """Project a polygon onto an axis and determine the minimum and maximum values.
 
-        Args:
+        
             axis (dict): The axis to project onto, with keys 'x' and 'y'.
             vertices (list[dict]): The vertices of the polygon, each with keys 'x' and 'y'.
 
-        Returns:
+        :return:
             tuple[float, float]: The minimum and maximum values of the projected polygon on the axis.
         """
         min_val = max_val = self.dot_product(axis, vertices[0])
@@ -331,12 +302,12 @@ class Game:
     def find_object_by_property(self, prop_name, prop_value, object_type):
         """Method used to find object by its property -> it should be unique
 
-        Args:
+        
             prop_name (string): name of the property for eg. "name"
             prop_value (Any): value of the property for eg. "Tom"
             object_type (string): one of the game objects: 'obstacle', 'bullet', 'player'
 
-        Returns:
+        :return:
             Reference to the object with the property that we are looking for
         """
         if object_type == 'player':
@@ -354,10 +325,10 @@ class Game:
     def generate_obstacles(self, num_obstacles):
         """Generate a specified number of obstacles.
 
-        Args:
+        
             num_obstacles (int): The number of obstacles to generate.
 
-        Returns:
+        :return:
             list[Obstacle]: A list of generated obstacles.
 
         Note:
@@ -381,10 +352,10 @@ class Game:
     def add_new_obstacle(self, id):
         """Add a new obstacle to the game.
 
-        Args:
+        
             id (int): The ID of the obstacle.
 
-        Returns:
+        :return:
             dict: A dictionary containing information about the added obstacle, including its type, position, and ID.
         """
         x, y = self.find_random_not_occupied_position()

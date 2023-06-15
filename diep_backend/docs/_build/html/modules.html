@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>diep_backend &mdash; diep.io  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app module" href="app.html" />
+    <link rel="prev" title="Welcome to diep.io’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            diep.io
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">diep_backend</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html">constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game.html">game module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="message_handler.html">message_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="server.html">server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html">game_components package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">diep.io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">diep_backend</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="diep-backend">
+<h1>diep_backend<a class="headerlink" href="#diep-backend" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.html">app module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.html#app.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="constants.html">constants module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="game.html">game module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="game.html#game.Game"><code class="docutils literal notranslate"><span class="pre">Game</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.Game"><code class="docutils literal notranslate"><span class="pre">Game.Game</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.add_new_obstacle"><code class="docutils literal notranslate"><span class="pre">Game.add_new_obstacle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.add_player"><code class="docutils literal notranslate"><span class="pre">Game.add_player()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.check_for_bullet_obstacle_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_bullet_obstacle_collision()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.check_for_bullet_player_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_bullet_player_collision()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.check_for_collisions"><code class="docutils literal notranslate"><span class="pre">Game.check_for_collisions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.check_for_obstacle_player_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_obstacle_player_collision()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.check_for_player_player_collision"><code class="docutils literal notranslate"><span class="pre">Game.check_for_player_player_collision()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.circle_collide"><code class="docutils literal notranslate"><span class="pre">Game.circle_collide()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.closest_point_on_segment"><code class="docutils literal notranslate"><span class="pre">Game.closest_point_on_segment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.distance"><code class="docutils literal notranslate"><span class="pre">Game.distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.dot_product"><code class="docutils literal notranslate"><span class="pre">Game.dot_product()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.find_object_by_property"><code class="docutils literal notranslate"><span class="pre">Game.find_object_by_property()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.find_player_id_by_name"><code class="docutils literal notranslate"><span class="pre">Game.find_player_id_by_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.find_random_not_occupied_position"><code class="docutils literal notranslate"><span class="pre">Game.find_random_not_occupied_position()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.generate_obstacles"><code class="docutils literal notranslate"><span class="pre">Game.generate_obstacles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.polygons_collide"><code class="docutils literal notranslate"><span class="pre">Game.polygons_collide()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.project_polygon"><code class="docutils literal notranslate"><span class="pre">Game.project_polygon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.there_is_such_player"><code class="docutils literal notranslate"><span class="pre">Game.there_is_such_player()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="game.html#game.Game.update_player_position"><code class="docutils literal notranslate"><span class="pre">Game.update_player_position()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="message_handler.html">message_handler module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler"><code class="docutils literal notranslate"><span class="pre">MessageHandler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.handle_bullets_update_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.handle_bullets_update_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.handle_join_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.handle_join_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.handle_move_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.handle_move_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.handle_shoot_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.handle_shoot_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.send_collision_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.send_collision_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.send_create_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.send_create_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.send_error_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.send_error_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.send_init_connection_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.send_init_connection_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.send_move_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.send_move_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="message_handler.html#message_handler.MessageHandler.send_new_player_message"><code class="docutils literal notranslate"><span class="pre">MessageHandler.send_new_player_message()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">server module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="server.html#server.Server"><code class="docutils literal notranslate"><span class="pre">Server</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="server.html#server.Server.handle_recieved_message"><code class="docutils literal notranslate"><span class="pre">Server.handle_recieved_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.html#server.Server.handler"><code class="docutils literal notranslate"><span class="pre">Server.handler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.html#server.Server.recieveMessages"><code class="docutils literal notranslate"><span class="pre">Server.recieveMessages()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="game_components.html">game_components package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html#module-game_components.bullet">game_components.bullet module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="game_components.html#game_components.bullet.Bullet"><code class="docutils literal notranslate"><span class="pre">Bullet</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html#module-game_components.obstacle">game_components.obstacle module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="game_components.html#game_components.obstacle.Obstacle"><code class="docutils literal notranslate"><span class="pre">Obstacle</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html#module-game_components.player">game_components.player module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="game_components.html#game_components.player.Player"><code class="docutils literal notranslate"><span class="pre">Player</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="game_components.html#module-game_components">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to diep.io’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.html" class="btn btn-neutral float-right" title="app module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Marcin Szmidt Dominik Noga.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

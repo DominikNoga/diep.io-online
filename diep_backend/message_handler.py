@@ -6,19 +6,18 @@ from game import Game
 
 class MessageHandler:
     """
-    Attributes:
-        game (Game): The game instance.
-        sleep_time (float): The sleep time between sending messages.
-        last_adding_result (dict): The result of the last adding operation.
-        last_bullet_update_result (dict): The result of the last bullet update operation.
-        bullets_to_delete (set): A set of bullet IDs to delete.
-        delete_bullets_treshold (int): The threshold value to trigger bullet deletion.
+    :param game (Game): The game instance.
+    :param sleep_time (float): The sleep time between sending messages.
+    :param last_adding_result (dict): The result of the last adding operation.
+    :param last_bullet_update_result (dict): The result of the last bullet update operation.
+    :param bullets_to_delete (set): A set of bullet IDs to delete.
+    :param delete_bullets_treshold (int): The threshold value to trigger bullet deletion.
     """
     def __init__(self, game: Game):
         """Initialize the MessageHandler.
 
-        Args:
-            game (Game): The game instance.
+        
+            :param game (Game): The game instance.
         """
         self.game = game
         self.sleep_time = 0.1
@@ -30,9 +29,9 @@ class MessageHandler:
     async def send_collision_message(self, websocket, message):
         """Send a collision message to the specified websocket.
 
-        Args:
-            websocket: The websocket to send the message to.
-            message: The collision message.
+        
+        :param websocket: The websocket to send the message to.
+        :param message: The collision message.
 
         """
         event = {
@@ -45,9 +44,9 @@ class MessageHandler:
     async def send_error_message(self, websocket, message):
         """Send an error message to the specified websocket.
 
-        Args:
-            websocket: The websocket to send the message to.
-            message: The error message.
+        
+        :param websocket: The websocket to send the message to.
+        :param message: The error message.
 
         """
         event = {
@@ -60,10 +59,10 @@ class MessageHandler:
     async def send_move_message(self, websocket, message: dict, connected_players):
         """Send a move message to the specified websocket.
 
-        Args:
-            websocket: The websocket to send the message to.
-            message (dict): The move message.
-            connected_players: A dictionary mapping websockets to player IDs.
+        
+        :param websocket: The websocket to send the message to.
+        :param message (dict): The move message.
+        :param connected_players: A dictionary mapping websockets to player IDs.
 
         """
 
@@ -79,8 +78,8 @@ class MessageHandler:
     async def send_create_message(self, websocket):
         """Send a create message to the specified websocket.
 
-        Args:
-            websocket: The websocket to send the message to.
+        
+        :param websocket: The websocket to send the message to.
 
         """
         event = self.last_adding_result
@@ -90,8 +89,8 @@ class MessageHandler:
     async def send_new_player_message(self, websocket):
         """Send a new player message to the specified websocket.
 
-        Args:
-            websocket: The websocket to send the message to.
+        
+        :param websocket: The websocket to send the message to.
 
         """
         event = {
@@ -108,9 +107,9 @@ class MessageHandler:
     async def send_init_connection_message(self, websocket, id):
         """Send an initialization connection message to the specified websocket.
 
-        Args:
-            websocket: The websocket to send the message to.
-            id: The client ID.
+        
+        :param websocket: The websocket to send the message to.
+        :param id: The client ID.
 
         """
         event = {
@@ -123,10 +122,10 @@ class MessageHandler:
     async def handle_shoot_message(self, connected_players, websocket, message):
         """Handle a shoot message.
 
-        Args:
-            connected_players: A dictionary mapping websockets to player IDs.
-            websocket: The websocket the message is received from.
-            message: The shoot message.
+        
+        :param connected_players: A dictionary mapping websockets to player IDs.
+        :param websocket: The websocket the message is received from.
+        :param message: The shoot message.
 
         """
 
@@ -149,11 +148,11 @@ class MessageHandler:
     async def handle_join_message(self, websocket, player_id, message: dict, index):
         """Handle a join message.
 
-        Args:
-            websocket: The websocket the message is received from.
-            player_id: The ID of the player.
-            message (dict): The join message.
-            index: The index of the player in the connection.
+        
+        :param websocket: The websocket the message is received from.
+        :param player_id: The ID of the player.
+        :param message (dict): The join message.
+        :param index: The index of the player in the connection.
 
         """
         if index == 0:
@@ -168,10 +167,10 @@ class MessageHandler:
     async def handle_move_message(self, websocket, message: dict, connected_players):
         """Handle a move message.
 
-        Args:
-            websocket: The websocket the message is received from.
-            message (dict): The move message.
-            connected_players: A dictionary mapping websockets to player IDs.
+        
+        :param websocket: The websocket the message is received from.
+        :param message (dict): The move message.
+        :param connected_players: A dictionary mapping websockets to player IDs.
 
         """
         await self.send_move_message(websocket, message, connected_players)
@@ -179,9 +178,9 @@ class MessageHandler:
     async def handle_bullets_update_message(self, connected_players, message):
         """Handle a bullets update message.
 
-        Args:
-            connected_players: A dictionary mapping websockets to player IDs.
-            message: The bullets update message.
+        
+        :param connected_players: A dictionary mapping websockets to player IDs.
+        :param message: The bullets update message.
 
         """
         for bullet in message["updatedBullets"]:

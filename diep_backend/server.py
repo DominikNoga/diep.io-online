@@ -10,11 +10,10 @@ from message_handler import MessageHandler
 class Server:
     """WebSocket server for the game.
 
-    Attributes:
-        connected_players (dict): A dictionary mapping WebSocket connections to player IDs.
-        game (Game): The game instance.
-        message_handler (MessageHandler): The message handler instance.
-        first_shooting_client: The WebSocket connection of the first client who shoots.
+    :param connected_players (dict): A dictionary mapping WebSocket connections to player IDs.
+    :param  game (Game): The game instance.
+    :param  message_handler (MessageHandler): The message handler instance.
+    :param  first_shooting_client: The WebSocket connection of the first client who shoots.
     """
     def __init__(self):
         """Initialize the WebSocket server."""
@@ -26,11 +25,10 @@ class Server:
     async def handle_recieved_message(self, websocket, player_id, message, index):
         """Handles the received message based on its type.
 
-        Args:
-            websocket: The WebSocket connection.
-            player_id (str): The ID of the player who sent the message.
-            message (str): The received message.
-            index (int): The index of the player in the connected players list.
+       :param  websocket: The WebSocket connection.
+       :param  player_id (str): The ID of the player who sent the message.
+       :param  message (str): The received message.
+       :param  index (int): The index of the player in the connected players list.
         """
         message = json.loads(message)
         
@@ -63,8 +61,7 @@ class Server:
     async def recieveMessages(self, websocket):
         """Receives messages from a WebSocket connection and handles them.
 
-        Args:
-            websocket: The WebSocket connection.
+        :param websocket: The WebSocket connection.
         """
         for player in  self.game.players_to_remove:
             self.game.players.remove(player)
@@ -86,8 +83,7 @@ class Server:
     async def handler(self, websocket):
         """Handles a new WebSocket connection.
 
-        Args:
-            websocket: The WebSocket connection.
+        :param websocket: The WebSocket connection.
         """
         print(f"New client connected {websocket}")
         client_id = str(uuid.uuid4())

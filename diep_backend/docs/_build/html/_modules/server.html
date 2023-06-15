@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>server &mdash; diep.io  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            diep.io
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">diep_backend</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">diep.io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">server</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for server</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">websockets</span>
+<span class="kn">from</span> <span class="nn">game</span> <span class="kn">import</span> <span class="n">Game</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">message_handler</span> <span class="kn">import</span> <span class="n">MessageHandler</span>
+
+
+<div class="viewcode-block" id="Server"><a class="viewcode-back" href="../server.html#server.Server">[docs]</a><span class="k">class</span> <span class="nc">Server</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;WebSocket server for the game.</span>
+
+<span class="sd">    :param connected_players (dict): A dictionary mapping WebSocket connections to player IDs.</span>
+<span class="sd">    :param  game (Game): The game instance.</span>
+<span class="sd">    :param  message_handler (MessageHandler): The message handler instance.</span>
+<span class="sd">    :param  first_shooting_client: The WebSocket connection of the first client who shoots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the WebSocket server.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span> <span class="o">=</span> <span class="n">MessageHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_shooting_client</span> <span class="o">=</span> <span class="kc">None</span>
+    
+<div class="viewcode-block" id="Server.handle_recieved_message"><a class="viewcode-back" href="../server.html#server.Server.handle_recieved_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handle_recieved_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles the received message based on its type.</span>
+
+<span class="sd">       :param  websocket: The WebSocket connection.</span>
+<span class="sd">       :param  player_id (str): The ID of the player who sent the message.</span>
+<span class="sd">       :param  message (str): The received message.</span>
+<span class="sd">       :param  index (int): The index of the player in the connected players list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        
+        <span class="n">message_type</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="n">message_types</span><span class="p">[</span><span class="n">MOVE</span><span class="p">]:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span><span class="o">.</span><span class="n">handle_move_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">message_type</span> <span class="o">==</span> <span class="n">message_types</span><span class="p">[</span><span class="n">JOIN</span><span class="p">]:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span><span class="o">.</span><span class="n">handle_join_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">message_type</span> <span class="o">==</span> <span class="n">message_types</span><span class="p">[</span><span class="n">SHOOT</span><span class="p">]:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span><span class="o">.</span><span class="n">handle_shoot_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span> <span class="p">,</span><span class="n">websocket</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">message_type</span> <span class="o">==</span> <span class="n">message_types</span><span class="p">[</span><span class="n">BULLETS_UPDATE</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span><span class="o">.</span><span class="n">handle_bullets_update_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No such message type </span><span class="si">{</span><span class="n">message_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">traceback_info</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback_info</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span><span class="o">.</span><span class="n">send_error_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">,</span> <span class="p">{</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;there was an error </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="Server.recieveMessages"><a class="viewcode-back" href="../server.html#server.Server.recieveMessages">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">recieveMessages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receives messages from a WebSocket connection and handles them.</span>
+
+<span class="sd">        :param websocket: The WebSocket connection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">players_to_remove</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">players_to_remove</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">websocket</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">player_socket</span><span class="p">,</span> <span class="n">player_id</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_recieved_message</span><span class="p">(</span><span class="n">player_socket</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">websockets</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionClosed</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;A client just disconnected&quot;</span><span class="p">)</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">player_socket</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">player_socket</span> <span class="o">==</span> <span class="n">websocket</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span><span class="p">[</span><span class="n">player_id</span><span class="p">]</span>
+                    <span class="k">break</span></div>
+
+<div class="viewcode-block" id="Server.handler"><a class="viewcode-back" href="../server.html#server.Server.handler">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles a new WebSocket connection.</span>
+
+<span class="sd">        :param websocket: The WebSocket connection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New client connected </span><span class="si">{</span><span class="n">websocket</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">client_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_players</span><span class="p">[</span><span class="n">websocket</span><span class="p">]</span> <span class="o">=</span> <span class="n">client_id</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_handler</span><span class="o">.</span><span class="n">send_init_connection_message</span><span class="p">(</span><span class="n">websocket</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">recieveMessages</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Marcin Szmidt Dominik Noga.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -4,6 +4,13 @@ bullet_damage = 20
 
 class Obstacle:
     def __init__(self, position,num_edges,radius,id):
+        """Class representing an obstacle in the game.
+
+        :param   position (dict): The position of the obstacle on the game area.
+        :param   num_edges (int): The number of edges the obstacle has.
+        :param   radius (int): The radius of the obstacle.
+        :param   id (int): The unique identifier of the obstacle.
+        """
         self.position = position
         self.num_edges=num_edges
         self.num_edges += 2

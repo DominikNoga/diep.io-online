@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>game &mdash; diep.io  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            diep.io
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">diep_backend</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">diep.io</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">game</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for game</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">game_components.player</span> <span class="kn">import</span> <span class="n">Player</span>
+<span class="kn">from</span> <span class="nn">game_components.obstacle</span> <span class="kn">import</span> <span class="n">Obstacle</span>
+<span class="kn">from</span> <span class="nn">constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+
+<div class="viewcode-block" id="Game"><a class="viewcode-back" href="../game.html#game.Game">[docs]</a><span class="k">class</span> <span class="nc">Game</span><span class="p">:</span>
+<div class="viewcode-block" id="Game.Game"><a class="viewcode-back" href="../game.html#game.Game.Game">[docs]</a>    <span class="k">class</span> <span class="nc">Game</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class representing the game logic and component management.</span>
+
+<span class="sd">      :param   width (int): The width of the game area.</span>
+<span class="sd">      :param   height (int): The height of the game area.</span>
+<span class="sd">      :param   players (list): A list of Player objects representing the players in the game.</span>
+<span class="sd">      :param   obstacles (list): A list of Obstacle objects representing the obstacles in the game.</span>
+<span class="sd">      :param  bullets_fired (list): A list of Bullet objects representing the fired bullets in the game.</span>
+<span class="sd">      :param   players_colors_length (int): The number of available colors for players.</span>
+<span class="sd">      :param   players_to_remove (list): A list of players to be removed from the game.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">1600</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">900</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">players</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_obstacles</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bullets_fired</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">players_colors_length</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">players_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Game.add_player"><a class="viewcode-back" href="../game.html#game.Game.add_player">[docs]</a>    <span class="k">def</span> <span class="nf">add_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">websocket</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new player to the game.</span>
+
+<span class="sd">        :param  player_name (str): The name of the player.</span>
+<span class="sd">        :param  websocket: The WebSocket associated with the player.</span>
+
+<span class="sd">        :return: (dict) A dictionary containing information about the success of the operation and game state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">there_is_such_player</span><span class="p">(</span><span class="n">player_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">CREATE</span><span class="p">],</span>
+                <span class="s1">&#39;errorMessage&#39;</span><span class="p">:</span> <span class="s1">&#39;There is already a player with that name!&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">&#39;target_client&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">}</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_random_not_occupied_position</span><span class="p">()</span>
+        <span class="n">color_index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">player</span> <span class="o">=</span> <span class="n">Player</span><span class="p">(</span><span class="n">player_name</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">},</span> <span class="n">color_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">websocket</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding player </span><span class="si">{</span><span class="n">player</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> on position: </span><span class="si">{</span><span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">message_types</span><span class="p">[</span><span class="n">CREATE</span><span class="p">],</span>
+            <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+            <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">player_name</span><span class="p">,</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="n">color_index</span><span class="p">,</span>
+            <span class="s1">&#39;players&#39;</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+                <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+                <span class="s1">&#39;lifeLeft&#39;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">life_left</span><span class="p">,</span>
+            <span class="p">}</span> <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span>
+            <span class="p">],</span>
+            <span class="s1">&#39;obstacles&#39;</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">id</span>
+            <span class="p">}</span> <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">]}</span></div>
+
+<div class="viewcode-block" id="Game.there_is_such_player"><a class="viewcode-back" href="../game.html#game.Game.there_is_such_player">[docs]</a>    <span class="k">def</span> <span class="nf">there_is_such_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a player with the given name already exists in the game.</span>
+
+
+<span class="sd">        :param player_name (str): The name of the player to check.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            bool: True if a player with the given name already exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">isIn</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">player</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">player_name</span><span class="p">:</span>
+                <span class="n">isIn</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">isIn</span></div>
+
+<div class="viewcode-block" id="Game.find_random_not_occupied_position"><a class="viewcode-back" href="../game.html#game.Game.find_random_not_occupied_position">[docs]</a>    <span class="k">def</span> <span class="nf">find_random_not_occupied_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find a random position in the game that is not occupied by any obstacles.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            tuple[int, int]: The x and y coordinates of the randomly generated position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">100</span><span class="p">),</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">100</span><span class="p">)]</span>
+            <span class="n">point</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">}</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">position</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="Game.update_player_position"><a class="viewcode-back" href="../game.html#game.Game.update_player_position">[docs]</a>    <span class="k">def</span> <span class="nf">update_player_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the position of a player in the game.</span>
+
+<span class="sd">        :param name (str): The name of the player to update.</span>
+<span class="sd">        :param position (dict): The new position of the player.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">player</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_object_by_property</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;player&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">player</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Player </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">player</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="Game.check_for_collisions"><a class="viewcode-back" href="../game.html#game.Game.check_for_collisions">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_collisions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check for collisions between game objects and handle them.</span>
+
+<span class="sd">        :param name (str): The name of the player to check collisions for.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            bool: True if a collision with an obstacle occurs, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">player</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_object_by_property</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;player&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_for_player_player_collision</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_for_obstacle_player_collision</span><span class="p">(</span><span class="n">player</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.check_for_bullet_player_collision"><a class="viewcode-back" href="../game.html#game.Game.check_for_bullet_player_collision">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_bullet_player_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check for collisions between bullets and players.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            tuple[list[dict], list[int]]: A tuple containing a list of damaged players and a list of bullet IDs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">damaged_players</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">buletts_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">bullet</span><span class="p">,</span> <span class="n">player</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bullets_fired</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circle_collide</span><span class="p">(</span><span class="n">bullet</span><span class="p">,</span> <span class="n">player</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">player</span><span class="o">.</span><span class="n">life_left</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">player</span><span class="o">.</span><span class="n">life_left</span> <span class="o">-=</span> <span class="n">bullet</span><span class="o">.</span><span class="n">damage</span>
+                <span class="n">damaged_players</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;lifeLeft&quot;</span><span class="p">:</span> <span class="n">player</span><span class="o">.</span><span class="n">life_left</span>
+                <span class="p">})</span>
+                <span class="n">buletts_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bullet</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">player</span><span class="o">.</span><span class="n">life_left</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">enemy</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">enemy</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">bullet</span><span class="o">.</span><span class="n">player_name</span><span class="p">:</span>
+                            <span class="n">enemy</span><span class="o">.</span><span class="n">score</span> <span class="o">+=</span> <span class="n">player</span><span class="o">.</span><span class="n">score</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">damaged_players</span><span class="p">,</span> <span class="n">buletts_ids</span></div>
+
+<div class="viewcode-block" id="Game.check_for_player_player_collision"><a class="viewcode-back" href="../game.html#game.Game.check_for_player_player_collision">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_player_player_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check for collisions between players and handle them.</span>
+
+<span class="sd">        :param player (Player): The player to check collisions for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">other_player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">player</span> <span class="o">!=</span> <span class="n">other_player</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circle_collide</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">other_player</span><span class="p">):</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+                    <span class="n">dy</span> <span class="o">=</span> <span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+                    <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">dx</span><span class="p">)</span>
+                    <span class="n">new_x</span> <span class="o">=</span> <span class="n">other_player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">25</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+                    <span class="n">new_y</span> <span class="o">=</span> <span class="n">other_player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">25</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+                    <span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_x</span>
+                    <span class="n">player</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_y</span></div>
+
+<div class="viewcode-block" id="Game.check_for_obstacle_player_collision"><a class="viewcode-back" href="../game.html#game.Game.check_for_obstacle_player_collision">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_obstacle_player_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check for collisions between players and obstacles.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param player (Player): The player to check collisions for.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            bool: True if a collision with an obstacle occurs, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circle_collide</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">):</span>
+                <span class="c1"># self.players.remove(player)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Game.check_for_bullet_obstacle_collision"><a class="viewcode-back" href="../game.html#game.Game.check_for_bullet_obstacle_collision">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_bullet_obstacle_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check for collisions between bullets and obstacles.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            tuple[list[dict], list[int], list[Obstacle]]: A tuple containing a list of damaged obstacles,</span>
+<span class="sd">                a list of bullet IDs, and a list of new obstacles to be added.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">damaged_obstacles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">buletts_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_obstacles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">bullet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bullets_fired</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">circle_collide</span><span class="p">(</span><span class="n">bullet</span><span class="p">,</span> <span class="n">obstacle</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">life_left</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">obstacle</span><span class="o">.</span><span class="n">life_left</span> <span class="o">-=</span> <span class="n">bullet</span><span class="o">.</span><span class="n">damage</span>
+                    <span class="n">damaged_obstacles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;lifeLeft&quot;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">life_left</span>
+                    <span class="p">})</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">life_left</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">player</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">bullet</span><span class="o">.</span><span class="n">player_name</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;basic&quot;</span><span class="p">:</span>
+                                    <span class="n">player</span><span class="o">.</span><span class="n">score</span> <span class="o">+=</span> <span class="mi">100</span>
+                                <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span>
+                                    <span class="n">player</span><span class="o">.</span><span class="n">score</span> <span class="o">+=</span> <span class="mi">300</span>
+                                <span class="k">if</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;hard&quot;</span><span class="p">:</span>
+                                    <span class="n">player</span><span class="o">.</span><span class="n">score</span> <span class="o">+=</span> <span class="mi">500</span>
+                        <span class="n">new_obstacles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_new_obstacle</span><span class="p">(</span><span class="n">obstacle</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
+                    <span class="n">buletts_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bullet</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bullets_fired</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">bullet</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">damaged_obstacles</span><span class="p">,</span> <span class="n">buletts_ids</span><span class="p">,</span> <span class="n">new_obstacles</span></div>
+
+<div class="viewcode-block" id="Game.circle_collide"><a class="viewcode-back" href="../game.html#game.Game.circle_collide">[docs]</a>    <span class="k">def</span> <span class="nf">circle_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if two circular objects collide.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param obj1: The first object to check.</span>
+<span class="sd">        :param obj2: The second object to check.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            bool: True if the objects collide, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">obj1</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj2</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">obj1</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj2</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">obj1</span><span class="o">.</span><span class="n">radius</span> <span class="o">+</span> <span class="n">obj2</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.dot_product"><a class="viewcode-back" href="../game.html#game.Game.dot_product">[docs]</a>    <span class="k">def</span> <span class="nf">dot_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">vector1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">vector2</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">vector1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">vector2</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Game.polygons_collide"><a class="viewcode-back" href="../game.html#game.Game.polygons_collide">[docs]</a>    <span class="k">def</span> <span class="nf">polygons_collide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if two polygons collide with each other.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param obj1 (Obstacle): The first polygon object.</span>
+<span class="sd">        :param obj2 (Obstacle): The second polygon object.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            bool: True if the polygons collide, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">obj1</span><span class="o">.</span><span class="n">normals</span> <span class="o">+</span> <span class="n">obj2</span><span class="o">.</span><span class="n">normals</span><span class="p">:</span>
+            <span class="n">min_a</span><span class="p">,</span> <span class="n">max_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_polygon</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">obj1</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+            <span class="n">min_b</span><span class="p">,</span> <span class="n">max_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_polygon</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">obj2</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">min_a</span> <span class="o">&gt;</span> <span class="n">max_b</span> <span class="ow">or</span> <span class="n">min_b</span> <span class="o">&gt;</span> <span class="n">max_a</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Game.distance"><a class="viewcode-back" href="../game.html#game.Game.distance">[docs]</a>    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the distance between two points in 2D space.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param p1 (dict): The coordinates of the first point, with keys &#39;x&#39; and &#39;y&#39;.</span>
+<span class="sd">        :param p2 (dict): The coordinates of the second point, with keys &#39;x&#39; and &#39;y&#39;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            float: The distance between the two points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">p1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.closest_point_on_segment"><a class="viewcode-back" href="../game.html#game.Game.closest_point_on_segment">[docs]</a>    <span class="k">def</span> <span class="nf">closest_point_on_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the closest point on a line segment to a given point.</span>
+
+<span class="sd">        </span>
+<span class="sd">        :param c (dict): The coordinates of the point, with keys &#39;x&#39; and &#39;y&#39;.</span>
+<span class="sd">        :param v1 (dict): The coordinates of the first endpoint of the line segment, with keys &#39;x&#39; and &#39;y&#39;.</span>
+<span class="sd">        :param v2 (dict): The coordinates of the second endpoint of the line segment, with keys &#39;x&#39; and &#39;y&#39;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            tuple[float, float]: The coordinates of the closest point on the line segment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">v2</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">v2</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">((</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">v1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">dy</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">*</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>  <span class="c1"># Limit t to the range [0, 1]</span>
+        <span class="n">closest_x</span> <span class="o">=</span> <span class="n">v1</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">dx</span>
+        <span class="n">closest_y</span> <span class="o">=</span> <span class="n">v1</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">dy</span>
+        <span class="k">return</span> <span class="n">closest_x</span><span class="p">,</span> <span class="n">closest_y</span></div>
+
+<div class="viewcode-block" id="Game.project_polygon"><a class="viewcode-back" href="../game.html#game.Game.project_polygon">[docs]</a>    <span class="k">def</span> <span class="nf">project_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Project a polygon onto an axis and determine the minimum and maximum values.</span>
+
+<span class="sd">        </span>
+<span class="sd">            axis (dict): The axis to project onto, with keys &#39;x&#39; and &#39;y&#39;.</span>
+<span class="sd">            vertices (list[dict]): The vertices of the polygon, each with keys &#39;x&#39; and &#39;y&#39;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            tuple[float, float]: The minimum and maximum values of the projected polygon on the axis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="n">max_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dot_product</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dot_product</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+                <span class="n">min_val</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+                <span class="n">max_val</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span></div>
+
+<div class="viewcode-block" id="Game.find_player_id_by_name"><a class="viewcode-back" href="../game.html#game.Game.find_player_id_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">find_player_id_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_object_by_property</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;player&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">id</span></div>
+
+<div class="viewcode-block" id="Game.find_object_by_property"><a class="viewcode-back" href="../game.html#game.Game.find_object_by_property">[docs]</a>    <span class="k">def</span> <span class="nf">find_object_by_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="p">,</span> <span class="n">object_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method used to find object by its property -&gt; it should be unique</span>
+
+<span class="sd">        </span>
+<span class="sd">            prop_name (string): name of the property for eg. &quot;name&quot;</span>
+<span class="sd">            prop_value (Any): value of the property for eg. &quot;Tom&quot;</span>
+<span class="sd">            object_type (string): one of the game objects: &#39;obstacle&#39;, &#39;bullet&#39;, &#39;player&#39;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            Reference to the object with the property that we are looking for</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">object_type</span> <span class="o">==</span> <span class="s1">&#39;player&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">player</span> <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">prop_value</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">object_type</span> <span class="o">==</span> <span class="s1">&#39;bullet&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">bullet</span> <span class="k">for</span> <span class="n">bullet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bullets_fired</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bullet</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">prop_value</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">object_type</span> <span class="o">==</span> <span class="s1">&#39;obstacle&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">obstacle</span> <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obstacle</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">prop_value</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unknown object type&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.generate_obstacles"><a class="viewcode-back" href="../game.html#game.Game.generate_obstacles">[docs]</a>    <span class="k">def</span> <span class="nf">generate_obstacles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_obstacles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a specified number of obstacles.</span>
+
+<span class="sd">        </span>
+<span class="sd">            num_obstacles (int): The number of obstacles to generate.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            list[Obstacle]: A list of generated obstacles.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The method ensures that the generated obstacles do not collide with each other.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="mi">25</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">obstacles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num_obstacles</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">num_edges</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">obstacle2</span> <span class="o">=</span> <span class="n">Obstacle</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">},</span> <span class="n">num_edges</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygons_collide</span><span class="p">(</span><span class="n">obstacle1</span><span class="p">,</span> <span class="n">obstacle2</span><span class="p">)</span> <span class="k">for</span> <span class="n">obstacle1</span> <span class="ow">in</span> <span class="n">obstacles</span><span class="p">):</span>
+                <span class="n">obstacles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">obstacles</span></div>
+
+<div class="viewcode-block" id="Game.add_new_obstacle"><a class="viewcode-back" href="../game.html#game.Game.add_new_obstacle">[docs]</a>    <span class="k">def</span> <span class="nf">add_new_obstacle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new obstacle to the game.</span>
+
+<span class="sd">        </span>
+<span class="sd">            id (int): The ID of the obstacle.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            dict: A dictionary containing information about the added obstacle, including its type, position, and ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_random_not_occupied_position</span><span class="p">()</span>
+        <span class="n">num_edges</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="mi">25</span>
+        <span class="n">obstacle</span> <span class="o">=</span> <span class="n">Obstacle</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">},</span> <span class="n">num_edges</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obstacle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">obstacle</span><span class="o">.</span><span class="n">id</span><span class="p">}</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Marcin Szmidt Dominik Noga.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
